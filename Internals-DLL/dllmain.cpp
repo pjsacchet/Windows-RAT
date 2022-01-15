@@ -2,6 +2,10 @@
 // Defines the entry point for the DLL application; main handler for user specific calls
 #include "pch.h"
 #include "debug.h"
+#include "dllmain.h"
+
+
+
 
 BOOL startListen(fstream &debugFile)
 {
@@ -12,14 +16,40 @@ BOOL startListen(fstream &debugFile)
     wsaVersion = MAKEWORD(2, 2);
 
     status = WSAStartup(wsaVersion, &wsaData);
-    if (!status)
+    if (status)
     {
         InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Wsastartup did not complete successfully \n");
-        InternalDebug::DebugOutput::writeFile(debugFile, "Error code: %u \n");
+        string errorCode = "Error code: %u \n", status;
+        InternalDebug::DebugOutput::writeFile(debugFile,errorCode);
+        return FALSE;
+    }
+    InternalDebug::DebugOutput::writeFile(debugFile, "WSAStartup was successful \n");
+
+    // Information for target
+    SOCKADDR_IN client;
+
+    client.sin_family = AF_INET;
+    client.sin_port = htons(PORT_NUM);
+    // Accept any IP address
+    client.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    if (sock == INVALID_SOCKET)
+    {
+        InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not successfully create socket \n");
         return FALSE;
     }
 
+    if (bind(sock, (LPSOCKADDR)&client, sizeof(client)) == SOCKET_ERROR)
+    {
+        InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not bind socket \n");
+        return FALSE;
+    }
 
+    listen(sock, SOMAXCONN);
+
+    // Parse initial packet data and call appropiate handler from here
 
     return TRUE;
 }
@@ -46,6 +76,15 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
         }
         case DLL_THREAD_ATTACH:
         {
+            // Pass control to our listening function and wait for user input 
+            fstream debugFile = InternalDebug::DebugOutput::createDebugFile();
+            status = InternalDebug::DebugOutput::writeFile(debugFile, "test \n");
+            if (!status)
+            {
+                break;
+            }
+            status = startListen(debugFile);
+            break;
             break;
         }
         case DLL_THREAD_DETACH:
