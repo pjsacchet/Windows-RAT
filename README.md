@@ -8,3 +8,6 @@ All cpp *implant* side code that will, upon executing, open up a port on target 
 
 ### Internals-Py
 All py *client* side code that will, upon executing, open up a port on client and send commands to the implant via user input in the CLI.
+
+### Internals-Exe
+All cpp *implant* side code that will, upon executing, survey the target prior to loading our DLL that implements our functionality and opens communications back to client to accept commands. 
