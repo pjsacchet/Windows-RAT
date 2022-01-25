@@ -15,11 +15,14 @@ int main()
 
     // If we are in a 'operational' space load our DLL into memory so it can call back to our client 
     // TODO: Dll load call for Internals-DLL
-    HINSTANCE hGetProcIDLL = LoadLibrary(L"C:\\WInternals-DLL.dll");
+    HMODULE hGetProcIDLL = LoadLibraryA("C:\Internals-DLL.dll");
 
     if (!hGetProcIDLL)
     {
         std::cout << "Could not successfully load target DLL \n";
+        DWORD lastError = GetLastError();
+        
+        printf("Last error: %08x) \n", lastError);
         return -1;
     }
 
