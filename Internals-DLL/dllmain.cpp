@@ -62,6 +62,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
         // Executable has surveyed environment and deemed it safe to operate; make calls specific to functionality here
         case DLL_PROCESS_ATTACH:
         {
+            std::cout << "INSIDE DLLMAIN \n";
             // Pass control to our listening function and wait for user input 
             fstream debugFile = InternalDebug::DebugOutput::createDebugFile();
             status = InternalDebug::DebugOutput::writeFile(debugFile, "test \n");

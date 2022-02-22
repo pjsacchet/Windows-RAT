@@ -15,7 +15,8 @@ int main()
 
     // If we are in a 'operational' space load our DLL into memory so it can call back to our client 
     // TODO: Dll load call for Internals-DLL
-    HMODULE hGetProcIDLL = LoadLibraryA("C:\Internals-DLL.dll");
+    LPCWSTR dllName = L"Internals-DLL.dll";
+    HMODULE hGetProcIDLL = LoadLibrary(dllName);
 
     if (!hGetProcIDLL)
     {
