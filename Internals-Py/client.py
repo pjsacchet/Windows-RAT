@@ -5,7 +5,7 @@
 import socket
 
 EXIT = 0
-PORT_NUM = 1550
+PORT_NUM = 15500
 HOST = "127.0.0.1"
 
 def commandSend(commandType):

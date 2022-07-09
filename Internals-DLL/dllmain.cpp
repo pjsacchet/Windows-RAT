@@ -22,6 +22,7 @@ BOOL startListen(fstream &debugFile)
         return FALSE;
     }
     InternalDebug::DebugOutput::writeFile(debugFile, "WSAStartup was successful \n");
+    std::cout << "WSAStartup was successful \n";
 
     // Information for target
     SOCKADDR_IN client;
@@ -44,6 +45,7 @@ BOOL startListen(fstream &debugFile)
         InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not bind socket \n");
         return FALSE;
     }
+    std::cout << "Listening on port... \n";
 
     listen(sock, SOMAXCONN);
 
