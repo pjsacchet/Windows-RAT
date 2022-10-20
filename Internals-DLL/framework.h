@@ -5,7 +5,12 @@
 
 // Windows Header Files
 #include <windows.h>
-#include <winsock.h>
+//#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 
 #include <iostream>
 #include <fstream>

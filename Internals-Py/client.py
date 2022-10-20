@@ -5,8 +5,8 @@
 import socket
 
 EXIT = 0
-PORT_NUM = 15500
-HOST = "127.0.0.1"
+PORT_NUM = 1550
+HOST = "192.168.111.128"
 
 def commandSend(commandType):
     return 1
@@ -18,10 +18,11 @@ def openSock():
             sock.connect((HOST, PORT_NUM))
         #   sock.sendall(b'Hello, world')
             #data = s.recv(1024)
+            return sock
     except Exception as e:
         print("ERROR: Could not connect to implant: ", e)
-        return 0
-    return 1
+        return -1
+    return
 
 def printHelp():
     print("""Please select from the following options: \n
@@ -30,13 +31,23 @@ def printHelp():
             0) Exit""")
     return 1
 
+def testSend(sock, bytes):
+    sock.send(bytes.encode())
+    data = sock.recv(1024)
+    #sock.close()
+    return data
+
 def main():
     print ("Attmepting to connect to target")
-    if (not openSock()):
+    sock = openSock()
+    if (sock == -1):
         print ("Failed to open socket; exiting....")
         return 0
     print ("Attempting to reach out to implant....")
-    if (not testSend()):
+    data = 'test message'
+    response = testSend(sock, data)
+    #if (not testSend()):
+    if (len(response) == 0):
         print ("Failed to get response from implant; exiting...")
     # Now wait for user input and make appropiate call
     userInput = 1

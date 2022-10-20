@@ -9,7 +9,11 @@ BOOL startListen(fstream &debugFile)
 {
     WORD wsaVersion;
     WSADATA wsaData;
-    int status = 0;
+    int status= 0;
+    int sendStatus = 0;
+    int recvBufLen = DEFAULT_BUFLEN;
+
+    char recvBuf [DEFAULT_BUFLEN];
 
     wsaVersion = MAKEWORD(2, 2);
 
@@ -31,23 +35,89 @@ BOOL startListen(fstream &debugFile)
     client.sin_port = htons(PORT_NUM);
     // Accept any IP address
     client.sin_addr.s_addr = htonl(INADDR_ANY);
+    SOCKET clientSock = INVALID_SOCKET;
+    SOCKET serverSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-    if (sock == INVALID_SOCKET)
+    if (serverSock == INVALID_SOCKET)
     {
         InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not successfully create socket \n");
         return FALSE;
     }
 
-    if (bind(sock, (LPSOCKADDR)&client, sizeof(client)) == SOCKET_ERROR)
+    if (bind(serverSock, (LPSOCKADDR)&client, sizeof(client)) == SOCKET_ERROR)
     {
         InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not bind socket \n");
         return FALSE;
     }
     std::cout << "Listening on port... \n";
 
-    listen(sock, SOMAXCONN);
+    status = listen(serverSock, SOMAXCONN);
+    if (status == SOCKET_ERROR)
+    {
+        std::cout << "SOCKET ERROR";
+        closesocket(serverSock);
+        WSACleanup();
+        return FALSE;
+    }
+
+    clientSock = accept(serverSock, NULL, NULL);
+    if (clientSock == INVALID_SOCKET)
+    {
+        std::cout << "INVALID SOCKET FROM CLIENT";
+        closesocket(serverSock);
+        WSACleanup();
+        return FALSE;
+     }
+
+    // dont need server socket anymore
+    closesocket(serverSock);
+
+    // receive from client until the peer shuts down the connection
+    do
+    {
+        status = recv(clientSock, recvBuf, recvBufLen, 0);
+        if (status > 0)
+        {
+            printf( "Bytes received: %d", status);
+
+            sendStatus = send(clientSock, recvBuf, status, 0);
+            if (sendStatus == SOCKET_ERROR)
+            {
+                printf( "SEND ERROR: %d", sendStatus);
+                closesocket(clientSock);
+                WSACleanup();
+                return FALSE;
+            }
+            printf("Bytes sent: %d", sendStatus);
+        }
+        else if (status == 0)
+        {
+            std::cout << "Closing socket";
+        }
+        else
+        {
+            printf("Recv failed with error %d", WSAGetLastError());
+            closesocket(clientSock);
+            WSACleanup();
+            return FALSE;
+        }
+        closesocket(clientSock);
+        WSACleanup();
+
+    } while (status > 0);
+
+    // shutdown connection since we're done
+    status = shutdown(clientSock, SD_SEND);
+    if (status == SOCKET_ERROR)
+    {
+        printf("shutdown failed with error: %d", WSAGetLastError());
+        closesocket(clientSock);
+        WSACleanup();
+        return FALSE;
+    }
+
+    closesocket(clientSock);
+    WSACleanup();
 
     // Parse initial packet data and call appropiate handler from here
 
@@ -73,6 +143,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
                 break;
             }
             status = startListen(debugFile);
+            std::cout << "START LISTEN FINISH\n";
             break;
         }
         case DLL_THREAD_ATTACH:
