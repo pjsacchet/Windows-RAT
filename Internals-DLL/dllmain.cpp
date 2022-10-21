@@ -4,7 +4,6 @@
 #include "debug.h"
 #include "dllmain.h"
 
-
 BOOL startListen(fstream &debugFile)
 {
     WORD wsaVersion;
@@ -12,7 +11,6 @@ BOOL startListen(fstream &debugFile)
     int status= 0;
     int sendStatus = 0;
     int recvBufLen = DEFAULT_BUFLEN;
-
     char recvBuf [DEFAULT_BUFLEN];
 
     wsaVersion = MAKEWORD(2, 2);
@@ -33,6 +31,7 @@ BOOL startListen(fstream &debugFile)
 
     client.sin_family = AF_INET;
     client.sin_port = htons(PORT_NUM);
+
     // Accept any IP address
     client.sin_addr.s_addr = htonl(INADDR_ANY);
     SOCKET clientSock = INVALID_SOCKET;
@@ -49,12 +48,12 @@ BOOL startListen(fstream &debugFile)
         InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not bind socket \n");
         return FALSE;
     }
-    std::cout << "Listening on port... \n";
+    printf("Listening on port: %d \n", PORT_NUM);
 
     status = listen(serverSock, SOMAXCONN);
     if (status == SOCKET_ERROR)
     {
-        std::cout << "SOCKET ERROR";
+        printf("Socket error; closing socket... \n");
         closesocket(serverSock);
         WSACleanup();
         return FALSE;
@@ -63,46 +62,45 @@ BOOL startListen(fstream &debugFile)
     clientSock = accept(serverSock, NULL, NULL);
     if (clientSock == INVALID_SOCKET)
     {
-        std::cout << "INVALID SOCKET FROM CLIENT";
+        printf("Invalid socket from client \n");
         closesocket(serverSock);
         WSACleanup();
         return FALSE;
      }
 
-    // dont need server socket anymore
+    // Close server socket since we no longer need it 
     closesocket(serverSock);
 
-    // receive from client until the peer shuts down the connection
+    // Receive from client until the peer shuts down the connection
     do
     {
+        printf("Waiting for more bytes... \n");
         status = recv(clientSock, recvBuf, recvBufLen, 0);
         if (status > 0)
         {
-            printf( "Bytes received: %d", status);
+            printf( "Bytes received: %d \n", status);
 
             sendStatus = send(clientSock, recvBuf, status, 0);
             if (sendStatus == SOCKET_ERROR)
             {
-                printf( "SEND ERROR: %d", sendStatus);
+                printf( "Send error: %d \n", sendStatus);
                 closesocket(clientSock);
                 WSACleanup();
                 return FALSE;
             }
-            printf("Bytes sent: %d", sendStatus);
+            printf("Bytes sent: %d \n", sendStatus);
         }
         else if (status == 0)
         {
-            std::cout << "Closing socket";
+            printf("Closing socket... \n");
         }
         else
         {
-            printf("Recv failed with error %d", WSAGetLastError());
+            printf("Recv failed with error %d \n", WSAGetLastError());
             closesocket(clientSock);
             WSACleanup();
             return FALSE;
         }
-        closesocket(clientSock);
-        WSACleanup();
 
     } while (status > 0);
 
@@ -110,7 +108,7 @@ BOOL startListen(fstream &debugFile)
     status = shutdown(clientSock, SD_SEND);
     if (status == SOCKET_ERROR)
     {
-        printf("shutdown failed with error: %d", WSAGetLastError());
+        printf("Shutdown failed with error: %d \n", WSAGetLastError());
         closesocket(clientSock);
         WSACleanup();
         return FALSE;
@@ -125,7 +123,6 @@ BOOL startListen(fstream &debugFile)
 }
 
 
-
 BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
     switch (ul_reason_for_call)
@@ -134,7 +131,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
         // Executable has surveyed environment and deemed it safe to operate; make calls specific to functionality here
         case DLL_PROCESS_ATTACH:
         {
-            std::cout << "INSIDE DLLMAIN \n";
+            printf("Inside DLLMain... \n");
             // Pass control to our listening function and wait for user input 
             fstream debugFile = InternalDebug::DebugOutput::createDebugFile();
             status = InternalDebug::DebugOutput::writeFile(debugFile, "test \n");
@@ -143,7 +140,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
                 break;
             }
             status = startListen(debugFile);
-            std::cout << "START LISTEN FINISH\n";
+            printf("Finished actions in process attach, exiting... \n");
             break;
         }
         case DLL_THREAD_ATTACH:
@@ -156,7 +153,6 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
                 break;
             }
             status = startListen(debugFile);
-            break;
             break;
         }
         case DLL_THREAD_DETACH:

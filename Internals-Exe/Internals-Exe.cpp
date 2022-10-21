@@ -8,7 +8,7 @@
 
 int main()
 {
-    std::cout << "Initializing program... \n";
+    printf("Initializing program... \n");
 
     // First we survey the system, paying particualr attention to Windows Defender specifics 
     // TODO: Windows Defender call
@@ -20,14 +20,13 @@ int main()
 
     if (!hGetProcIDLL)
     {
-        std::cout << "Could not successfully load target DLL \n";
+        printf("Could not successfully load target DLL \n");
         DWORD lastError = GetLastError();
-        
         printf("Last error: %08x) \n", lastError);
         return -1;
     }
 
-    std::cout << " Successfully loaded target DLL!\n";
+    printf("Successfully loaded target DLL \n");
 
     // Grab proc address to call into 
     typedef UINT (WINAPI* DLLFUNCPOINT) (HMODULE,DWORD,LPVOID);
@@ -46,11 +45,11 @@ int main()
 
         if (!returnValue)
         {
-            std::cout << " Call to DLL main failed\n";
+            printf("Call to DLL main failed \n");
         }
         else
         {
-            std::cout << " Call to DLL main succeeded!\n";
+            printf("Call to DLL main was successful \n");
             FreeLibrary(hGetProcIDLL);
             return true;
         }
