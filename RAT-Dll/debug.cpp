@@ -4,26 +4,34 @@
 #include "pch.h"
 #include "debug.h"
 
-using namespace std;
+//using namespace std;
 
-fstream InternalDebug::DebugOutput::createDebugFile()
+namespace InternalDebug
 {
-	InternalDebug::DebugOutput debug;
-	fstream DebugFile(debug.fileName);
-	//fstream DebugFile("debugoutput.txt");
-	DebugFile.close();
 
-	return DebugFile;
+	DebugOutput* InternalDebug::DebugOutput::createFile()
+	{
+		DebugOutput debug;
+		debug = DebugOutput();
+
+		return &debug;
+	}
+
+	void InternalDebug::DebugOutput::writeFile(string fileInput, char mode)
+	{
+		this->debugFile.open(this->fileName, mode);
+		debugFile << fileInput;
+		debugFile.close();
+
+		return;
+	}
+
+	void InternalDebug::DebugOutput::deleteFile()
+	{
+		remove((this->fileName).c_str());
+
+		return;
+	}
+
 }
-
-
-BOOL InternalDebug::DebugOutput::writeFile(fstream &debugFile, string fileInput)
-{
-	debugFile << fileInput;
-
-	debugFile.close(); 
-
-	return TRUE;
-}
-
 

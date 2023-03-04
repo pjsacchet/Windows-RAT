@@ -1,8 +1,8 @@
-﻿  pch.cpp
-  debug.cpp
+﻿  debug.cpp
   dllmain.cpp
   Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 178 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+C:\Users\Admin\Projects\Personal\Windows-RAT\RAT-Dll\debug.cpp(17): warning C4172: returning address of local variable or temporary: debug
+  All 193 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   RAT-Dll.vcxproj -> C:\Users\Admin\Projects\Personal\Windows-RAT\RAT-Dll\x64\Release\RAT-Dll.dll
