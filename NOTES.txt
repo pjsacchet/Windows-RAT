@@ -1,11 +1,12 @@
 DESIGN:
 ===========
 - Executable:
-  - RAT-Exe - Loads DLL into memory for functionality
+  - RAT-Exe-Main - Loads DLL into memory for functionality
     - Will make calls to perform basic PSP survey
     - Prompt user to see if they still want to connect
 
-
+- Dll:
+  - RAT-Dll-Main - Opens socket, handles connection with C2 and performs functionality
 
 TODO:
 ===========
