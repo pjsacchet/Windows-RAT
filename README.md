@@ -3,13 +3,13 @@ This repository will serve as an exploratory environment where I will rely prima
 
 ## Repository Breakdown
 
-### Internals-DLL
+### RAT-DLL
 All cpp *implant* side code that will, upon executing, open up a port on target and listen for commands sent by the user via Python CLI.
 
-### Internals-Py
+### RAT-Py
 All py *client* side code that will, upon executing, open up a port on client and send commands to the implant via user input in the CLI.
 
-### Internals-Exe
+### RAT-Exe
 All cpp *implant* side code that will, upon executing, survey the target prior to loading our DLL that implements our functionality and opens communications back to client to accept commands.
 
 ### Assumptions

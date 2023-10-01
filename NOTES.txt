@@ -1,0 +1,14 @@
+DESIGN:
+===========
+- Executable:
+  - RAT-Exe - Loads DLL into memory for functionality
+    - Will make calls to perform basic PSP survey
+    - Prompt user to see if they still want to connect
+
+
+
+TODO:
+===========
+- Config file for target specifics (xml?)
+- Basic get file functionality
+- Basic put file functionality

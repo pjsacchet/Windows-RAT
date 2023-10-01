@@ -5,16 +5,22 @@
 
 // Windows Header Files
 #include <windows.h>
+#include <debugapi.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #include <iostream>
 #include <fstream>
 
 #pragma comment(lib,"WS2_32")
 
+#define SUCCESS 0
+#define FAILURE -1
+#define DEFAULT_BUF_LEN 512
+extern int PORT_NUM = 1550;
 
-// User defined header files
+char msgBuf[256];
+
+INT startListen();
 
