@@ -151,10 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="RAT-Dll-Connect.h" />
     <ClInclude Include="RAT-Dll-Main.h" />
-    <ClInclude Include="Networking.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RAT-Dll-Connect.cpp" />
     <ClCompile Include="RAT-Dll-Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

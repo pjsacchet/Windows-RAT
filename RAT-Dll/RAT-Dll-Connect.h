@@ -2,9 +2,8 @@
 
 #include "RAT-Dll-Main.h"
 
-#define DEFAULT_BUF_LEN 512
-extern int PORT_NUM = 1550;
 
-char msgBuf[256];
+const INT DEFAULT_BUF_LEN = 512;
+const INT PORT_NUM = 1550;
 
 INT startListen();

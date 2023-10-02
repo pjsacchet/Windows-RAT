@@ -11,10 +11,11 @@ INT startListen()
     WSADATA wsaData;
     SOCKET clientSock, serverSock;
     SOCKADDR_IN client;
-    int status = SUCCESS;
-    int sendStatus = 0;
-    int recvBufLen = DEFAULT_BUF_LEN;
-    char recvBuf[DEFAULT_BUF_LEN];
+    INT status = SUCCESS;
+    INT sendStatus = 0;
+    INT recvBufLen = DEFAULT_BUF_LEN;
+    CHAR recvBuf[DEFAULT_BUF_LEN];
+    CHAR msgBuf[DEFAULT_BUF_LEN];
 
     wsaVersion = MAKEWORD(2, 2);
 

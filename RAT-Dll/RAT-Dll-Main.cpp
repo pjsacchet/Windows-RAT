@@ -9,6 +9,8 @@
 INT APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
     INT status = SUCCESS;
+    CHAR msgBuf[DEFAULT_BUF_LEN];
+
     switch (ul_reason_for_call)
     {
         // Executable has surveyed environment and deemed it safe to operate; make calls specific to functionality here
