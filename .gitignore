@@ -1,0 +1,11 @@
+# Ignore build files
+RAT-Dll\x64
+RAT-Dll\Debug
+RAT-Exe\x64
+
+# Ignore irrelevant studio files
+RAT-Dll\.vs
+RAT-Exe\.vs
+*.sln
+*.vcxproj.filters
+*.vcxproj.user
