@@ -13,14 +13,8 @@
 #include <iostream>
 #include <fstream>
 
-#pragma comment(lib,"WS2_32")
+#pragma comment(lib, "WS2_32")
 
 #define SUCCESS 0
 #define FAILURE -1
-#define DEFAULT_BUF_LEN 512
-extern int PORT_NUM = 1550;
-
-char msgBuf[256];
-
-INT startListen();
 

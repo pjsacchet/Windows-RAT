@@ -7,5 +7,17 @@ RAT-Exe\x64
 RAT-Dll\.vs
 RAT-Exe\.vs
 *.sln
+*.exe
+*.dll
+*.db-shm
+*.db-wal
+*.opendb
+*.iobj
+*.ipbd
+*.pdb
+*.suo
+*.tlog
+*.ilk
+*.psch
 *.vcxproj.filters
 *.vcxproj.user

