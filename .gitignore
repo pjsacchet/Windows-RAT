@@ -1,11 +1,14 @@
 # Ignore build files
-RAT-Dll\x64
-RAT-Dll\Debug
-RAT-Exe\x64
+RAT-Dll/x64
+RAT-Dll/Debug
+RAT-Exe/x64
+Debug/
+x64/
+Release/
 
 # Ignore irrelevant studio files
-RAT-Dll\.vs
-RAT-Exe\.vs
+RAT-Dll/.vs
+RAT-Exe/.vs
 *.sln
 *.exe
 *.dll
