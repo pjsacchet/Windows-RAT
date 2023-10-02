@@ -22,3 +22,6 @@ Current assumptions will include:
 ### Testing Environment
 - Target machine is Window 10 Education version 10.0.19043 build 19043
 - Python version for client is 3.7.16 (important for scapy use)
+
+### Build Environment
+- Visual Studio 2019 version 16.11.20
