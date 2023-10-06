@@ -29,17 +29,7 @@ def putFile(filepath, filename, overwrite):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((HOST, PORT_NUM))
-            #sock.send(filename)
-            #response = sock.recv(514)
-            #print("respose: %s", response.decode())
-            #sock.send(filepath)
-            #response = sock.recv(514)
-            #print("respose: %s", response.decode())
-            #sock.send(overwrite)
-            #response = sock.recv(514)
-            #print("respose: %s", response.decode())
-            #print("Closing socket...")
-            #sock.close()
+
     except Exception as e:
         print("ERROR: Could not connect to implant: ", e)
         return 0
