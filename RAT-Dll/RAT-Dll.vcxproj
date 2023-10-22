@@ -152,11 +152,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="RAT-Dll-Connect.h" />
+    <ClInclude Include="RAT-Dll-GetFile.h" />
     <ClInclude Include="RAT-Dll-Main.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RAT-Dll-Connect.cpp" />
+    <ClCompile Include="RAT-Dll-GetFile.cpp" />
     <ClCompile Include="RAT-Dll-Main.cpp" />
+    <ClCompile Include="RAT-Dll-PutFile.cpp" />
+    <ClCompile Include="RAT-Dll-PutFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

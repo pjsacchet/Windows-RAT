@@ -9,6 +9,7 @@ EXIT = 0
 PUT = 1
 GET = 2
 
+ # Change to flags for parser object
 PORT_NUM = 1550
 HOST = "192.168.111.128"
 
@@ -40,8 +41,9 @@ def doConnect():
 #-----------------------------------------------
 def putFile(sock, filepath, filename, overwrite):
     try:
-        sock.send(bytes("test", "utf-8"))
-        resp = sock.recv(8)
+        # Will send off our command and wait for response 
+        sock.send(bytes(str(PUT), "utf-8"))
+
 
     except Exception as e:
         print("ERROR: Could not connect to implant: ", e)
@@ -59,7 +61,7 @@ def handleInput():
         userInput = input("> ")
         # add ip and port num to pass
 
-        # change this to parser object with ip and port specified
+        # Change this to parser object with ip and port specified
         if (int(userInput) == PUT):
             filepath= input("Please input filepath > ")
             filename = input("Please input filename (if not provided will use source file name) > ")
