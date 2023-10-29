@@ -15,9 +15,15 @@
 
 #pragma comment(lib, "WS2_32")
 
-#define SUCCESS 0
-#define FAILURE -1
+// Most Microsoft function returns are non zero so...
+#define SUCCESSFUL (x) \
+	((x) > 0 ? TRUE : FALSE)
 
+// I want my own true and false for function returns; will print error codes for debugging 
+#define SUCCESS 1
+#define FAILURE 0
+
+// Will store constant values from C2 server that will tell us what to do 
 #define PUT "1"
 #define GET "2"
 

