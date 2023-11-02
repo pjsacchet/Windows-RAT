@@ -45,7 +45,7 @@ def getFile(sock, filepath, filename, overwrite):
         sock.send(bytes(str(GET), "utf-8") + b"\x00")
 
         # Send filepath
-        sock.send(filepath)
+        sock.send(filepath + b'\x00')
 
         # Wait for response (should be success code followed by file contents)
         data = sock.recv(1024)
@@ -58,6 +58,8 @@ def getFile(sock, filepath, filename, overwrite):
         moreData = True
         while(moreData):
             data = sock.recv(1024)
+            print(data)
+            print(data.decode('utf-8'))
             print("Data received is %s\n" % str(data))
             moreData = False
 
@@ -83,7 +85,7 @@ def putFile(sock, filepath, filename, overwrite):
 
         # Placeholder - will continue reading data until... end code is sent?
         moreData = True
-        while(morData):
+        while(moreData):
             sock.recv(1024)
             moreData = False
 

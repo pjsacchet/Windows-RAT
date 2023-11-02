@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <iostream>
 
-#define SUCCESS 0
-#define FAILURE -1
+#define SUCCESS 1
+#define FAILURE 0
 #define DLL_NAME L"RAT-Dll.dll"
 
 char msgBuf[256];

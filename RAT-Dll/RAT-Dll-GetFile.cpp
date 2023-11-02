@@ -68,6 +68,8 @@ INT performGetFile(__in const char* filePath, __out char* fileBytes, __out DWORD
 		goto cleanup;
 	}
 
+	printf("file bytes %s", fileBytes);
+
 	// Normal Windows app will close the handle to the file
 	if (!CloseHandle(hFile))
 	{

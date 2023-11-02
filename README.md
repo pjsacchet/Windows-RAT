@@ -25,3 +25,12 @@ Current assumptions will include:
 
 ### Build Environment
 - Visual Studio 2019 version 16.11.20
+
+## TODO
+- Finish getfile functionality
+  - Eventually add flags for offsets into file and chunksizes to send back to C2?
+- Implement putfile functionality
+- Implement getfile functionality 
+- Implement password hash stealing via registry reads 
+- Implement registry key read/write add/delete
+- Implement screenshot

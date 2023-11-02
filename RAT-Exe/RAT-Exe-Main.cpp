@@ -19,6 +19,7 @@ INT main()
 
     if (!hGetProcIDLL)
     {
+        // why do we end up here 
         OutputDebugStringA("RAT-Exe-Main.cpp::main - Could not successfully load target DLL\n");
         lastError = GetLastError();
         sprintf_s(msgBuf, "RAT-Exe-Main::main - Last error: %08x) \n", lastError);
