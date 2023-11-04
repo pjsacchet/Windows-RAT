@@ -1,0 +1,12 @@
+TODO:
+===========
+- Config file for target specifics (xml?)
+- Add file size, file offset for get file 
+- Basic put file functionality
+- Process list functionality
+- Authentication options for remote execution?
+
+
+BUG FIXES:
+===========
+- Main thread does not execute properly following a disconnect - something logic oriented here 

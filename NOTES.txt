@@ -8,8 +8,3 @@ DESIGN:
 - Dll:
   - RAT-Dll-Main - Opens socket, handles connection with C2 and performs functionality
 
-TODO:
-===========
-- Config file for target specifics (xml?)
-- Basic get file functionality
-- Basic put file functionality

