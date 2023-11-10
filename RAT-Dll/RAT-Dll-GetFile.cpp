@@ -63,7 +63,7 @@ INT performGetFile(__in const char* filePath, __out char** fileBytes, __out DWOR
 		status = GetLastError();
 		goto cleanup;
 	}
-
+	
 	*fileBytes = fileContents;
 
 	// Normal Windows app will close the handle to the file
