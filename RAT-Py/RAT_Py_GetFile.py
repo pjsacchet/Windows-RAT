@@ -2,6 +2,10 @@
 SUCCESS = 1
 FAILURE = 0
 
+# Command values
+EXIT = 0
+PUT = 1
+GET = 2
 
 #-----------------------------------------------
 

