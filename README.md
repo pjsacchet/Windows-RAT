@@ -27,8 +27,44 @@ Current assumptions will include:
 - Visual Studio 2019 version 16.11.20
 
 ## Examples
-### Perform a *get file*
+### Startup
+#### Required Args:
+- N/A
+#### Optional Args:
+- N/A
+```
+pjsacchet@Patrick-Desktop:/mnt/c/Users/Admin/Projects/Personal/Windows-RAT/RAT-Py$ python3 RAT_Py_Main.py 
+Reaching out to agent for connection establishment... 
+Connected to agent at 192.168.111.128 on port 1550 
+Please select from the following options:
 
+            1) Write a file to a location on target
+
+            2) Get a file from a specific location on target
+
+            3) Exit
+
+```
+
+### Perform a *get file*
+#### Required Args:
+- filepath - File path on target to the file we want to get 
+- outfilepath - Local file path where we want to write our file contents to 
+#### Optional Args:
+- overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
+```
+> 2
+> -filepath C:\test.txt -outfilepath /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
+Successful file get! Getting file contents...
+Successfully wrote file contents to /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
+Please select from the following options:
+
+            1) Write a file to a location on target
+
+            2) Get a file from a specific location on target
+
+            3) Exit
+```
 
 ## TODO
 - Finish getfile functionality

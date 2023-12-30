@@ -5,15 +5,12 @@
 import socket
 import argparse
 from RAT_Py_GetFile import *
+from RAT_Py_PutFile import *
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
 FAILURE = 0
-
-# Command values
 EXIT = 0
-PUT = 1
-GET = 2
 
  # Change to flags for parser object
 PORT_NUM = 1550
@@ -108,7 +105,7 @@ def handleInput():
             parser.add_argument('-outfilepath', '--outfilepath', type=str, help='Path to output file write on local machine', action='store', required=True)
             parser.add_argument('-overwrite','--overwrite', help="Whether to overwrite an existing file of the same name on the local machine", action='store_true', required=False)
             args = parser.parse_args(user_input.split())
-            print(args)
+            #print(args)
 
 
 

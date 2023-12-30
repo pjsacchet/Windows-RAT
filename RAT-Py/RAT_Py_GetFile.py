@@ -1,10 +1,11 @@
+# Patrick Sacchet
+# Version 1.0
+# Serves to implement interfacing with get file functionality 
 
 SUCCESS = 1
 FAILURE = 0
 
-# Command values
-EXIT = 0
-PUT = 1
+# Command value
 GET = 2
 
 #-----------------------------------------------

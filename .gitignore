@@ -6,6 +6,7 @@ Debug/
 x64/
 Release/
 __pycache__/
+TestFiles/
 
 # Ignore irrelevant studio files
 RAT-Dll/.vs
