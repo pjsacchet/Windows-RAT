@@ -21,9 +21,19 @@ HOST = "192.168.111.128"
 #-----------------------------------------------
 def printHelp():
     print("""Please select from the following options: \n
-            1) Write a file to a location on target \n
-            2) Get a file from a specific location on target\n
-            0) Exit""")
+                1) Write a file to a location on target \n
+                2) Get a file from a specific location on target\n
+                0) Exit""")
+    return SUCCESS
+
+#-----------------------------------------------
+
+#-----------------------------------------------
+def printGetFileHelp():
+    print("""Required params: \n
+                -filepath - path to file on target \n
+                -outfilepath - file to write to locally \nOptional params: \n
+                -overwrite - overwrite the file locally if it already exists (default: false)""")
     return SUCCESS
 
 #-----------------------------------------------
@@ -39,8 +49,6 @@ def doConnect():
         return FAILURE
 
     return sock
-
-
 
 #-----------------------------------------------
 
@@ -87,6 +95,10 @@ def handleInput():
 
         # Change this to parser object with ip and port specified
         if (int(userInput) == PUT):
+            userInput = input("> ")
+            parser = argparse.ArgumentParser(description='Perform a put file off target')
+
+
             filepath= input("Please input filepath > ")
             filename = input("Please input filename (if not provided will use source file name) > ")
             overwrite = input("Would you like to overwrite existing file on target? > ")
@@ -97,7 +109,7 @@ def handleInput():
             putFile(sock, filepath, filename, overwrite)
 
         elif (int(userInput) == GET):
-
+            printGetFileHelp()
             user_input = input("> ")
              # play around with argparse 
             parser = argparse.ArgumentParser(description='Perform a get file off target')
@@ -105,24 +117,10 @@ def handleInput():
             parser.add_argument('-outfilepath', '--outfilepath', type=str, help='Path to output file write on local machine', action='store', required=True)
             parser.add_argument('-overwrite','--overwrite', help="Whether to overwrite an existing file of the same name on the local machine", action='store_true', required=False)
             args = parser.parse_args(user_input.split())
-            #print(args)
-
-
-
-            
-            #filepath= input("Please input filepath > ")
-            #outfilepath = input("Please input filename (if not provided will use source file name) > ")
-            #overwrite = input("Would you like to overwrite existing file on host? > ")
             
             filepath = bytes(args.filepath, 'utf-8')
             outfilepath = args.outfilepath
 
-            '''
-            if (overwrite.lower() == "yes" or overwrite.lower() == "y"):
-                overwrite = True
-            else:
-                overwrite = False
-            '''
             if (args.overwrite):
                 overwrite = True
             else:

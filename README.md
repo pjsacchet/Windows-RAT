@@ -72,4 +72,5 @@ Please select from the following options:
 - Implement putfile functionality
 - Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
+- Implement get system info 
 - Implement screenshot

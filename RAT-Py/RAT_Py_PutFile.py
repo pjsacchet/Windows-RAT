@@ -8,6 +8,17 @@ FAILURE = 0
 # Command value
 PUT = 1
 
+#-----------------------------------------------
+
+#-----------------------------------------------
+def getFileBytes(filePath):
+
+
+    return SUCCESS
+
+#-----------------------------------------------
+
+#-----------------------------------------------
 def putFile (sock, filepath, overwrite):
-    
+
     return SUCCESS 

