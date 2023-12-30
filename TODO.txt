@@ -4,6 +4,10 @@ TODO:
 - Add file size, file offset for get file 
 - Basic put file functionality
 - Process list functionality
+- Dir list functionality 
+- PSP survey for exe
+- Break out functionality into separated DLLs - smaller footprint instead of loading it into one 
+- Pass bytes to be loaded and executed? 
 - Authentication options for remote execution?
 
 

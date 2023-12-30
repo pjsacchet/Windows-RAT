@@ -12,19 +12,23 @@ All py *client* side code that will, upon executing, open up a port on client an
 ### RAT-Exe
 All cpp *implant* side code that will, upon executing, survey the target prior to loading our DLL that implements our functionality and opens communications back to client to accept commands.
 
-### Assumptions
+## Assumptions
 Current assumptions will include:
 - The user has access to the target machine + network
 - The user has the ability to or already has dropped .exe and .dll on target
 - The user has remote shell/execution capabilities to launch payload on target
 - Traditional antivirus programs have been disabled/mitigated
 
-### Testing Environment
+## Testing Environment
 - Target machine is Window 10 Education version 10.0.19043 build 19043
 - Python version for client is 3.7.16 (important for scapy use)
 
-### Build Environment
+## Build Environment
 - Visual Studio 2019 version 16.11.20
+
+## Examples
+### Perform a *get file*
+
 
 ## TODO
 - Finish getfile functionality
