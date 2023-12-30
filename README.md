@@ -54,6 +54,13 @@ Please select from the following options:
 - overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
 ```
 > 2
+Required params:
+
+                -filepath - path to file on target
+
+                -outfilepath - file to write to locally
+Optional params:
+                - overwrite - overwrite the file locally if it already exists
 > -filepath C:\test.txt -outfilepath /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
 Successful file get! Getting file contents...
 Successfully wrote file contents to /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
