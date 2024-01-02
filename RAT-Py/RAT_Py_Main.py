@@ -23,7 +23,7 @@ def printHelp():
     print("""Please select from the following options: \n
                 1) Write a file to a location on target \n
                 2) Get a file from a specific location on target\n
-                0) Exit""")
+                0) Exit\n""")
     return SUCCESS
 
 #-----------------------------------------------
@@ -33,7 +33,17 @@ def printGetFileHelp():
     print("""Required params: \n
                 -filepath - path to file on target \n
                 -outfilepath - file to write to locally \nOptional params: \n
-                -overwrite - overwrite the file locally if it already exists (default: false)""")
+                -overwrite - overwrite the file locally if it already exists (default: false)\n""")
+    return SUCCESS
+
+#-----------------------------------------------
+
+#-----------------------------------------------
+def printPutFileHelp():
+    print("""Required params: \n
+                -filepath - path to write file on target \n
+                Optional params: \n
+                -overwrite - overwrite the file if it already exists (default: false)\n""")
     return SUCCESS
 
 #-----------------------------------------------
@@ -81,37 +91,34 @@ def putFile(sock, filepath, filename, overwrite):
 def handleInput():
     print("Reaching out to agent for connection establishment...")
     sock = doConnect()
+    # TODO: change to take ip and port number from flags 
     print("Connected to agent at %s on port %d" % (sock.getpeername()[0], sock.getpeername()[1]))
     userInput = 1
     while (int(userInput) != EXIT):
         printHelp()
-
-
-       
-
-        
+ 
         userInput = input("> ")
-        # add ip and port num to pass
 
-        # Change this to parser object with ip and port specified
         if (int(userInput) == PUT):
+            printPutFileHelp()
             userInput = input("> ")
             parser = argparse.ArgumentParser(description='Perform a put file off target')
+            parser.add_argument('-filepath', '--filepath', type=str, help='Path to file to put on target', action='store', required=True)
+            parser.add_argument('-overwrite','--overwrite', help="Whether to overwrite an existing file of the same name on target", action='store_true', required=False)
+            args = parser.parse_args(user_input.split())
 
+            filepath = bytes(args.filepath, 'utf-8')
 
-            filepath= input("Please input filepath > ")
-            filename = input("Please input filename (if not provided will use source file name) > ")
-            overwrite = input("Would you like to overwrite existing file on target? > ")
-            filepath = bytes(filepath, 'utf-8')
-            filename = bytes(filename, 'utf-8')
-            overwrite = bytes(overwrite, 'utf-8')
+            if (args.overwrite):
+                overwrite = True
+            else:
+                overwrite = False
 
-            putFile(sock, filepath, filename, overwrite)
+            putFile(sock, filepath, overwrite)
 
         elif (int(userInput) == GET):
             printGetFileHelp()
             user_input = input("> ")
-             # play around with argparse 
             parser = argparse.ArgumentParser(description='Perform a get file off target')
             parser.add_argument('-filepath', '--filepath', type=str, help='Path to file to get on target', action='store', required=True)
             parser.add_argument('-outfilepath', '--outfilepath', type=str, help='Path to output file write on local machine', action='store', required=True)
