@@ -8,9 +8,18 @@ FAILURE = 0
 # Command value
 GET = 2
 
-#-----------------------------------------------
 
-#-----------------------------------------------
+'''
+Description:
+    Performs get file functionality; communicates with C2 server and handles responses
+Params:
+    sock - sock object with connection already established
+    filepath - path to file to get off target
+    outputfilepath - path to write file contents to write locally
+    overwrite - whether or not to overwrite the file locally if it already exists
+Returns:
+    SUCCESS or FAILURE 
+'''
 def getFile(sock, filepath, outfilepath, overwrite):
     try:
         # First tell our implant we want a get file performed

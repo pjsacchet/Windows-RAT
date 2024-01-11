@@ -63,31 +63,6 @@ def doConnect():
 #-----------------------------------------------
 
 #-----------------------------------------------
-def putFile(sock, filepath, filename, overwrite):
-    try:
-        # First tell our implant we want a PUT file performed
-        sock.send(bytes(str(PUT), "utf-8"))
-        # Send filepath
-        sock.send(bytes(filepath), "utf-8")
-        # Wait for response (should be success code)
-        data = sock.recv(1024)
-        print("Data received is %s\n" % data)
-
-        # Placeholder - will continue reading data until... end code is sent?
-        moreData = True
-        while(moreData):
-            sock.recv(1024)
-            moreData = False
-
-
-    except Exception as e:
-        print("ERROR: Could not send put file to implant: ", e)
-        return FAILURE
-    return SUCCESS
-
-#-----------------------------------------------
-
-#-----------------------------------------------
 def handleInput():
     print("Reaching out to agent for connection establishment...")
     sock = doConnect()
