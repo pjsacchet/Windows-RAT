@@ -29,11 +29,12 @@ Current assumptions will include:
 ## Examples
 ### Startup
 #### Required Args:
-- N/A
+- ip - IP address of target
+- port - port number our implant is listening on
 #### Optional Args:
 - N/A
 ```
-pjsacchet@Patrick-Desktop:/mnt/c/Users/Admin/Projects/Personal/Windows-RAT/RAT-Py$ python3 RAT_Py_Main.py 
+pjsacchet@Patrick-Desktop:/mnt/c/Users/Admin/Projects/Personal/Windows-RAT/RAT-Py$ python3 RAT_Py_Main.py -ip 192.168.111.128 -port 1550
 Reaching out to agent for connection establishment... 
 Connected to agent at 192.168.111.128 on port 1550 
 Please select from the following options:
