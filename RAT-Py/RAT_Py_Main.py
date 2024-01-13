@@ -39,7 +39,8 @@ def printGetFileHelp():
 #-----------------------------------------------
 def printPutFileHelp():
     print("""Required params: \n
-                -filepath - path to write file on target \n
+                -filepath - local path to file we are writing \n
+                -outputfilepath - remote path we are writing to \n
                 Optional params: \n
                 -overwrite - overwrite the file if it already exists (default: false)\n""")
     return SUCCESS
@@ -74,20 +75,24 @@ def handleInput(ip, port):
 
         if (int(userInput) == PUT):
             printPutFileHelp()
-            userInput = input("> ")
-            parser = argparse.ArgumentParser(description='Perform a put file off target')
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Perform a put file on target')
             parser.add_argument('-filepath', '--filepath', type=str, help='Path to file to put on target', action='store', required=True)
+            parser.add_argument('-outputfilepath', '--localfilepath', type=str, help='Path to remote location on target we are writing to', action='store', required=True)
             parser.add_argument('-overwrite','--overwrite', help="Whether to overwrite an existing file of the same name on target", action='store_true', required=False)
             args = parser.parse_args(user_input.split())
 
             filepath = bytes(args.filepath, 'utf-8')
 
-            if (args.overwrite):
-                overwrite = True
-            else:
-                overwrite = False
+            outputfilepath = bytes(args.localfilepath, 'utf-8')
 
-            putFile(sock, filepath, overwrite)
+            # Needs to not be bool since we're sending this value over the wire 
+            if (args.overwrite):
+                overwrite = 1
+            else:
+                overwrite = 0
+
+            putFile(sock, filepath, outputfilepath, overwrite)
 
         elif (int(userInput) == GET):
             printGetFileHelp()

@@ -23,7 +23,7 @@ Returns:
 def putFile(sock, filepath, filename, overwrite):
     try:
         # First tell our implant we want a PUT file performed
-        sock.send(bytes(str(PUT), "utf-8"))
+        sock.send(bytes(str(PUT), "utf-8") + b'\x00')
 
         # Open local file and read in our bytes
         with open(filepath, 'r') as openfile:
@@ -31,23 +31,19 @@ def putFile(sock, filepath, filename, overwrite):
             openfile.close()
 
         # Send filepath to write to 
-        sock.send(bytes(filename), "utf-8")
+        sock.send(filename+ b'\x00')
 
         # Send file bytes
-        sock.send(bytes(filebytes), "utf-8")
+        sock.send(bytes(filebytes, 'utf-8') + b'\x00')
 
         # Send our overwrite
-        sock.send(bytes(overwrite))
+        sock.send(bytes(overwrite) + b'\x00')
+
+        print("Sent data to implant; waiting on response code...")
 
         # Wait for response (should be success code)
         data = sock.recv(1024)
         print("Data received is %s\n" % data)
-
-        # Placeholder - will continue reading data until... end code is sent?
-        moreData = True
-        while(moreData):
-            sock.recv(1024)
-            moreData = False
 
 
     except Exception as e:

