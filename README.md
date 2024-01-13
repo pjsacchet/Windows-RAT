@@ -3,6 +3,9 @@ This repository will serve as an exploratory environment where I will rely prima
 
 ## Repository Breakdown
 
+### Pcaps
+Packet captures between C2 and implant in a test environment for different commands. These help reinforce how interaction between our C2 and implant works for each command type. 
+
 ### RAT-DLL
 All cpp *implant* side code that will, upon executing, open up a port on target and listen for commands sent by the user via Python CLI.
 
@@ -11,9 +14,6 @@ All py *client* side code that will, upon executing, open up a port on client an
 
 ### RAT-Exe
 All cpp *implant* side code that will, upon executing, survey the target prior to loading our DLL that implements our functionality and opens communications back to client to accept commands.
-
-### Pcaps
-Packet captures between C2 and implant in a test environment for different commands. These help reinforce how interaction between our C2 and implant works for each command type. 
 
 ## Assumptions
 Current assumptions will include:
