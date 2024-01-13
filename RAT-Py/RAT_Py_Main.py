@@ -40,8 +40,7 @@ def printGetFileHelp():
 def printPutFileHelp():
     print("""Required params: \n
                 -filepath - local path to file we are writing \n
-                -outputfilepath - remote path we are writing to \n
-                Optional params: \n
+                -outputfilepath - remote path we are writing to \nOptional params: \n
                 -overwrite - overwrite the file if it already exists (default: false)\n""")
     return SUCCESS
 

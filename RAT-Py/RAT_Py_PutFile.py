@@ -2,11 +2,19 @@
 # Version 1.0
 # Serves to implement interfacing with put file functionality 
 
+# NOTE:
+    # This is a hack to force our socket to send parameters as separate packets LOL... otherwise itll get thrown into one packet 
+import time 
+import random
+
 SUCCESS = 1
 FAILURE = 0
 
 # Command value
 PUT = 1
+
+# How long we'd like to wait between sends 
+WAIT_TIME = random.randrange(1, 5)
 
 
 '''
@@ -23,7 +31,9 @@ Returns:
 def putFile(sock, filepath, filename, overwrite):
     try:
         # First tell our implant we want a PUT file performed
+        print("Sending command...")
         sock.send(bytes(str(PUT), "utf-8") + b'\x00')
+        time.sleep(WAIT_TIME)
 
         # Open local file and read in our bytes
         with open(filepath, 'r') as openfile:
@@ -31,19 +41,30 @@ def putFile(sock, filepath, filename, overwrite):
             openfile.close()
 
         # Send filepath to write to 
+        print("Sending file path...")
         sock.send(filename+ b'\x00')
+        time.sleep(WAIT_TIME)
 
         # Send file bytes
+        print("Sending file contents...")
         sock.send(bytes(filebytes, 'utf-8') + b'\x00')
+        time.sleep(WAIT_TIME)
 
         # Send our overwrite
+        print("Sending overwrite...")
         sock.send(bytes(overwrite) + b'\x00')
-
         print("Sent data to implant; waiting on response code...")
 
         # Wait for response (should be success code)
         data = sock.recv(1024)
-        print("Data received is %s\n" % data)
+        data = data.strip()
+        data = data.decode('utf-8')
+
+        if (data == "SUCCESS"):
+            print("Successful file put!")
+
+        else:
+            print("Implant returned FAILURE!")
 
 
     except Exception as e:

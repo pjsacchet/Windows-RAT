@@ -12,6 +12,9 @@ All py *client* side code that will, upon executing, open up a port on client an
 ### RAT-Exe
 All cpp *implant* side code that will, upon executing, survey the target prior to loading our DLL that implements our functionality and opens communications back to client to accept commands.
 
+### Pcaps
+Packet captures between C2 and implant in a test environment for different commands. These help reinforce how interaction between our C2 and implant works for each command type. 
+
 ## Assumptions
 Current assumptions will include:
 - The user has access to the target machine + network
@@ -47,6 +50,40 @@ Please select from the following options:
 
 ```
 
+### Perform a *put file*
+#### Required Args:
+- filepath - Path (locally) to file with contents we are writing to target
+- outfilepath - Remote file path where we want to write our file contents to 
+#### Optional Args:
+- overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
+```
+> 1
+Required params:
+
+               -filepath - local path to file we are writing
+
+               -outputfilepath - remote path we are writing to
+
+Optional params:
+
+               -overwrite - overwrite the file if it already exists (default: false)
+
+> -filepath /mnt/c/Users/Admin/Projects/Personal/test.txt -outputfilepath C:\test2.txt
+Sending command...
+Sending file path...
+Sending file contents...
+Sending overwrite...
+Sent data to implant; waiting on response code...
+Successful file put!
+Please select from the following options:
+
+                1) Write a file to a location on target
+
+                2) Get a file from a specific location on target
+
+                0) Exit
+```
+
 ### Perform a *get file*
 #### Required Args:
 - filepath - File path on target to the file we want to get 
@@ -79,13 +116,16 @@ Please select from the following options:
 ### Exisiting Features: 
 - Flesh out getfile functionality
   - Eventually add flags for offsets into file and chunksizes to send back to C2?
+- Flesh out putfile functionality
+  - Implement C2 OK messages to ensure it has the param or resend if need be
   
 ### New Features:
-- Implement putfile functionality
 - Implement dir lists
 - Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
 - Implement get system info 
 - Implement screenshot
 - Implement COM stuff?
-- Implement remote cred auth 
+- Implement remote cred auth (kerberos, ntlm etc.)
+- Implement basic encryption? 
+  - Give both implant and C2 same key or something
