@@ -13,9 +13,6 @@ SUCCESS = 1
 FAILURE = 0
 EXIT = 0
 
- # Change to flags for parser object
-PORT_NUM = 1550
-HOST = "192.168.111.128"
 
 #-----------------------------------------------
 
@@ -67,7 +64,7 @@ def doConnect(ip, port):
 def handleInput(ip, port):
     print("Reaching out to agent for connection establishment...")
     sock = doConnect(ip, port)
-    # TODO: change to take ip and port number from flags 
+
     print("Connected to agent at %s on port %d" % (sock.getpeername()[0], sock.getpeername()[1]))
     userInput = 1
     while (int(userInput) != EXIT):

