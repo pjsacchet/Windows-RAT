@@ -26,4 +26,5 @@
 // Will store constant values from C2 server that will tell us what to do 
 #define PUT "1"
 #define GET "2"
+#define DIR "3"
 

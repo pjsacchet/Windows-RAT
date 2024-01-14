@@ -126,6 +126,10 @@ Please select from the following options:
 - Implement get system info 
 - Implement screenshot
 - Implement COM stuff?
+  - Prob better in separate project
 - Implement remote cred auth (kerberos, ntlm etc.)
 - Implement basic encryption? 
   - Give both implant and C2 same key or something
+- Process list 
+  - Return specific info about a particular process
+- Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 

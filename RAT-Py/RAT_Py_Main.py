@@ -7,6 +7,7 @@ import socket
 import argparse
 from RAT_Py_GetFile import *
 from RAT_Py_PutFile import *
+from RAT_Py_DirList import * 
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
@@ -21,6 +22,7 @@ def printHelp():
     print("""Please select from the following options: \n
                 1) Write a file to a location on target \n
                 2) Get a file from a specific location on target\n
+                3) Perform a dir list for a particular directory on target\n
                 0) Exit\n""")
     return SUCCESS
 

