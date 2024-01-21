@@ -132,4 +132,7 @@ Please select from the following options:
   - Give both implant and C2 same key or something
 - Process list 
   - Return specific info about a particular process
+- Start/stop processes?
+  - Flags for permissions, process name etc.
+- Add specific error messages and translate function for easy debug messages
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 

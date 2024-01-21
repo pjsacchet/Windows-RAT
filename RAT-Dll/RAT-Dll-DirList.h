@@ -2,4 +2,4 @@
 
 #include "RAT-Dll-Main.h"
 
-INT performDirList();
+INT performDirList(__in const char* dirPath, __inout char** dirFiles);
