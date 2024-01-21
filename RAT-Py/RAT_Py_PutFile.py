@@ -42,7 +42,7 @@ def putFile(sock, filepath, filename, overwrite):
 
         # Send filepath to write to 
         print("Sending file path...")
-        sock.send(filename+ b'\x00')
+        sock.send(filename + b'\x00')
         time.sleep(WAIT_TIME)
 
         # Send file bytes

