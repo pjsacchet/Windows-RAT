@@ -31,7 +31,7 @@ Returns:
 def putFile(sock, filepath, filename, overwrite):
     try:
         # First tell our implant we want a PUT file performed
-        print("Sending command...")
+        print("Sending command...\n")
         sock.send(bytes(str(PUT), "utf-8") + b'\x00')
         time.sleep(WAIT_TIME)
 
@@ -41,19 +41,19 @@ def putFile(sock, filepath, filename, overwrite):
             openfile.close()
 
         # Send filepath to write to 
-        print("Sending file path...")
+        print("Sending file path...\n")
         sock.send(filename + b'\x00')
         time.sleep(WAIT_TIME)
 
         # Send file bytes
-        print("Sending file contents...")
+        print("Sending file contents...\n")
         sock.send(bytes(filebytes, 'utf-8') + b'\x00')
         time.sleep(WAIT_TIME)
 
         # Send our overwrite
-        print("Sending overwrite...")
+        print("Sending overwrite...\n")
         sock.send(bytes(overwrite) + b'\x00')
-        print("Sent data to implant; waiting on response code...")
+        print("Sent data to implant; waiting on response code...\n")
 
         # Wait for response (should be success code)
         data = sock.recv(1024)
@@ -61,10 +61,10 @@ def putFile(sock, filepath, filename, overwrite):
         data = data.decode('utf-8')
 
         if (data == "SUCCESS"):
-            print("Successful file put!")
+            print("Successful file put!\n")
 
         else:
-            print("Implant returned FAILURE!")
+            print("Implant returned FAILURE!\n")
 
 
     except Exception as e:

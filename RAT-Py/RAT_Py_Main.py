@@ -49,6 +49,14 @@ def printPutFileHelp():
 #-----------------------------------------------
 
 #-----------------------------------------------
+def printDirListHelp():
+    print("""Required params: \n
+                -path - path to directory we're listing off target \n""")
+    return SUCCESS
+
+#-----------------------------------------------
+
+#-----------------------------------------------
 def doConnect(ip, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -114,10 +122,16 @@ def handleInput(ip, port):
             
             getFile(sock, filepath, outfilepath, overwrite)
 
-
         elif(int(userInput) == DIR):
             printDirListHelp()
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Perform a dir list off target')
+            parser.add_argument('-path', '--path', type=str, help='Path to dir list on target', action='store', required=True)
+            args = parser.parse_args(user_input.split())
+            
+            dirPath = bytes(args.path, 'utf-8')
 
+            dirList(sock, dirPath)
 
         else:
             print("Invalid command!")

