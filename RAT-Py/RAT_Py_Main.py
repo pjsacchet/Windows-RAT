@@ -114,6 +114,14 @@ def handleInput(ip, port):
             
             getFile(sock, filepath, outfilepath, overwrite)
 
+
+        elif(int(userInput) == DIR):
+            printDirListHelp()
+
+
+        else:
+            print("Invalid command!")
+
     return
 
 #-----------------------------------------------

