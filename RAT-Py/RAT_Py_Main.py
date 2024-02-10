@@ -133,9 +133,6 @@ def handleInput(ip, port):
 
             dirList(sock, dirPath)
 
-        else:
-            print("Invalid command!")
-
     return
 
 #-----------------------------------------------
