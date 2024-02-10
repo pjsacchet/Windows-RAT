@@ -112,22 +112,62 @@ Please select from the following options:
             3) Exit
 ```
 
+### Perform a *dir list*
+#### Required Args:
+- path - path to directory we would like to list off target
+#### Optional Args:
+- N/A
+```
+> 3
+Required params:
+
+                -path - path to directory we're listing off target
+
+> -path C:\Users\Admin\Documents
+Sending command...
+Sending dir path...
+Files in C:\Users\Admin\Documents:
+        .
+        ..
+        Debugger-Command.txt
+        desktop.ini
+        Internals-DLL.dll
+        Internals-Exe.exe
+        My Music
+        My Pictures
+        My Videos
+        RAT-Dll.dll
+        RAT-Exe.exe
+
+Successful dir list!
+
+Please select from the following options:
+
+                1) Write a file to a location on target
+
+                2) Get a file from a specific location on target
+
+                3) Perform a dir list for a particular directory on target
+
+                0) Exit
+```
+
 ## TODO
 ### Exisiting Features: 
 - Flesh out getfile functionality
   - Eventually add flags for offsets into file and chunksizes to send back to C2?
 - Flesh out putfile functionality
   - Implement C2 OK messages to ensure it has the param or resend if need be
+- Implement recursive dir lists + additional file info 
   
 ### New Features:
-- Implement dir lists
 - Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
 - Implement get system info 
 - Implement screenshot
 - Implement COM stuff?
   - Prob better in separate project
-- Implement remote cred auth (kerberos, ntlm etc.)
+  - Implement remote cred auth (kerberos, ntlm etc.)
 - Implement basic encryption? 
   - Give both implant and C2 same key or something
 - Process list 

