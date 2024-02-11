@@ -27,4 +27,5 @@
 #define PUT "1"
 #define GET "2"
 #define DIR "3"
+#define DEL "4"
 
