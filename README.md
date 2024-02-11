@@ -161,10 +161,12 @@ Please select from the following options:
 - Implement recursive dir lists + additional file info 
   
 ### New Features:
+- Implement delete file 
 - Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
 - Implement get system info 
 - Implement screenshot
+  - Write output to file, get file then delete file..
 - Implement COM stuff?
   - Prob better in separate project
   - Implement remote cred auth (kerberos, ntlm etc.)
