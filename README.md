@@ -42,11 +42,15 @@ Reaching out to agent for connection establishment...
 Connected to agent at 192.168.111.128 on port 1550 
 Please select from the following options:
 
-            1) Write a file to a location on target
+                1) Write a file to a location on target
 
-            2) Get a file from a specific location on target
+                2) Get a file from a specific location on target
 
-            3) Exit
+                3) Perform a dir list for a particular directory on target
+
+                4) Perform a delete file off target
+
+                0) Exit
 
 ```
 
@@ -83,6 +87,8 @@ Please select from the following options:
 
                 3) Perform a dir list for a particular directory on target
 
+                4) Perform a delete file off target
+
                 0) Exit
 ```
 
@@ -112,6 +118,8 @@ Please select from the following options:
                 2) Get a file from a specific location on target
 
                 3) Perform a dir list for a particular directory on target
+
+                4) Perform a delete file off target
 
                 0) Exit
 ```
@@ -152,6 +160,37 @@ Please select from the following options:
                 2) Get a file from a specific location on target
 
                 3) Perform a dir list for a particular directory on target
+
+                4) Perform a delete file off target
+
+                0) Exit
+```
+
+### Perform a *delete file*
+#### Required Args:
+- filepath - path to the file we're deleting off target
+#### Optional Args:
+- N/A
+```
+> 4
+Required params:
+
+                -filepath - path to the file we're deleting off target
+
+> -filepath C:\test2.txt
+Sending command...
+Sending file path...
+Successful delete file!
+
+Please select from the following options:
+
+                1) Write a file to a location on target
+
+                2) Get a file from a specific location on target
+
+                3) Perform a dir list for a particular directory on target
+
+                4) Perform a delete file off target
 
                 0) Exit
 ```
