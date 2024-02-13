@@ -1,6 +1,38 @@
 # Windows-RAT
 This repository will serve as an exploratory environment where I will rely primarily on C++ and Windows APIs to delve into the deeper aspects of Windows security management along with the varying components and architectures that come within the Windows environment.
 
+## Table of Contents
+- [Windows-RAT](#windows-rat)
+  - [Table of Contents](#table-of-contents)
+  - [Repository Breakdown](#repository-breakdown)
+    - [Pcaps](#pcaps)
+    - [RAT-DLL](#rat-dll)
+    - [RAT-Py](#rat-py)
+    - [RAT-Exe](#rat-exe)
+  - [Assumptions](#assumptions)
+  - [Testing Environment](#testing-environment)
+  - [Build Environment](#build-environment)
+  - [Examples](#examples)
+    - [Startup](#startup)
+      - [Required Args:](#required-args)
+      - [Optional Args:](#optional-args)
+    - [Perform a *put file*](#perform-a-put-file)
+      - [Required Args:](#required-args-1)
+      - [Optional Args:](#optional-args-1)
+    - [Perform a *get file*](#perform-a-get-file)
+      - [Required Args:](#required-args-2)
+      - [Optional Args:](#optional-args-2)
+    - [Perform a *dir list*](#perform-a-dir-list)
+      - [Required Args:](#required-args-3)
+      - [Optional Args:](#optional-args-3)
+    - [Perform a *delete file*](#perform-a-delete-file)
+      - [Required Args:](#required-args-4)
+      - [Optional Args:](#optional-args-4)
+  - [TODO](#todo)
+    - [Exisiting Features:](#exisiting-features)
+    - [New Features:](#new-features)
+    - [Bugs](#bugs)
+
 ## Repository Breakdown
 
 ### Pcaps
