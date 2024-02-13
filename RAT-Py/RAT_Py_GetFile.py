@@ -54,11 +54,9 @@ def getFile(sock, filepath, outfilepath, overwrite):
 
             print("Successfully wrote file contents to %s\n" % outfilepath)
 
-
         else:
             print("Agent did not return SUCCESS status code! \n")
             return FAILURE
-
 
 
     except Exception as e:

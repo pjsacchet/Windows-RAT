@@ -81,6 +81,8 @@ Please select from the following options:
 
                 2) Get a file from a specific location on target
 
+                3) Perform a dir list for a particular directory on target
+
                 0) Exit
 ```
 
@@ -105,11 +107,13 @@ Successful file get! Getting file contents...
 Successfully wrote file contents to /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
 Please select from the following options:
 
-            1) Write a file to a location on target
+                1) Write a file to a location on target
 
-            2) Get a file from a specific location on target
+                2) Get a file from a specific location on target
 
-            3) Exit
+                3) Perform a dir list for a particular directory on target
+
+                0) Exit
 ```
 
 ### Perform a *dir list*
@@ -159,6 +163,7 @@ Please select from the following options:
 - Flesh out putfile functionality
   - Implement C2 OK messages to ensure it has the param or resend if need be
 - Implement recursive dir lists + additional file info 
+- Return number of bytes we successfully deleted?
   
 ### New Features:
 - Implement delete file 
@@ -178,3 +183,7 @@ Please select from the following options:
   - Flags for permissions, process name etc.
 - Add specific error messages and translate function for easy debug messages
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
+- Currently only support ASCII... could do unicode pretty easily?
+  
+### Bugs
+- Exe does not exit 'cleanly'

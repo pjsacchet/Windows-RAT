@@ -8,6 +8,16 @@ FAILURE = 0
 # Command value
 DIR = 3
 
+
+'''
+Description:
+    Performs dir list functionality; communicates with C2 server and handles responses
+Params:
+    sock - sock object with connection already established
+    dirPath - path on target to dir list
+Returns:
+    SUCCESS or FAILURE 
+'''
 def dirList(sock, dirPath):
     try:
         # First tell our implant we want a DIR list performed
@@ -34,7 +44,6 @@ def dirList(sock, dirPath):
             data = sock.recv(1024)
             data = data.strip()
             data = data.decode('utf-8')
-
 
         print("\nSuccessful dir list!\n")
 

