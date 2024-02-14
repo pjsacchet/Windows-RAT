@@ -24,6 +24,7 @@ def printHelp():
                 2) Get a file from a specific location on target\n
                 3) Perform a dir list for a particular directory on target\n
                 4) Perform a delete file off target\n
+                5) Take a screenshot of target (will get file and delete file off target)\n
                 0) Exit\n""")
     return SUCCESS
 

@@ -254,6 +254,7 @@ Please select from the following options:
 - Add specific error messages and translate function for easy debug messages
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
 - Currently only support ASCII... could do unicode pretty easily?
+- Make it so command keywords are actual words; get rid of numbers
   
 ### Bugs
 - Exe does not exit 'cleanly'
