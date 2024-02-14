@@ -28,4 +28,5 @@
 #define GET "2"
 #define DIR "3"
 #define DEL "4"
+#define SCREENSHOT "5"
 

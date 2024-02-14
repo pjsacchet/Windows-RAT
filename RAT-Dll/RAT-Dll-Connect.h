@@ -10,4 +10,3 @@ const INT PORT_NUM = 1550;
 
 INT startListen();
 
-INT sendFiles(__in SOCKET* sock, __in char** files);
