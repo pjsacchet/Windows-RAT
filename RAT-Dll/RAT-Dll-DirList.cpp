@@ -32,6 +32,7 @@ INT performDirList(__in char* dirPath, __inout char*** dirFiles, __inout UINT32*
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		OutputDebugStringA("RAT-Dll-DirList::performDirList - Failed FindFirstFile\n");
+		status = FAILURE;
 		goto cleanup;
 	}
 
@@ -46,6 +47,7 @@ INT performDirList(__in char* dirPath, __inout char*** dirFiles, __inout UINT32*
 	if (dirFilesRet == NULL)
 	{
 		OutputDebugStringA("RAT-Dll::performDirList - Failed malloc; insufficient memory!\n");
+		status = FAILURE;
 		goto cleanup;
 	}
 
@@ -58,6 +60,7 @@ INT performDirList(__in char* dirPath, __inout char*** dirFiles, __inout UINT32*
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		OutputDebugStringA("RAT-Dll::performDirList - Failed FindFirstFile\n");
+		status = FAILURE;
 		goto cleanup;
 	}
 
@@ -71,6 +74,7 @@ INT performDirList(__in char* dirPath, __inout char*** dirFiles, __inout UINT32*
 		if (dirFilesRet[currIndex] == NULL)
 		{
 			OutputDebugStringA("RAT-Dll::performDirList - Failed malloc; insufficient memory!\n");
+			status = FAILURE;
 			goto cleanup;
 		}
 		strcpy(dirFilesRet[currIndex], (char*)foundData.cFileName);

