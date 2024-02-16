@@ -242,6 +242,7 @@ Please select from the following options:
 - Implement get system info 
 - Implement screenshot
   - Write output to file, get file then delete file..
+  - Would be kind of cool if we 'opened' the screenshot after taking it to display to the user?
 - Implement COM stuff?
   - Prob better in separate project
   - Implement remote cred auth (kerberos, ntlm etc.)
@@ -258,3 +259,4 @@ Please select from the following options:
   
 ### Bugs
 - Exe does not exit 'cleanly'
+- Even if exe exits we do not alert our C2, so it still thinks its connected

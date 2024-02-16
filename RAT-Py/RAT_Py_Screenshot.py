@@ -23,7 +23,6 @@ def screenshot(sock, filePath):
         print("Sending command...")
         sock.send(bytes(str(SCREENSHOT), "utf-8") + b'\x00')
 
-
         data = sock.recv(1024)
         data = data.strip()
         data = data.decode('utf-8')
