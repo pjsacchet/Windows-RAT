@@ -231,8 +231,11 @@ Please select from the following options:
 ### Exisiting Features: 
 - Flesh out getfile functionality
   - Eventually add flags for offsets into file and chunksizes to send back to C2?
+  - Should send back file size first then full size... currently only take 1024 bytes
 - Flesh out putfile functionality
   - Implement C2 OK messages to ensure it has the param or resend if need be
+- Screenshot:
+  - Pass back number of bytes prior to sending file 
 - Implement recursive dir lists + additional file info 
 - Return number of bytes we successfully deleted?
   

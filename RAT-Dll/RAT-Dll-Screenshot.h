@@ -2,4 +2,4 @@
 
 #include "RAT-Dll-Main.h"
 
-INT doScreenshot();
+INT performScreenshot(SOCKET clientSock);

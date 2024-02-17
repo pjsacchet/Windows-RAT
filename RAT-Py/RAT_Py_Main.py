@@ -68,6 +68,14 @@ def printDeleteFileHelp():
 #-----------------------------------------------
 
 #-----------------------------------------------
+def printScreenshotHelp():
+    print("""Required params: \n
+                -filepath - Path where we would like to write our screenshot to locally \n""")
+    return SUCCESS
+
+#-----------------------------------------------
+
+#-----------------------------------------------
 def doConnect(ip, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -156,7 +164,7 @@ def handleInput(ip, port):
             deleteFile(sock, filePath)
 
         elif(int(userInput) == SCREENSHOT):
-            printDeleteFileHelp()
+            printScreenshotHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a screenshot of target')
             parser.add_argument('-filepath', '--filepath', type=str, help='Path where we would like to write our screenshot to locally', action='store', required=True)

