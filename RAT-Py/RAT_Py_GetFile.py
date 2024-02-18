@@ -39,6 +39,7 @@ def getFile(sock, filepath, outfilepath, overwrite):
         if (data == "SUCCESS"):
             print("Successful file get! Getting file contents...")
             data = sock.recv(1024)
+            # probably shouldn't decode here... in case it some other file type than txt
             data = data.strip()
             data = data.decode('utf-8')
 
