@@ -11,6 +11,11 @@ INT performRegRead()
 
 
 
+	// RegOpenKeyEx
+
+
+	//RegGetValueA
+
 cleanup:
 	return status;
 }

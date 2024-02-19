@@ -287,21 +287,20 @@ Please select from the following options:
   
 ### New Features:
 - Implement registry key read/write add/delete
+  - Add registry key value listing 
 - Implement get system info 
 - Implement password hash stealing via registry reads 
-- Implement COM stuff?
-  - Prob better in separate project
-  - Implement remote cred auth (kerberos, ntlm etc.)
-- Implement basic encryption? 
-  - Give both implant and C2 same key or something
+- Enable SYSTEM elevation
 - Process list 
   - Return specific info about a particular process
 - Start/stop processes?
   - Flags for permissions, process name etc.
-- Add specific error messages and translate function for easy debug messages
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
-- Currently only support ASCII... could do unicode pretty easily?
 - Make it so command keywords are actual words; get rid of numbers
+- Implement basic encryption? 
+  - Give both implant and C2 same key or something for packet encryption
+- Add specific error messages and translate function for easy debug messages
+- Currently only support ASCII... could do unicode pretty easily?
   
 ### Bugs
 - Exe does not exit 'cleanly'
