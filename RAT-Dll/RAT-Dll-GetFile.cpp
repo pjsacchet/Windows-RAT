@@ -55,6 +55,9 @@ INT performGetFile(__in const char* filePath, __out char** fileBytes, __out DWOR
 	// These data sizes dont technically match up so fix this later...
 	*bufferSize = fileSize.QuadPart;
 
+	sprintf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Size of buffer we're grabbing: %d\n", *bufferSize);
+	OutputDebugStringA(msgBuf);
+
 	// Now note the size and read the file 
 	if (!ReadFile(hFile, fileContents, fileSize.QuadPart, &dwBytesRead, NULL))
 	{

