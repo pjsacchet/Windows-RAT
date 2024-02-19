@@ -286,9 +286,9 @@ Please select from the following options:
   - Return number of bytes we successfully deleted?
   
 ### New Features:
-- Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
 - Implement get system info 
+- Implement password hash stealing via registry reads 
 - Implement COM stuff?
   - Prob better in separate project
   - Implement remote cred auth (kerberos, ntlm etc.)
