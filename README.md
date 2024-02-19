@@ -14,20 +14,23 @@ This repository will serve as an exploratory environment where I will rely prima
   - [Build Environment](#build-environment)
   - [Examples](#examples)
     - [Startup](#startup)
-      - [Required Args:](#required-args)
-      - [Optional Args:](#optional-args)
+      - [Required Args](#required-args)
+      - [Optional Args](#optional-args)
     - [Perform a *put file*](#perform-a-put-file)
-      - [Required Args:](#required-args-1)
-      - [Optional Args:](#optional-args-1)
+      - [Required Args](#required-args-1)
+      - [Optional Args](#optional-args-1)
     - [Perform a *get file*](#perform-a-get-file)
-      - [Required Args:](#required-args-2)
-      - [Optional Args:](#optional-args-2)
+      - [Required Args](#required-args-2)
+      - [Optional Args](#optional-args-2)
     - [Perform a *dir list*](#perform-a-dir-list)
-      - [Required Args:](#required-args-3)
-      - [Optional Args:](#optional-args-3)
+      - [Required Args](#required-args-3)
+      - [Optional Args](#optional-args-3)
     - [Perform a *delete file*](#perform-a-delete-file)
-      - [Required Args:](#required-args-4)
-      - [Optional Args:](#optional-args-4)
+      - [Required Args](#required-args-4)
+      - [Optional Args](#optional-args-4)
+    - [Perform a *screenshot*](#perform-a-screenshot)
+      - [Required Args](#required-args-5)
+      - [Optional Args](#optional-args-5)
   - [TODO](#todo)
     - [Exisiting Features:](#exisiting-features)
     - [New Features:](#new-features)
@@ -63,10 +66,10 @@ Current assumptions will include:
 
 ## Examples
 ### Startup
-#### Required Args:
+#### Required Args
 - ip - IP address of target
 - port - port number our implant is listening on
-#### Optional Args:
+#### Optional Args
 - N/A
 ```
 pjsacchet@Patrick-Desktop:/mnt/c/Users/Admin/Projects/Personal/Windows-RAT/RAT-Py$ python3 RAT_Py_Main.py -ip 192.168.111.128 -port 1550
@@ -82,15 +85,17 @@ Please select from the following options:
 
                 4) Perform a delete file off target
 
+                5) Take a screenshot of target (will get file and delete file off target)
+
                 0) Exit
 
 ```
 
 ### Perform a *put file*
-#### Required Args:
+#### Required Args
 - filepath - Path (locally) to file with contents we are writing to target
 - outfilepath - Remote file path where we want to write our file contents to 
-#### Optional Args:
+#### Optional Args
 - overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
 ```
 > 1
@@ -121,14 +126,16 @@ Please select from the following options:
 
                 4) Perform a delete file off target
 
+                5) Take a screenshot of target (will get file and delete file off target)
+
                 0) Exit
 ```
 
 ### Perform a *get file*
-#### Required Args:
+#### Required Args
 - filepath - File path on target to the file we want to get 
 - outfilepath - Local file path where we want to write our file contents to 
-#### Optional Args:
+#### Optional Args
 - overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
 ```
 > 2
@@ -153,13 +160,15 @@ Please select from the following options:
 
                 4) Perform a delete file off target
 
+                5) Take a screenshot of target (will get file and delete file off target)
+
                 0) Exit
 ```
 
 ### Perform a *dir list*
-#### Required Args:
+#### Required Args
 - path - path to directory we would like to list off target
-#### Optional Args:
+#### Optional Args
 - N/A
 ```
 > 3
@@ -195,13 +204,15 @@ Please select from the following options:
 
                 4) Perform a delete file off target
 
+                5) Take a screenshot of target (will get file and delete file off target)
+
                 0) Exit
 ```
 
 ### Perform a *delete file*
-#### Required Args:
+#### Required Args
 - filepath - path to the file we're deleting off target
-#### Optional Args:
+#### Optional Args
 - N/A
 ```
 > 4
@@ -224,6 +235,41 @@ Please select from the following options:
 
                 4) Perform a delete file off target
 
+                5) Take a screenshot of target (will get file and delete file off target)
+
+                0) Exit
+```
+
+### Perform a *screenshot*
+#### Required Args
+- filepath - path where we would like to write our screenshot to locally
+#### Optional Args
+- N/A
+```
+> 5
+Required params:
+
+                -filepath - Path where we would like to write our screenshot to locally
+
+> -filepath /mnt/c/Screenshots/screenshot.bmp
+Sending command...
+Successful screenshot! Getting file size...
+File is 14745654 bytes; Receiving data...
+Successfully wrote file to disk... awaiting implant reponse code...
+Successful screenshot!
+
+Please select from the following options:
+
+                1) Write a file to a location on target
+
+                2) Get a file from a specific location on target
+
+                3) Perform a dir list for a particular directory on target
+
+                4) Perform a delete file off target
+
+                5) Take a screenshot of target (will get file and delete file off target)
+
                 0) Exit
 ```
 
@@ -234,18 +280,15 @@ Please select from the following options:
   - Should send back file size first then full size... currently only take 1024 bytes
 - Flesh out putfile functionality
   - Implement C2 OK messages to ensure it has the param or resend if need be
-- Screenshot:
-  - Pass back number of bytes prior to sending file 
-- Implement recursive dir lists + additional file info 
-- Return number of bytes we successfully deleted?
+- Flesh out dirlist functionality
+  - Implement recursive dir lists + additional file info 
+- Flesh out deletefile functionality 
+  - Return number of bytes we successfully deleted?
   
 ### New Features:
 - Implement password hash stealing via registry reads 
 - Implement registry key read/write add/delete
 - Implement get system info 
-- Implement screenshot
-  - Write output to file, get file then delete file..
-  - Would be kind of cool if we 'opened' the screenshot after taking it to display to the user?
 - Implement COM stuff?
   - Prob better in separate project
   - Implement remote cred auth (kerberos, ntlm etc.)
