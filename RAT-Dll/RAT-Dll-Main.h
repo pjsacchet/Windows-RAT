@@ -29,4 +29,5 @@
 #define DIR "3"
 #define DEL "4"
 #define SCREENSHOT "5"
+#define REGREAD "6"
 

@@ -284,6 +284,8 @@ Please select from the following options:
   - Implement recursive dir lists + additional file info 
 - Flesh out deletefile functionality 
   - Return number of bytes we successfully deleted?
+- Fleshout screenshot functionality
+  - Refactor; add output param for file buffer contents and send our data back in the caller not callee
   
 ### New Features:
 - Implement registry key read/write add/delete
