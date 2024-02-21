@@ -41,7 +41,7 @@ def regWrite():
         return SUCCESS
     
     except Exception as e:
-        print("ERROR: Could not send reg list to implant: ", e)
+        print("ERROR: Could not send reg write to implant: ", e)
         return FAILURE
     
     return SUCCESS
@@ -52,7 +52,7 @@ def regDelete():
         return SUCCESS
     
     except Exception as e:
-        print("ERROR: Could not send reg list to implant: ", e)
+        print("ERROR: Could not send reg delete to implant: ", e)
         return FAILURE
     
     return SUCCESS

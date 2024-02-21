@@ -156,7 +156,7 @@
     <ClInclude Include="RAT-Dll-DirList.h" />
     <ClInclude Include="RAT-Dll-GetFile.h" />
     <ClInclude Include="RAT-Dll-Main.h" />
-    <ClInclude Include="RAT-Dll-RegRead.h" />
+    <ClInclude Include="RAT-Dll-Registry.h" />
     <ClInclude Include="RAT-Dll-Screenshot.h" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +167,7 @@
     <ClCompile Include="RAT-Dll-Main.cpp" />
     <ClCompile Include="RAT-Dll-PutFile.cpp" />
     <ClCompile Include="RAT-Dll-PutFile.h" />
-    <ClCompile Include="RAT-Dll-RegRead.cpp" />
+    <ClCompile Include="RAT-Dll-Registry.cpp" />
     <ClCompile Include="RAT-Dll-Screenshot.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
