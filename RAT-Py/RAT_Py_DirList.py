@@ -11,6 +11,20 @@ DIR = 3
 
 '''
 Description:
+    Prints dir listing usage for user
+Params:
+    N/A
+Returns:
+    SUCCESS or FAILURE  
+'''
+def printDirListHelp():
+    print("""Required params: \n
+                -path - path to directory we're listing off target \n""")
+    return SUCCESS
+
+
+'''
+Description:
     Performs dir list functionality; communicates with C2 server and handles responses
 Params:
     sock - sock object with connection already established

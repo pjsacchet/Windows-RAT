@@ -11,6 +11,22 @@ GET = 2
 
 '''
 Description:
+    Prints get file usage for user
+Params:
+    N/A
+Returns:
+    SUCCESS or FAILURE 
+'''
+def printGetFileHelp():
+    print("""Required params: \n
+                -filepath - path to file on target \n
+                -outfilepath - file to write to locally \nOptional params: \n
+                -overwrite - overwrite the file locally if it already exists (default: false)\n""")
+    return SUCCESS
+
+
+'''
+Description:
     Performs get file functionality; communicates with C2 server and handles responses
 Params:
     sock - sock object with connection already established

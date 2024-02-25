@@ -18,6 +18,22 @@ WAIT_TIME = random.randrange(1, 5)
 
 
 '''
+Description: 
+    Prints usage of putfile for user
+Params:
+    N/A
+Returns
+    SUCCESS or FAILURE
+'''
+def printPutFileHelp():
+    print("""Required params: \n
+                -filepath - local path to file we are writing \n
+                -outputfilepath - remote path we are writing to \nOptional params: \n
+                -overwrite - overwrite the file if it already exists (default: false)\n""")
+    return SUCCESS
+
+
+'''
 Description:
     Performs put file functionality; communicates with C2 server and handles responses
 Params:
