@@ -136,8 +136,15 @@ def handleInput(ip, port):
             printRegReadHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a registry read off target')
-            parser.add_argument('-')
+            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we''re reading', action='store', required=True)
+            parser.add_argument('-value', '--value', type=str, help='Name of the value we want to read', action='store', required=True)
+            args = parser.parse_args(user_input.split())
 
+            keyPath = bytes(args.keypath, 'utf-8')
+            value = bytes(args.value, 'utf-8')
+
+            regRead(sock, keyPath, value)
+            
     return
 
 #-----------------------------------------------

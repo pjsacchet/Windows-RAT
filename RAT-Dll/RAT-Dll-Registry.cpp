@@ -4,23 +4,37 @@
 
 #include "RAT-Dll-Registry.h"
 #include "RAT-Dll-Connect.h"
+#include <iostream>
+#include <cstring>
+using namespace std;
 
 
 /** This function will perform a registry key read for us 
 params:
-* hiveKey - buffer containing hive key our target key resides in 
-* subKey - subkey path to our actual desired key 
+* keypath - full path to the desired registry key we're reading from 
 * valueName - name of the value we're reading from this key 
 * regValue - void buffer to contain contents of our reg key 
 * sizeRegValue - size of the regValue buffer 
 return:
 * if successful we return SUCCESS; otherwise print error code and handle appropiately
 */
-INT performRegRead(__in char* hiveKey, __in char* subKey, __in char* valueName, __out void** regValue, __out DWORD* sizeRegValue)
+INT performRegRead(__in char* keyPath, __in char* valueName, __out void** regValue, __out DWORD* sizeRegValue)
 {
 	INT status = SUCCESS;
 	HKEY hiveKeyValue = NULL, openRegKey = { 0 };
-	CHAR msgBuf[DEFAULT_BUF_LEN];
+	CHAR msgBuf[DEFAULT_BUF_LEN], *hiveKey = NULL, *subKey = NULL;
+	 
+
+	// Split up the total keypath by hive and sub key path 
+	hiveKey = strchr(keyPath, '\\');
+	if (hiveKey == 0)
+	{
+		OutputDebugStringA("RAT-Dll-Registry::performRegRead - Failed to grab hive key!\n");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+	// Remainder of this path if subkey
 
 	hiveKeyValue = getHiveKey(hiveKey);
 	if (hiveKeyValue == NULL)

