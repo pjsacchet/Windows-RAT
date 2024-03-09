@@ -156,6 +156,7 @@
     <ClInclude Include="RAT-Dll-DirList.h" />
     <ClInclude Include="RAT-Dll-GetFile.h" />
     <ClInclude Include="RAT-Dll-Main.h" />
+    <ClInclude Include="RAT-Dll-Process.h" />
     <ClInclude Include="RAT-Dll-Registry.h" />
     <ClInclude Include="RAT-Dll-Screenshot.h" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClCompile Include="RAT-Dll-DirList.cpp" />
     <ClCompile Include="RAT-Dll-GetFile.cpp" />
     <ClCompile Include="RAT-Dll-Main.cpp" />
+    <ClCompile Include="RAT-Dll-Process.cpp" />
     <ClCompile Include="RAT-Dll-PutFile.cpp" />
     <ClCompile Include="RAT-Dll-PutFile.h" />
     <ClCompile Include="RAT-Dll-Registry.cpp" />

@@ -7,7 +7,25 @@
 
 /*TODO: Add ability to start at offset within file
 		Add ability to chunk data we send back
-		Check fiel size output parameter bytes*/
+		Check file size output parameter bytes*/
+
+
+/** Handle socket work and function calls for performing get file functionality 
+params:
+* clientSock - current open client socket to implant 
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT handleGetFile(SOCKET clientSock)
+{
+	INT status = SUCCESS, recvBufLen = DEFAULT_BUF_LEN;
+    CHAR recvBuf[DEFAULT_BUF_LEN], msgBuf[DEFAULT_BUF_LEN];
+
+    
+
+cleanup:
+    return status;
+}
 
 
 /** This function will perform a simple get file for us 

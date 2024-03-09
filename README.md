@@ -343,14 +343,21 @@ Please select from the following options:
 - Flesh out registry functionality
   - Handle different reg data types
     - Should send back data type as separate return from implant and handle as needed in python scripting 
+  
 ### New Features:
 - Implement registry key write add/delete
   - Add registry key value listing 
 - Implement get system info 
 - Implement password hash stealing via registry reads 
 - Enable SYSTEM elevation
+  - Have exe inject our dll into some other process's memory 
+  - Or simply call system API with dll - rundll or something similar 
 - Process list 
   - Return specific info about a particular process
+  - List all running processes
+- Driver list
+  - Return specific info about a particular driver
+  - List all loaded drivers
 - Start/stop processes?
   - Flags for permissions, process name etc.
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
@@ -363,3 +370,5 @@ Please select from the following options:
 ### Bugs
 - Exe does not exit 'cleanly'
 - Even if exe exits we do not alert our C2, so it still thinks its connected
+- Put file
+  - Large files may fail due to socket streams mixing comamnd values
