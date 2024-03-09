@@ -31,6 +31,9 @@ This repository will serve as an exploratory environment where I will rely prima
     - [Perform a *screenshot*](#perform-a-screenshot)
       - [Required Args](#required-args-5)
       - [Optional Args](#optional-args-5)
+    - [Perform a *registry read*](#perform-a-registry-read)
+      - [Required Args](#required-args-6)
+      - [Optional Args](#optional-args-6)
   - [TODO](#todo)
     - [Exisiting Features:](#exisiting-features)
     - [New Features:](#new-features)
@@ -87,6 +90,8 @@ Please select from the following options:
 
                 5) Take a screenshot of target (will get file and delete file off target)
 
+                6) Read a registry key off target
+
                 0) Exit
 
 ```
@@ -128,6 +133,8 @@ Please select from the following options:
 
                 5) Take a screenshot of target (will get file and delete file off target)
 
+                6) Read a registry key off target
+
                 0) Exit
 ```
 
@@ -161,6 +168,8 @@ Please select from the following options:
                 4) Perform a delete file off target
 
                 5) Take a screenshot of target (will get file and delete file off target)
+
+                6) Read a registry key off target
 
                 0) Exit
 ```
@@ -206,6 +215,8 @@ Please select from the following options:
 
                 5) Take a screenshot of target (will get file and delete file off target)
 
+                6) Read a registry key off target
+
                 0) Exit
 ```
 
@@ -236,6 +247,8 @@ Please select from the following options:
                 4) Perform a delete file off target
 
                 5) Take a screenshot of target (will get file and delete file off target)
+
+                6) Read a registry key off target
 
                 0) Exit
 ```
@@ -270,6 +283,47 @@ Please select from the following options:
 
                 5) Take a screenshot of target (will get file and delete file off target)
 
+                6) Read a registry key off target
+
+                0) Exit
+```
+
+### Perform a *registry read*
+#### Required Args
+- keypath - path to key we're reading off target 
+- value - name of the value we're reading from the key
+#### Optional Args
+- N/A
+```
+> 6
+Required params:
+
+                -keypath - Path to the registry key we'd like to read
+
+                -value - Name of the value we want to read
+
+> -keypath HKLM\SYSTEM\CurrentControlSet\Control -value CurrentUser
+Sending command...
+Sending key path...
+Sending value name...
+Successful reg read file! Getting key size...
+Key data is 9 bytes; Receiving data...
+Key HKLM\SYSTEM\CurrentControlSet\Control with value CurrentUser returned: USERNAME
+
+Please select from the following options:
+
+                1) Write a file to a location on target
+
+                2) Get a file from a specific location on target
+
+                3) Perform a dir list for a particular directory on target
+
+                4) Perform a delete file off target
+
+                5) Take a screenshot of target (will get file and delete file off target)
+
+                6) Read a registry key off target
+
                 0) Exit
 ```
 
@@ -286,9 +340,11 @@ Please select from the following options:
   - Return number of bytes we successfully deleted?
 - Flesh out screenshot functionality
   - Refactor; add output param for file buffer contents and send our data back in the caller not callee
-  
+- Flesh out registry functionality
+  - Handle different reg data types
+    - Should send back data type as separate return from implant and handle as needed in python scripting 
 ### New Features:
-- Implement registry key read/write add/delete
+- Implement registry key write add/delete
   - Add registry key value listing 
 - Implement get system info 
 - Implement password hash stealing via registry reads 
