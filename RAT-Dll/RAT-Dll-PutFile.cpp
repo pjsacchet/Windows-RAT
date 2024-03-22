@@ -60,8 +60,6 @@ INT handlePutFile(__in SOCKET clientSock)
     }
 
     strcpy(fileBytes, recvBuf);
-    //sprintf_s(msgBuf, "RAT-Dll-PutFile::handlePutFile - Performing put file with bytes %s...\n", fileBytes);
-    //OutputDebugStringA(msgBuf);
 
     // Get our overwrite value 
     status = recv(clientSock, recvBuf, recvBufLen, 0);
