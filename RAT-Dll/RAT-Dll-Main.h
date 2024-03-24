@@ -30,4 +30,11 @@
 #define DEL "4"
 #define SCREENSHOT "5"
 #define REGREAD "6"
+#define REGLIST "7"
+#define REGWRITE "8"
+#define REGDELETE "9"
+#define PROCESSLIST "10"
+#define PROCESSSTART "11"
+#define PROCESSSTOP "12"
+#define PROCESSRESTART "13"
 

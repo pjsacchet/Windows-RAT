@@ -6,7 +6,6 @@
 #include "RAT-Dll-Connect.h"
 #include <iostream>
 #include <cstring>
-//using namespace std;
 
 
 /** Handle socket work and function calls for performing registry reading functionality
