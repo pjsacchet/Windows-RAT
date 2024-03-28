@@ -360,6 +360,9 @@ Please select from the following options:
   - List all loaded drivers
 - Start/stop processes?
   - Flags for permissions, process name etc.
+- User list
+  - Get logged on users, all users
+  - Can do this via registry... or other way?
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
 - Make it so command keywords are actual words; get rid of numbers
 - Implement basic encryption? 
