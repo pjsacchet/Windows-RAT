@@ -23,14 +23,14 @@ EXIT = 0
 #-----------------------------------------------
 def printHelp():
     print("""Please select from the following options: \n
-                1) Write a file to a location on target \n
-                2) Get a file from a specific location on target\n
-                3) Perform a dir list for a particular directory on target\n
-                4) Perform a delete file off target\n
-                5) Take a screenshot of target (will get file and delete file off target)\n
-                6) Read a registry key off target\n
-                7) List all running processes off target\n
-                0) Exit\n""")
+                putfile - Write a file to a location on target \n
+                getfile - Get a file from a specific location on target\n
+                dirlist - Perform a dir list for a particular directory on target\n
+                deletefile - Perform a delete file off target\n
+                screenshot - Take a screenshot of target (will get file and delete file off target)\n
+                regread - Read a registry key off target\n
+                processlist -  List all running processes off target\n
+                exit - Task agent to shutdown gracefully and cleanup\n""")
     return SUCCESS
 
 
@@ -56,13 +56,14 @@ def handleInput(ip, port):
     sock = doConnect(ip, port)
 
     print("Connected to agent at %s on port %d" % (sock.getpeername()[0], sock.getpeername()[1]))
-    userInput = 1
-    while (int(userInput) != EXIT):
+    userInput = ""
+    while (userInput != "exit"):
         printHelp()
  
         userInput = input("> ")
+        userInput = userInput.lower()
 
-        if (int(userInput) == PUT):
+        if (userInput == "putfile"):
             printPutFileHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a put file on target')
@@ -83,7 +84,7 @@ def handleInput(ip, port):
 
             putFile(sock, filepath, outputfilepath, overwrite)
 
-        elif (int(userInput) == GET):
+        elif (userInput == "getfile"):
             printGetFileHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a get file off target')
@@ -102,7 +103,7 @@ def handleInput(ip, port):
             
             getFile(sock, filepath, outfilepath, overwrite)
 
-        elif(int(userInput) == DIR):
+        elif(userInput == "dirlist"):
             printDirListHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a dir list off target')
@@ -113,7 +114,7 @@ def handleInput(ip, port):
 
             dirList(sock, dirPath)
 
-        elif(int(userInput) == DEL):
+        elif(userInput == "deletefile"):
             printDeleteFileHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a delete file off target')
@@ -124,7 +125,7 @@ def handleInput(ip, port):
 
             deleteFile(sock, filePath)
 
-        elif(int(userInput) == SCREENSHOT):
+        elif(userInput == "screenshot"):
             printScreenshotHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a screenshot of target')
@@ -135,7 +136,7 @@ def handleInput(ip, port):
 
             screenshot(sock, filePath)
 
-        elif (int(userInput) == REGREAD):
+        elif (userInput == "regread"):
             printRegReadHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a registry read off target')
@@ -148,7 +149,7 @@ def handleInput(ip, port):
 
             regRead(sock, keyPath, value)
 
-        elif (int(userInput) == PROCESSLIST):
+        elif (userInput == "processlist"):
             printProcessListHelp()
             processList(sock)
             

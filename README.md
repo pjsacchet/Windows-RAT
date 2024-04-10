@@ -80,19 +80,21 @@ Reaching out to agent for connection establishment...
 Connected to agent at 192.168.111.128 on port 1550 
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 
 ```
 
@@ -103,7 +105,7 @@ Please select from the following options:
 #### Optional Args
 - overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
 ```
-> 1
+> putfile
 Required params:
 
                -filepath - local path to file we are writing
@@ -123,19 +125,21 @@ Sent data to implant; waiting on response code...
 Successful file put!
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *get file*
@@ -145,7 +149,7 @@ Please select from the following options:
 #### Optional Args
 - overwrite - Whether or not to overwrite the file locally if it already exits (default is false)
 ```
-> 2
+> getfile
 Required params:
 
                 -filepath - path to file on target
@@ -159,19 +163,21 @@ Successful file get! Getting file contents...
 Successfully wrote file contents to /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *dir list*
@@ -180,7 +186,7 @@ Please select from the following options:
 #### Optional Args
 - N/A
 ```
-> 3
+> dirlist
 Required params:
 
                 -path - path to directory we're listing off target
@@ -205,19 +211,21 @@ Successful dir list!
 
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *delete file*
@@ -226,7 +234,7 @@ Please select from the following options:
 #### Optional Args
 - N/A
 ```
-> 4
+> deletefile
 Required params:
 
                 -filepath - path to the file we're deleting off target
@@ -238,19 +246,21 @@ Successful delete file!
 
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *screenshot*
@@ -259,7 +269,7 @@ Please select from the following options:
 #### Optional Args
 - N/A
 ```
-> 5
+> screenshot
 Required params:
 
                 -filepath - Path where we would like to write our screenshot to locally
@@ -273,19 +283,21 @@ Successful screenshot!
 
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *registry read*
@@ -295,7 +307,7 @@ Please select from the following options:
 #### Optional Args
 - N/A
 ```
-> 6
+> regread
 Required params:
 
                 -keypath - Path to the registry key we'd like to read
@@ -312,19 +324,21 @@ Key HKLM\SYSTEM\CurrentControlSet\Control with value CurrentUser returned: USERN
 
 Please select from the following options:
 
-                1) Write a file to a location on target
+                putfile - Write a file to a location on target
 
-                2) Get a file from a specific location on target
+                getfile - Get a file from a specific location on target
 
-                3) Perform a dir list for a particular directory on target
+                dirlist - Perform a dir list for a particular directory on target
 
-                4) Perform a delete file off target
+                deletefile - Perform a delete file off target
 
-                5) Take a screenshot of target (will get file and delete file off target)
+                screenshot - Take a screenshot of target (will get file and delete file off target)
 
-                6) Read a registry key off target
+                regread - Read a registry key off target
 
-                0) Exit
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ## TODO

