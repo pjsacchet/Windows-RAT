@@ -43,7 +43,7 @@ def processList(sock):
     print("Sending command...")
     sock.send(bytes(str(PROCESSLIST), "utf-8") + b'\x00')
 
-    data = sock.recv(1024)
+    data = sock.recv(8)
     data = data.strip()
     data = data.decode('utf-8')
 
