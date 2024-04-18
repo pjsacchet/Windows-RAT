@@ -43,11 +43,11 @@ def processList(sock):
     print("Sending command...")
     sock.send(bytes(str(PROCESSLIST), "utf-8") + b'\x00')
 
-    data = sock.recv(8)
+    data = sock.recv(4)
     data = data.strip()
     data = data.decode('utf-8')
 
-    print("Implant found %i processes:", data)
+    print("Implant found %i processes:" % data)
 
     # Keep getting processes back until we get our terminator
     while (data != "SUCCESS"):
