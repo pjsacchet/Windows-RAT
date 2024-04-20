@@ -44,8 +44,6 @@ def processList(sock):
     sock.send(bytes(str(PROCESSLIST), "utf-8") + b'\x00')
 
     data = sock.recv(4)
-    #data = data.strip()
-    #data = data.decode('utf-8')
 
     numProcesses = int.from_bytes(data, 'little')
 
