@@ -7,3 +7,5 @@
 INT handleProcessList(SOCKET clientSock);
 
 INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out INT* numProcesses);
+
+INT sendProcesses(SOCKET clientSock, CHAR** processNames, DWORD* processPIDs, INT numProcesses);

