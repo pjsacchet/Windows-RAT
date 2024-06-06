@@ -51,9 +51,19 @@ def processList(sock):
 
     # Keep getting processes back until we get our terminator
     while (data != "SUCCESS"):
-        data = sock.recv(1024)
+        # First get length of string
+        data = sock.recv(4)
+        stringSize = int.from_bytes(data, 'little')
+
+        if (stringSize == 0):
+            print("ERROR: received size zero string from implant!")
+            return FAILURE
+        
+        print("Reading %s bytes..." % stringSize)
+        data = sock.recv(stringSize)
         data = data.strip()
         data = data.decode('utf-8')
+        
         if (data != "" and data != " "):
             print("\t%s" % data)
         if (data == "FAILURE"):

