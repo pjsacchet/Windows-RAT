@@ -44,13 +44,14 @@ def processList(sock):
     sock.send(bytes(str(PROCESSLIST), "utf-8") + b'\x00')
 
     data = sock.recv(4)
-
     numProcesses = int.from_bytes(data, 'little')
 
     print("Implant found %i processes:" % numProcesses)
 
-    # Keep getting processes back until we get our terminator
-    while (data != "SUCCESS"):
+    currProcess = 0
+
+    # Get all the processes
+    while (currProcess < numProcesses):
         # First get length of string
         data = sock.recv(4)
         stringSize = int.from_bytes(data, 'little')
@@ -59,18 +60,30 @@ def processList(sock):
             print("ERROR: received size zero string from implant!")
             return FAILURE
         
-        print("Reading %s bytes..." % stringSize)
         data = sock.recv(stringSize)
         data = data.strip()
         data = data.decode('utf-8')
         
         if (data != "" and data != " "):
             print("\t%s" % data)
-        if (data == "FAILURE"):
-            print("Process list returned failure!")
-            return FAILURE
         
-    print("\nSuccessful process list!\n")
+        # Retrieve the PID
+        data = sock.recv(4)
+        pid = int.from_bytes(data, 'little')
+        print("\t\tPID: %i" % pid)
 
+        currProcess += 1
+
+    # Should get sucessful response code now
+    data = sock.recv(1024)
+    data = data.strip()
+    data = data.decode('utf-8')
+
+    if (data != "SUCCESS"):
+        print("\nERROR: Implant returned failure!")
+        return FAILURE
+    else:
+        print("\nSuccessful process list!\n")
+        return SUCCESS
 
     return SUCCESS

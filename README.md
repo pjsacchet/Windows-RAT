@@ -34,6 +34,9 @@ This repository will serve as an exploratory environment where I will rely prima
     - [Perform a *registry read*](#perform-a-registry-read)
       - [Required Args](#required-args-6)
       - [Optional Args](#optional-args-6)
+    - [Perform a *process list*](#perform-a-process-list)
+      - [Required Args](#required-args-7)
+      - [Optional Args](#optional-args-7)
   - [TODO](#todo)
     - [Exisiting Features:](#exisiting-features)
     - [New Features:](#new-features)
@@ -321,6 +324,91 @@ Sending value name...
 Successful reg read file! Getting key size...
 Key data is 9 bytes; Receiving data...
 Key HKLM\SYSTEM\CurrentControlSet\Control with value CurrentUser returned: USERNAME
+
+Please select from the following options:
+
+                putfile - Write a file to a location on target
+
+                getfile - Get a file from a specific location on target
+
+                dirlist - Perform a dir list for a particular directory on target
+
+                deletefile - Perform a delete file off target
+
+                screenshot - Take a screenshot of target (will get file and delete file off target)
+
+                regread - Read a registry key off target
+
+                processlist -  List all running processes off target
+
+                exit - Task agent to shutdown gracefully and cleanup
+```
+
+### Perform a *process list*
+#### Required Args
+- N/A
+#### Optional Args
+- N/A
+```
+> processlist
+Required params:
+
+                - N/A
+
+Sending command...
+Implant found 25 processes:
+        svchost.exe
+                PID: 4000
+        sihost.exe
+                PID: 5672
+        svchost.exe
+                PID: 5028
+        taskhostw.exe
+                PID: 6052
+        Explorer.EXE
+                PID: 4252
+        svchost.exe
+                PID: 4092
+        StartMenuExperienceHost.exe
+                PID: 5200
+        TextInputHost.exe
+                PID: 2240
+        RuntimeBroker.exe
+                PID: 3672
+        UserOOBEBroker.exe
+                PID: 6200
+        SearchApp.exe
+                PID: 6336
+        RuntimeBroker.exe
+                PID: 6572
+        SecurityHealthSystray.exe
+                PID: 3132
+        vmtoolsd.exe
+                PID: 1692
+        svchost.exe
+                PID: 8164
+        dbgview64.exe
+                PID: 7700
+        RuntimeBroker.exe
+                PID: 7564
+        cmd.exe
+                PID: 7028
+        conhost.exe
+                PID: 5576
+        cmd.exe
+                PID: 6124
+        conhost.exe
+                PID: 900
+        DllHost.exe
+                PID: 1040
+        ApplicationFrameHost.exe
+                PID: 336
+        PhoneExperienceHost.exe
+                PID: 7040
+        RAT-Exe.exe
+                PID: 1348
+
+Successful process list!
 
 Please select from the following options:
 
