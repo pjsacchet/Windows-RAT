@@ -445,6 +445,7 @@ Please select from the following options:
 - Flesh out registry functionality
   - Handle different reg data types
     - Should send back data type as separate return from implant and handle as needed in python scripting 
+- Flesh out process list functionality
   
 ### New Features:
 - Implement registry key write add/delete
@@ -454,9 +455,8 @@ Please select from the following options:
 - Enable SYSTEM elevation
   - Have exe inject our dll into some other process's memory 
   - Or simply call system API with dll - rundll or something similar 
-- Process list 
+- Process query
   - Return specific info about a particular process
-  - List all running processes
 - Driver list
   - Return specific info about a particular driver
   - List all loaded drivers
@@ -466,7 +466,7 @@ Please select from the following options:
   - Get logged on users, all users
   - Can do this via registry... or other way?
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
-- Make it so command keywords are actual words; get rid of numbers
+- Whoami-esq command
 - Implement basic encryption? 
   - Give both implant and C2 same key or something for packet encryption
 - Add specific error messages and translate function for easy debug messages

