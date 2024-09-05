@@ -126,23 +126,6 @@ Sending file contents...
 Sending overwrite...
 Sent data to implant; waiting on response code...
 Successful file put!
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *get file*
@@ -164,23 +147,6 @@ Optional params:
 > -filepath C:\test.txt -outfilepath /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
 Successful file get! Getting file contents...
 Successfully wrote file contents to /mnt/c/Users/Admin/Projects/Personal/Windows-RAT/TestFiles/test.txt
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *dir list*
@@ -211,24 +177,6 @@ Files in C:\Users\Admin\Documents:
         RAT-Exe.exe
 
 Successful dir list!
-
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *delete file*
@@ -246,24 +194,6 @@ Required params:
 Sending command...
 Sending file path...
 Successful delete file!
-
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *screenshot*
@@ -283,24 +213,6 @@ Successful screenshot! Getting file size...
 File is 14745654 bytes; Receiving data...
 Successfully wrote file to disk... awaiting implant reponse code...
 Successful screenshot!
-
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *registry read*
@@ -324,24 +236,6 @@ Sending value name...
 Successful reg read file! Getting key size...
 Key data is 9 bytes; Receiving data...
 Key HKLM\SYSTEM\CurrentControlSet\Control with value CurrentUser returned: USERNAME
-
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ### Perform a *process list*
@@ -409,24 +303,6 @@ Implant found 25 processes:
                 PID: 1348
 
 Successful process list!
-
-Please select from the following options:
-
-                putfile - Write a file to a location on target
-
-                getfile - Get a file from a specific location on target
-
-                dirlist - Perform a dir list for a particular directory on target
-
-                deletefile - Perform a delete file off target
-
-                screenshot - Take a screenshot of target (will get file and delete file off target)
-
-                regread - Read a registry key off target
-
-                processlist -  List all running processes off target
-
-                exit - Task agent to shutdown gracefully and cleanup
 ```
 
 ## TODO
