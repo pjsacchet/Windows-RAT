@@ -124,7 +124,35 @@ def regWrite():
         return FAILURE
     
 
-def regDelete():
+'''
+Description:
+    Prints reg delete usage for user 
+Params:
+    N/A
+Returns:
+    SUCCESS or FAILURE 
+'''
+def printRegDeleteHelp():
+    print("""Required params: \n
+                -keypath - Path to the registry key we'd like to read \n
+                -value - Name of the value we want to read\n
+            Optional params: \n
+                -iskey - The value being passed is a subkey we're deleting, not a value""")
+    return SUCCESS
+
+
+'''
+Description:
+    Performs registry deleting functionality; communicates with C2 server and handles responses
+Params:
+    sock - sock object with connection already established
+    isKey - whether or not the value being passed is a subkey to be deleted or a value of a key
+    keyPath - path to the registry key that we're deleting
+    valueName - name of the value/key we're deleting 
+Returns:
+    SUCCESS or FAILURE 
+'''
+def regDelete(sock, isKey, keyPath, valueName):
     try:
 
         return SUCCESS

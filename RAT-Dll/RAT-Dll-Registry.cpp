@@ -234,24 +234,31 @@ cleanup:
 }
 
 
-/** This function will perform a registry key delete for us 
+/** Handle socket work and function calls for performing registry deleting functionality
 params:
-* isKey - whether or not we're deleting a registry key (true) or a registry value (false)
-* keypath - full path to the desired registry key we're reading from
-* valueName - name of the value we're reading from this key
-* regValue - void buffer to contain contents of our reg key
-return:
-* if successful we return SUCCESS; otherwise print error code and handle appropiately
-*//** This function will perform a registry key read for us 
-params:
-* keypath - full path to the desired registry key we're reading from 
-* valueName - name of the value we're reading from this key 
-* regValue - void buffer to contain contents of our reg key 
-* sizeRegValue - size of the regValue buffer 
+* clientSock - current open client socket to implant
 return:
 * if successful we return SUCCESS; otherwise print error code and handle appropiately
 */
-INT performRegDelete(__in bool isKey)
+INT handleRegDelete(__in SOCKET clientSock)
+{
+	INT status = SUCCESS;
+
+
+cleanup:
+	return status;
+}
+
+
+/** This function will perform a registry key/value delete for us, depending on the flag passed 
+params:
+* isKey - whether or not we're deleting a registry key (true) or a registry value (false)
+* keypath - full path to the desired registry key we're deleting
+* valueName - name of the subkey or value we're deleting 
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT performRegDelete(__in bool isKey, __in char* keyPath, __in char* value)
 {
 	INT status = SUCCESS;
 

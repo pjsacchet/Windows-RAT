@@ -347,6 +347,7 @@ Successful process list!
   - Give both implant and C2 same key or something for packet encryption
 - Add specific error messages and translate function for easy debug messages
 - Currently only support ASCII... could do unicode pretty easily?
+- Persistence via registry or something?
   
 ### Bugs
 - Exe does not exit 'cleanly'
