@@ -234,10 +234,37 @@ cleanup:
 }
 
 
-
-INT performRegDelete()
+/** This function will perform a registry key delete for us 
+params:
+* isKey - whether or not we're deleting a registry key (true) or a registry value (false)
+* keypath - full path to the desired registry key we're reading from
+* valueName - name of the value we're reading from this key
+* regValue - void buffer to contain contents of our reg key
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*//** This function will perform a registry key read for us 
+params:
+* keypath - full path to the desired registry key we're reading from 
+* valueName - name of the value we're reading from this key 
+* regValue - void buffer to contain contents of our reg key 
+* sizeRegValue - size of the regValue buffer 
+return:
+* if successful we return SUCCESS; otherwise print error code and handle appropiately
+*/
+INT performRegDelete(__in bool isKey)
 {
 	INT status = SUCCESS;
+
+	// Check to see if we're deleting a key or value and make appropiate call 
+	if (isKey)
+	{
+		// call performRegDeleteKey
+	}
+
+	else
+	{
+		// call performRegDeleteValue
+	}
 
 
 

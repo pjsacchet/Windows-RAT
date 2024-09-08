@@ -325,7 +325,7 @@ Successful process list!
   
 ### New Features:
 - Implement registry key write add/delete
-  - Add registry key value listing 
+  - Add registry key value listing/add/delete
 - Implement get system info 
 - Implement password hash stealing via registry reads 
 - Enable SYSTEM elevation

