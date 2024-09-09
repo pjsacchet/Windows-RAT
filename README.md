@@ -348,6 +348,8 @@ Successful process list!
 - Add specific error messages and translate function for easy debug messages
 - Currently only support ASCII... could do unicode pretty easily?
 - Persistence via registry or something?
+- Add basic quit / cleanup      
+  - Self cleanup off disk?
   
 ### Bugs
 - Exe does not exit 'cleanly'

