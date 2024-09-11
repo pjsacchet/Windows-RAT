@@ -34,9 +34,15 @@ This repository will serve as an exploratory environment where I will rely prima
     - [Perform a *registry read*](#perform-a-registry-read)
       - [Required Args](#required-args-6)
       - [Optional Args](#optional-args-6)
-    - [Perform a *process list*](#perform-a-process-list)
+    - [Perform a *registry delete (value)*](#perform-a-registry-delete-value)
       - [Required Args](#required-args-7)
       - [Optional Args](#optional-args-7)
+    - [Perform a *registry delete (key)*](#perform-a-registry-delete-key)
+      - [Required Args](#required-args-8)
+      - [Optional Args](#optional-args-8)
+    - [Perform a *process list*](#perform-a-process-list)
+      - [Required Args](#required-args-9)
+      - [Optional Args](#optional-args-9)
   - [TODO](#todo)
     - [Exisiting Features:](#exisiting-features)
     - [New Features:](#new-features)
@@ -236,6 +242,58 @@ Sending value name...
 Successful reg read file! Getting key size...
 Key data is 9 bytes; Receiving data...
 Key HKLM\SYSTEM\CurrentControlSet\Control with value CurrentUser returned: USERNAME
+```
+
+### Perform a *registry delete (value)*
+#### Required Args
+- keypath - path to key value we're deleting off target
+- value - name of the value we're deleting off target
+#### Optional Args
+- iskey - whether or not the value passed is a key or not
+```
+> regdelete
+Required params:
+
+                -keypath - Path to the registry key/value we'd like to delete
+
+                -value - Name of the value we want to delete
+
+            Optional params:
+
+                -iskey - The value being passed is a subkey we're deleting, not a value
+
+> -keypath HKLM\SOFTWARE\TestKey -value testvalue
+Sending command...
+Sending delete key... (0)
+Sending key path...
+Sending value/key name...
+Successful reg delete!
+```
+
+### Perform a *registry delete (key)*
+#### Required Args
+- keypath - path to key value we're deleting off target
+- value - name of the value we're deleting off target
+#### Optional Args
+- iskey - whether or not the value passed is a key or not
+```
+> regdelete
+Required params:
+
+                -keypath - Path to the registry key/value we'd like to delete
+
+                -value - Name of the value we want to delete
+
+            Optional params:
+
+                -iskey - The value being passed is a subkey we're deleting, not a value (default:false)
+
+> -keypath HKLM\SOFTWARE -value TestKey -iskey
+Sending command...
+Sending delete key... (1)
+Sending key path...
+Sending value/key name...
+Successful reg delete!
 ```
 
 ### Perform a *process list*

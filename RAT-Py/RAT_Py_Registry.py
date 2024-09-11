@@ -134,10 +134,10 @@ Returns:
 '''
 def printRegDeleteHelp():
     print("""Required params: \n
-                -keypath - Path to the registry key we'd like to read \n
-                -value - Name of the value we want to read\n
+                -keypath - Path to the registry key/value we'd like to delete \n
+                -value - Name of the value we want to delete\n
             Optional params: \n
-                -iskey - The value being passed is a subkey we're deleting, not a value""")
+                -iskey - The value being passed is a subkey we're deleting, not a value (default:false)\n""")
     return SUCCESS
 
 
@@ -161,7 +161,7 @@ def regDelete(sock, isKey, keyPath, valueName):
 
         # Send whether or not we're deleting a key or value 
         print("Sending delete key... (%i)" % isKey)
-        sock.send(bytes(isKey) + b'\x00')
+        sock.send(bytes(str(isKey), 'utf-8') + b'\x00')
         time.sleep(WAIT_TIME)
 
         # Send key path to read

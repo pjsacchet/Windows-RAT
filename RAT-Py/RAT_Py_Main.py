@@ -166,9 +166,9 @@ def handleInput(ip, port):
             args = parser.parse_args(user_input.split())
 
             if (args.iskey):
-                isKey = True
+                isKey = 1
             else:
-                isKey = False
+                isKey = 0
 
             keyPath = bytes(args.keypath, 'utf-8')
             value = bytes(args.value, 'utf-8')

