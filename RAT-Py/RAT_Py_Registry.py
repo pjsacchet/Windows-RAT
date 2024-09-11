@@ -164,7 +164,7 @@ def regDelete(sock, isKey, keyPath, valueName):
         sock.send(bytes(str(isKey), 'utf-8') + b'\x00')
         time.sleep(WAIT_TIME)
 
-        # Send key path to read
+        # Send key path to delete from
         print("Sending key path...")
         sock.send(keyPath + b'\x00')
         time.sleep(WAIT_TIME)
@@ -174,7 +174,7 @@ def regDelete(sock, isKey, keyPath, valueName):
         sock.send(valueName + b'\x00')
         time.sleep(WAIT_TIME)
 
-        # Receiving key value here... probably need a size first 
+        # Check for success
         data = sock.recv(7)
         data = data.strip()
         data = data.decode('utf-8')
