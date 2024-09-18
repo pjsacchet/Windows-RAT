@@ -74,7 +74,7 @@ Current assumptions will include:
 - Python version for client is 3.7.16 (important for scapy use)
 
 ## Build Environment
-- Visual Studio 2019 version 16.11.20
+- Visual Studio 2022 version 17.11.3
 
 ## Examples
 ### Startup
@@ -100,6 +100,8 @@ Please select from the following options:
                 screenshot - Take a screenshot of target (will get file and delete file off target)
 
                 regread - Read a registry key off target
+
+                regdelete - Delete a registry key/value off target
 
                 processlist -  List all running processes off target
 
@@ -401,6 +403,8 @@ Successful process list!
   - Get logged on users, all users
   - Can do this via registry... or other way?
 - Have exe perform survey, report results back to C2 and have C2 send DLL payload for loading 
+  - Have exe survey running processes; inject DLL into target after running
+    - Survey, report back to C2 those that we can inject, then get payload and start it; maybe self kill?
 - Whoami-esq command
 - Implement basic encryption? 
   - Give both implant and C2 same key or something for packet encryption
