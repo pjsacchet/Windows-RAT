@@ -9,5 +9,4 @@
 #define SUCCESS 1
 #define FAILURE 0
 #define DLL_NAME L"RAT-Dll.dll"
-
-char msgBuf[256];
+#define MAX_BUFFER_SIZE 256
