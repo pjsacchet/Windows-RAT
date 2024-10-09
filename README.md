@@ -413,6 +413,7 @@ Successful process list!
 - Persistence via registry or something?
 - Add basic quit / cleanup      
   - Self cleanup off disk?
+- Add random GUID 
   
 ### Bugs
 - Exe does not exit 'cleanly'

