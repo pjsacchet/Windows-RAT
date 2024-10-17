@@ -115,7 +115,7 @@ INT readPayload(__in char* filePath, __inout UINT64* payloadSize, __inout char**
 	if (fileContents == NULL)
 	{
 		OutputDebugStringA("RAT-Exe-Injection::readPayload - Failure from malloc (NOT ENOUGH MEMORY)");
-		status = FAILURE;
+		status = ERROR_OUTOFMEMORY;
 		goto cleanup;
 	}
 

