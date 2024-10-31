@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="RAT-Exe-Connect.cpp" />
     <ClCompile Include="RAT-Exe-Injection.cpp" />
     <ClCompile Include="RAT-Exe-Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RAT-Exe-Connect.h" />
     <ClInclude Include="RAT-Exe-Injection.h" />
     <ClInclude Include="RAT-Exe-Main.h" />
   </ItemGroup>

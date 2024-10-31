@@ -12,6 +12,7 @@ This repository will serve as an exploratory environment where I will rely prima
   - [Assumptions](#assumptions)
   - [Testing Environment](#testing-environment)
   - [Build Environment](#build-environment)
+  - [Setup \& Initial Comms (In progress)](#setup--initial-comms-in-progress)
   - [Examples](#examples)
     - [Startup](#startup)
       - [Required Args](#required-args)
@@ -75,6 +76,20 @@ Current assumptions will include:
 
 ## Build Environment
 - Visual Studio 2022 version 17.11.3
+  
+## Setup & Initial Comms (In progress)
+The setup of this tool comprises of several steps which are important to understand if one was to properly employ it:
+
+- User drops executable to target and runs
+   - Executable opens a port and waits for initial C2 connection
+ - C2 connects, sends filepath to write our DLL to
+ - C2 sends DLL file bytes
+ - Implant writes DLL to filepath
+ - Implant parses processes running on target to collect those that are inject-able; sends back to C2
+ - C2 allows user to choose which process to inject into; sends back to implant; closes connection
+ - Implant injects DLL into target process; shuts down
+ - DLL opens new port in target process; waits for C2 to connect
+ - C2 connects; starts issuing commands
 
 ## Examples
 ### Startup

