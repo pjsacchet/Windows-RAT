@@ -12,6 +12,8 @@
 #include "RAT-Dll-Process.h"
 
 
+int size = sizeof(IMAGE_SECTION_HEADER);
+
 /** This function will serve as our main 'handler' for C2 requests
 *       It will continously serve our server connection until the connection is closed, reading request types and responding to them as needed
 params: 

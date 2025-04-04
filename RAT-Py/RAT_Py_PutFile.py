@@ -44,7 +44,7 @@ Params:
 Returns:
     SUCCESS or FAILURE 
 '''
-def putFile(sock, filepath, filename, overwrite):
+def putFile(sock, filepath, filename, overwrite) -> int:
     try:
         # First tell our implant we want a PUT file performed
         print("Sending command...")
